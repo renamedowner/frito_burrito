@@ -60,7 +60,7 @@
     // Modals
     dishModalBackdrop: document.getElementById('dishModalBackdrop'),
     dishModalClose: document.getElementById('dishModalClose'),
-    dishModalImg: document.getElementById('dishModalImg'),
+    dishModalEmoji: document.getElementById('dishModalEmoji'),
     dishModalTitle: document.getElementById('dishModalTitle'),
     dishModalMeta: document.getElementById('dishModalMeta'),
     dishModalDesc: document.getElementById('dishModalDesc'),
@@ -272,12 +272,11 @@
       badgesHtml += '<span class="badge-tag popular">🔥 Хит</span>';
     }
 
-    // Image fallback
-    const imgUrl = dish.image;
+    const emojiIcon = dish.emoji || '🌯';
 
     card.innerHTML = `
-      <div class="dish-img-wrap">
-        <img src="${imgUrl}" alt="${escapeHtml(dish.name)}" loading="lazy" onerror="this.src='img/burrito-classic.jpg'" />
+      <div class="dish-emoji-wrap">
+        <div class="dish-emoji-icon">${emojiIcon}</div>
         <div class="dish-badges">${badgesHtml}</div>
       </div>
       <div class="dish-content">
@@ -354,7 +353,7 @@
     currentModalDish = dish;
     currentSelectedModifiers = [];
 
-    el.dishModalImg.src = dish.image;
+    el.dishModalEmoji.textContent = dish.emoji || '🌯';
     el.dishModalTitle.textContent = dish.name;
     el.dishModalMeta.innerHTML = `
       <span>${dish.weight}</span>
@@ -439,10 +438,10 @@
         id: cartItemId,
         dishId: dish.id,
         name: dish.name,
+        emoji: dish.emoji || '🌯',
         price: itemPrice,
         basePrice: dish.price,
         weight: dish.weight,
-        image: dish.image,
         modifiers: [...modifiers],
         quantity: 1
       });
@@ -547,7 +546,7 @@
         }
 
         itemRow.innerHTML = `
-          <img src="${item.image}" alt="" class="cart-item-img" onerror="this.src='img/burrito-classic.jpg'" />
+          <div class="cart-item-emoji">${item.emoji || '🌯'}</div>
           <div class="cart-item-details">
             <div class="cart-item-name">${escapeHtml(item.name)}</div>
             ${modsDesc ? `<div class="cart-item-modifiers">${escapeHtml(modsDesc)}</div>` : ''}
@@ -1076,11 +1075,11 @@
           id: "burrito-classic",
           categoryId: "burrito",
           name: "Буррито «Эль Классико»",
+          emoji: "🌯",
           price: 250,
           weight: "360 г",
           popular: true,
           spicy: 0,
-          image: "img/burrito-classic.jpg",
           description: "Сочное куриное филе на гриле, свежие томаты, кукуруза, сыр моцарелла, свежая зелень и фирменный сливочный соус в подрумяненной тортилье.",
           calories: "520 ккал",
           modifiers: [{ name: "Двойной сыр Чеддер", price: 50 }, { name: "Перчик Халапеньо", price: 40 }]
@@ -1089,11 +1088,11 @@
           id: "burrito-juanita",
           categoryId: "burrito",
           name: "Буррито «Месть Хуаниты»",
+          emoji: "🌶️🌯",
           price: 300,
           weight: "380 г",
           popular: true,
           spicy: 1,
-          image: "img/burrito-juanita.jpg",
           description: "Пикантная рубленая мраморная говядина, острый перчик халапеньо, красная фасоль пинто, тянущийся чеддер и аутентичная сальса роха.",
           calories: "580 ккал",
           modifiers: [{ name: "Экстра Халапеньо 🌶️", price: 40 }, { name: "Двойная говядина", price: 90 }]
@@ -1102,11 +1101,11 @@
           id: "burrito-diablo",
           categoryId: "burrito",
           name: "Буррито «Эль Диабло»",
+          emoji: "🔥🌯",
           price: 330,
           weight: "390 г",
           popular: true,
           spicy: 2,
-          image: "img/burrito-diablo.jpg",
           description: "Экстра-острый мексиканский хит! Мраморная говядина и цыпленок, острый соус чили-хабанеро, халапеньо, сладкая кукуруза и расплавленный чеддер.",
           calories: "610 ккал",
           modifiers: [{ name: "Острый соус Чили x2", price: 45 }]
@@ -1115,11 +1114,11 @@
           id: "burrito-mushroom",
           categoryId: "burrito",
           name: "Буррито «Грибной Жюльен»",
+          emoji: "🍄🌯",
           price: 330,
           weight: "370 г",
           popular: true,
           spicy: 0,
-          image: "img/burrito-mushroom.jpg",
           description: "Нежнейшее куриное филе, обжаренные шампиньоны с карамелизованным луком, двойная порция сыра и фирменный соус ранч.",
           calories: "540 ккал",
           modifiers: [{ name: "Дополнительный сыр", price: 50 }]
@@ -1128,11 +1127,11 @@
           id: "tacos-box",
           categoryId: "tacos-quesadilla",
           name: "Такос Ланч-Бокс (3 шт)",
+          emoji: "🌮",
           price: 500,
           weight: "380 г",
           popular: true,
           spicy: 1,
-          image: "img/tacos-box.jpg",
           description: "Три хрустящих кукурузно-пшеничных тако: с томленым цыпленком, острой говядиной и свежими овощами с долькой сочного лайма.",
           calories: "560 ккал",
           modifiers: [{ name: "Соус Гуакамоле", price: 70 }]
@@ -1141,11 +1140,11 @@
           id: "fries-crispy",
           categoryId: "snacks",
           name: "Картофель Фри хрустящий",
+          emoji: "🍟",
           price: 170,
           weight: "150 г",
           popular: true,
           spicy: 0,
-          image: "img/fries-crispy.jpg",
           description: "Золотистые хрустящие брусочки картофеля фри с легкой морской солью и паприкой.",
           calories: "320 ккал",
           modifiers: [{ name: "Соус Сырный", price: 60 }]
@@ -1154,11 +1153,11 @@
           id: "sauce-guacamole",
           categoryId: "sauces",
           name: "Фирменный Гуакамоле",
+          emoji: "🥑",
           price: 120,
           weight: "50 г",
           popular: true,
           spicy: 0,
-          image: "img/sauce-guacamole.jpg",
           description: "Аутентичный мексиканский дип из спелого авокадо, сока лайма, томатов и свежей кинзы.",
           calories: "95 ккал",
           modifiers: []
@@ -1167,11 +1166,11 @@
           id: "combo-mexican",
           categoryId: "combos",
           name: "Комбо «Мексиканец»",
+          emoji: "🌯🍟",
           price: 490,
           weight: "650 г",
           popular: true,
           spicy: 0,
-          image: "img/combo-mexican.jpg",
           description: "Сытный набор для одного: Буррито «Эль Классико» + Картофель Фри + Соус Сальса Роха + Напиток на выбор. Выгода 90 ₽!",
           calories: "980 ккал",
           modifiers: []
