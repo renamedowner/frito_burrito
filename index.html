@@ -3,397 +3,421 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Фрито Буррито — Доставка мексиканской кухни в Краснодаре</title>
-  <meta name="description" content="Сочные мексиканские буррито, тако, кесадильи и горячие закуски в Краснодаре на ул. Петра Метальникова, 3/1А. Быстрая доставка и самовывоз.">
+  <title>FRITO BURRITO — Мексиканский стритфуд в Краснодаре</title>
+  <meta name="description" content="Горячие буррито, хрустящие тако, сырные кесадильи и закуски в Краснодаре на ул. Петра Метальникова, 3/1А. Доставка и самовывоз.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌯</text></svg>">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
-  <!-- Site Header (Yandex Eda Mobile-First Architecture) -->
-  <header class="site-header">
-    <div class="header-container">
+  <!-- Top Announcement Bar -->
+  <aside class="top-announcement" aria-label="Объявление">
+    <div class="announcement-content">
+      <span>🔥 Доставка от 25 минут по Прикубанскому округу</span>
+      <span class="sep">•</span>
+      <span>🛵 Бесплатная доставка от 800 ₽</span>
+      <span class="sep">•</span>
+      <span>📍 ул. Петра Метальникова, 3/1А</span>
+    </div>
+  </aside>
+
+  <!-- Main Site Header -->
+  <header class="fb-header">
+    <div class="header-inner">
       
-      <!-- Top Row: Brand, Location Pill & Cart Button -->
-      <div class="header-top-row">
-        
-        <div class="brand-logo" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-          <div class="brand-icon">FB</div>
-          <div class="brand-text">
-            <span class="brand-title">Фрито Буррито</span>
-            <span class="brand-subtitle">Мексиканский стритфуд</span>
-          </div>
+      <!-- Brand Logo -->
+      <a href="#" class="fb-brand">
+        <div class="brand-badge">🌯</div>
+        <div class="brand-info">
+          <span class="brand-name">FRITO BURRITO</span>
+          <span class="brand-tagline">Мексиканский стритфуд</span>
         </div>
+      </a>
 
-        <div class="header-top-actions">
-          <button class="address-picker-btn" id="addressPickerBtn" title="Сменить адрес доставки">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-              <circle cx="12" cy="10" r="3"></circle>
-            </svg>
-            <span id="currentAddressDisplay" class="addr-text">Метальникова, 3/1А</span>
-            <span class="caret">▼</span>
-          </button>
+      <!-- Quick Info (Address & Phone on Desktop) -->
+      <div class="header-center-info">
+        <button class="info-pill-btn" id="headerAddressBtn" title="Сменить адрес">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          <span id="currentAddressDisplay">ул. Петра Метальникова, 3/1А</span>
+        </button>
 
-          <button class="header-cart-btn" id="headerCartBtn">
+        <a href="tel:+79996505576" class="info-pill-btn phone-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+          <span>+7 (999) 650-55-76</span>
+        </a>
+      </div>
+
+      <!-- Header Actions: Cart Button -->
+      <div class="header-right-actions">
+        <button class="header-cart-trigger" id="headerCartBtn">
+          <span class="cart-icon-wrap">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
               <line x1="3" y1="6" x2="21" y2="6"></line>
               <path d="M16 10a4 4 0 0 1-8 0"></path>
             </svg>
-            <span class="header-cart-label" id="headerCartSum">Корзина</span>
-            <span class="header-cart-badge" id="headerCartBadge" style="display: none;">0</span>
-          </button>
-        </div>
-
-      </div>
-
-      <!-- Search & Delivery Toggle Row -->
-      <div class="header-search-row">
-        
-        <div class="search-bar">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input type="text" id="searchInput" class="search-input" placeholder="Найти буррито, тако, соус..." autocomplete="off">
-          <button class="search-clear-btn" id="searchClearBtn" title="Очистить поиск">✕</button>
-        </div>
-
-        <div class="delivery-type-toggle">
-          <button class="delivery-toggle-opt active" data-type="delivery">Доставка</button>
-          <button class="delivery-toggle-opt" data-type="pickup">Самовывоз</button>
-        </div>
-
+            <span class="cart-count-badge" id="headerCartBadge" style="display: none;">0</span>
+          </span>
+          <span class="cart-btn-text" id="headerCartSum">Корзина</span>
+        </button>
       </div>
 
     </div>
   </header>
 
-  <!-- Restaurant Hero Banner (Yandex Eda layout) -->
-  <section class="hero-section">
-    <div class="restaurant-hero-card">
-      <div class="hero-cover">
-        <img src="img/hero-cover.jpg" alt="Фрито Буррито Краснодар">
-        <div class="hero-cover-overlay"></div>
-        <div class="hero-badge-tag">
-          <span>🌮</span>
-          <span>Оригинальные рецепты • Открытая кухня</span>
+  <!-- Hero Section (Atmospheric Mexican Street-Food Banner) -->
+  <section class="fb-hero">
+    <div class="hero-bg-wrap">
+      <img src="img/hero-cover.jpg?v=3" alt="Frito Burrito Краснодар" class="hero-bg-img">
+      <div class="hero-gradient-overlay"></div>
+    </div>
+
+    <div class="hero-container">
+      <div class="hero-badge">
+        <span>⭐ 5.0 на Яндекс Картах</span>
+        <span class="badge-dot">•</span>
+        <span>240+ отзывов</span>
+      </div>
+
+      <h1 class="hero-title">НАСТОЯЩИЙ МЕКСИКАНСКИЙ СТРИТФУД В КРАСНОДАРЕ</h1>
+      
+      <p class="hero-subtitle">
+        Горячие сочные буррито, хрустящие тако и тянущиеся сырные кесадильи с открытого гриля. Плотная пшеничная тортилья, которая держит форму и не размокает.
+      </p>
+
+      <div class="hero-features-grid">
+        <div class="feature-item">
+          <div class="feature-icon">🌯</div>
+          <div class="feature-text">
+            <strong>Свежая тортилья</strong>
+            <span>Подрумяненная лепешка с хрустящей корочкой</span>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🥩</div>
+          <div class="feature-text">
+            <strong>Мясо на гриле</strong>
+            <span>Мраморная говядина и сочное филе цыпленка</span>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">⏱️</div>
+          <div class="feature-text">
+            <strong>Быстрая доставка</strong>
+            <span>25–35 минут, привозим горячим в термосумках</span>
+          </div>
         </div>
       </div>
 
-      <div class="hero-body">
-        <div class="hero-info-col">
-          <div class="hero-title-row">
-            <h1 class="hero-title">Фрито Буррито</h1>
-            <span class="hero-open-status">
-              <span class="dot"></span>
-              Открыто до 23:00
-            </span>
-          </div>
-          
-          <p class="hero-desc">Аутентичный мексиканский стритфуд: горячие сытные буррито, хрустящие тако, сырные кесадильи и фирменные закуски</p>
+      <div class="hero-cta-row">
+        <a href="#menu-catalog" class="btn-primary-hero">
+          <span>Смотреть меню</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <polyline points="19 12 12 19 5 12"></polyline>
+          </svg>
+        </a>
 
-          <div class="hero-meta-pills">
-            <div class="meta-pill rating">
-              <span>★ 5.0</span>
-              <span style="font-weight: 500; color: #555;">(240+ на картах)</span>
+        <a href="https://wa.me/79996505576?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D1%81%D0%B4%D0%B5%D0%BB%D0%B0%D1%82%D1%8C%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%20%D0%B2%20Frito%20Burrito" target="_blank" rel="noopener noreferrer" class="btn-secondary-hero">
+          <span>💬 Заказ в WhatsApp</span>
+        </a>
+
+        <a href="https://yandex.ru/maps/org/frito_burrito/201782394789/" target="_blank" rel="noopener noreferrer" class="btn-outline-hero">
+          <span>Яндекс Карты ↗</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sticky Categories Navigation -->
+  <nav class="categories-sticky-bar" id="menu-catalog" aria-label="Категории меню">
+    <div class="categories-bar-inner">
+      
+      <!-- Category Tabs (Horizontal Scroll) -->
+      <div class="tabs-scroll-track" id="tabsTrack">
+        <!-- Rendered by app.js -->
+      </div>
+
+      <!-- Quick Search Input -->
+      <div class="menu-search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Поиск в меню..." autocomplete="off">
+        <button id="searchClearBtn" class="search-clear">✕</button>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- Main Menu Catalog -->
+  <main class="catalog-wrapper">
+    <div class="catalog-container" id="catalogContainer">
+      <!-- Dish sections dynamically populated by app.js -->
+    </div>
+  </main>
+
+  <!-- Restaurant About & Location Section -->
+  <section class="about-section">
+    <div class="about-container">
+      <div class="about-card">
+        <div class="about-text-col">
+          <div class="about-tag">📍 Локация и самовывоз</div>
+          <h2 class="about-title">Ждем вас в Frito Burrito</h2>
+          <p class="about-desc">
+            Мы находимся в Краснодаре по адресу <strong>ул. им. Петра Метальникова, 3/1А</strong> (ЖК «Времена года»). Готовим на открытой кухне — вы всегда видите, из каких свежих продуктов собирается ваш заказ.
+          </p>
+
+          <div class="about-details-list">
+            <div class="about-detail-item">
+              <span class="detail-icon">⏰</span>
+              <div>
+                <strong>Режим работы:</strong>
+                <span>Ежедневно с 10:00 до 23:00</span>
+              </div>
             </div>
-            <div class="meta-pill">
-              <span>⏱️ 25–35 мин</span>
+            <div class="about-detail-item">
+              <span class="detail-icon">📞</span>
+              <div>
+                <strong>Телефон для предзаказа:</strong>
+                <a href="tel:+79996505576">+7 (999) 650-55-76</a>
+              </div>
             </div>
-            <div class="meta-pill delivery-free">
-              <span>🛵 Бесплатная доставка от 800 ₽</span>
+            <div class="about-detail-item">
+              <span class="detail-icon">🛵</span>
+              <div>
+                <strong>Зона доставки:</strong>
+                <span>Музыкальный, Петра Метальникова, Российская и прилегающие районы. Бесплатно от 800 ₽.</span>
+              </div>
             </div>
-            <div class="meta-pill">
-              <span>📍 ул. Петра Метальникова, 3/1А</span>
-            </div>
+          </div>
+
+          <div class="about-actions">
+            <a href="https://yandex.ru/maps/org/frito_burrito/201782394789/" target="_blank" rel="noopener noreferrer" class="btn-yandex-maps">
+              <span>Открыть точку на Яндекс Картах</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </a>
           </div>
         </div>
 
-        <div class="hero-actions-col">
-          <button class="btn-info-modal" id="btnOpenInfo">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="16" x2="12" y2="12"></line>
-              <line x1="12" y1="8" x2="12.01" y2="8"></line>
-            </svg>
-            О заведении
-          </button>
-          
-          <a href="https://yandex.ru/maps/org/frito_burrito/201782394789/" target="_blank" rel="noopener noreferrer" class="btn-maps-link">
-            Яндекс Карты ↗
-          </a>
+        <div class="about-photo-col">
+          <img src="img/burrito-classic.jpg?v=3" alt="Буррито на гриле Frito Burrito" class="about-img">
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Sticky Categories Navigation (Zero-Lag 60 FPS) -->
-  <div class="sticky-tabs-container">
-    <div class="tabs-wrapper" id="tabsWrapper">
-      <!-- Populated dynamically by app.js -->
-    </div>
-  </div>
-
-  <!-- Main Container: Dishes Catalog + Desktop Sticky Cart Sidebar -->
-  <main class="main-layout">
-    
-    <!-- Catalog Column -->
-    <div class="catalog-column" id="catalogSections">
-      <!-- Dish sections and cards rendered by app.js -->
-    </div>
-
-    <!-- Desktop Sticky Cart Sidebar -->
-    <aside class="cart-sidebar-col" id="cartSidebar">
-      <div class="cart-card">
-        
-        <div class="cart-card-header">
-          <span class="cart-title">Корзина</span>
-          <button class="btn-clear-cart" id="btnClearCart" title="Очистить корзину">Очистить</button>
+  <!-- Modern Slide-Over Cart Drawer -->
+  <div class="drawer-backdrop" id="cartDrawerBackdrop">
+    <aside class="cart-drawer" id="cartDrawer" aria-label="Корзина">
+      
+      <div class="drawer-header">
+        <div class="drawer-title-wrap">
+          <h2 class="drawer-title">Ваш заказ</h2>
+          <span class="drawer-count" id="drawerItemsCount">0 позиций</span>
         </div>
-
-        <!-- Empty Cart -->
-        <div class="cart-empty-state" id="cartEmptyState">
-          <div class="cart-empty-icon">🌯</div>
-          <div class="cart-empty-title">В корзине пока пусто</div>
-          <div class="cart-empty-desc">Выберите вкусный буррито или комбо из меню слева</div>
-        </div>
-
-        <!-- Filled Cart View -->
-        <div id="cartFilledState" style="display: none; flex-direction: column; flex: 1;">
-          
-          <!-- Free delivery progress bar -->
-          <div class="delivery-threshold-box" id="deliveryThresholdBox">
-            <div class="delivery-threshold-text" id="deliveryThresholdText">
-              <span>До бесплатной доставки: <b>400 ₽</b></span>
-              <span>800 ₽</span>
-            </div>
-            <div class="delivery-progress-track">
-              <div class="delivery-progress-fill" id="deliveryProgressFill" style="width: 50%;"></div>
-            </div>
-          </div>
-
-          <!-- Items list -->
-          <div class="cart-items-list" id="cartItemsList">
-            <!-- Dynamically populated -->
-          </div>
-
-          <!-- Cutlery counter -->
-          <div class="cart-cutlery-box">
-            <span>Бесплатные приборы</span>
-            <div class="cart-item-stepper">
-              <button id="btnCutleryDec">−</button>
-              <span id="cutleryCountDisplay">1 шт</span>
-              <button id="btnCutleryInc">+</button>
-            </div>
-          </div>
-
-          <!-- Calculation summary -->
-          <div class="cart-summary">
-            <div class="cart-summary-row">
-              <span id="cartSummaryItemsCount">0 товаров</span>
-              <span id="cartItemsSum">0 ₽</span>
-            </div>
-            <div class="cart-summary-row" id="cartDeliveryRow">
-              <span>Доставка</span>
-              <span id="cartDeliveryFee">0 ₽</span>
-            </div>
-            <div class="cart-summary-row total">
-              <span>Итого</span>
-              <span id="cartTotalSum">0 ₽</span>
-            </div>
-          </div>
-
-          <!-- Action buttons -->
-          <button class="btn-checkout-primary" id="btnCheckout">
-            <span>Оформить заказ</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
-
-          <button class="btn-whatsapp-direct" id="btnWhatsAppDirect" title="Быстрый заказ в чате WhatsApp ресторана">
-            <span>💬 Заказать через WhatsApp</span>
-          </button>
-
-        </div>
-
+        <button class="drawer-close-btn" id="drawerCloseBtn" title="Закрыть">✕</button>
       </div>
+
+      <!-- Free Delivery Progress -->
+      <div class="delivery-bar-box" id="deliveryBarBox">
+        <div class="delivery-bar-labels">
+          <span id="deliveryBarText">До бесплатной доставки: 800 ₽</span>
+          <span class="delivery-goal">800 ₽</span>
+        </div>
+        <div class="delivery-track">
+          <div class="delivery-fill" id="deliveryFill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Order Mode Toggle (Delivery vs Pickup) -->
+      <div class="drawer-mode-toggle">
+        <button class="mode-btn active" data-type="delivery" id="modeBtnDelivery">
+          🛵 Доставка
+        </button>
+        <button class="mode-btn" data-type="pickup" id="modeBtnPickup">
+          🏪 Самовывоз (-10%)
+        </button>
+      </div>
+
+      <!-- Cart Items List -->
+      <div class="drawer-items-list" id="drawerItemsList">
+        <!-- Empty Cart Notice -->
+        <div class="drawer-empty-state" id="drawerEmptyNotice">
+          <div class="empty-icon">🌯</div>
+          <div class="empty-title">В корзине пока пусто</div>
+          <div class="empty-desc">Выберите вкусный буррито или комбо из меню</div>
+        </div>
+      </div>
+
+      <!-- Cutlery counter -->
+      <div class="drawer-cutlery" id="cutlerySection" style="display: none;">
+        <span>🍴 Приборы (бесплатно)</span>
+        <div class="stepper-wrap">
+          <button id="btnCutleryDec">−</button>
+          <span id="cutleryCount">1</span>
+          <button id="btnCutleryInc">+</button>
+        </div>
+      </div>
+
+      <!-- Drawer Footer Summary & Checkout Button -->
+      <div class="drawer-footer" id="drawerFooter" style="display: none;">
+        <div class="drawer-summary-line">
+          <span>Сумма блюд</span>
+          <span id="summaryItemsTotal">0 ₽</span>
+        </div>
+        <div class="drawer-summary-line" id="summaryDeliveryRow">
+          <span>Доставка</span>
+          <span id="summaryDeliveryCost">0 ₽</span>
+        </div>
+        <div class="drawer-summary-line total-line">
+          <span>Итого к оплате</span>
+          <span id="summaryFinalTotal">0 ₽</span>
+        </div>
+
+        <button class="btn-checkout-submit" id="btnOpenCheckoutModal">
+          <span>Оформить заказ</span>
+          <span id="checkoutBtnSum">0 ₽</span>
+        </button>
+
+        <button class="btn-wa-order" id="btnQuickWhatsAppOrder">
+          <span>💬 Быстрый заказ через WhatsApp</span>
+        </button>
+      </div>
+
     </aside>
-
-  </main>
-
-  <!-- Mobile Floating Cart Bar (Fixed & responsive) -->
-  <div class="mobile-cart-float-bar" id="mobileCartBar" style="display: none;">
-    <div class="m-cart-left">
-      <span class="m-cart-badge" id="mCartBadge">0</span>
-      <span class="m-cart-sum" id="mCartSum">0 ₽</span>
-    </div>
-    <div class="m-cart-right">
-      <span>Оформить</span>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="9 18 15 12 9 6"></polyline>
-      </svg>
-    </div>
   </div>
 
-  <!-- Dish Detail Modal -->
-  <div class="modal-backdrop" id="dishModalBackdrop">
-    <div class="modal-window">
-      <button class="modal-close-btn" id="dishModalClose">✕</button>
-      <div class="dish-modal-emoji-header" id="dishModalEmoji">🌯</div>
-      <div class="dish-modal-content">
-        <h2 class="dish-modal-title" id="dishModalTitle"></h2>
-        <div class="dish-modal-meta" id="dishModalMeta"></div>
-        <p class="dish-modal-desc" id="dishModalDesc"></p>
+  <!-- Mobile Floating Cart Button -->
+  <button class="mobile-float-cart" id="mobileFloatCart" style="display: none;">
+    <div class="m-cart-info">
+      <span class="m-badge" id="mCartBadge">0</span>
+      <span class="m-text">Заказ на сумму:</span>
+      <strong id="mCartSum">0 ₽</strong>
+    </div>
+    <div class="m-cart-arrow">
+      <span>Далее ➔</span>
+    </div>
+  </button>
 
-        <div class="modifiers-block">
-          <div class="modifiers-title">Добавить в блюдо по вкусу:</div>
-          <div id="dishModalModifiersList"></div>
+  <!-- Dish Customization Modal -->
+  <div class="modal-backdrop" id="dishModalBackdrop">
+    <div class="modal-card">
+      <button class="modal-close" id="dishModalClose">✕</button>
+      
+      <div class="dish-modal-banner">
+        <img src="" alt="" id="dishModalImg" class="dish-modal-hero-img">
+        <div class="modal-banner-gradient"></div>
+      </div>
+
+      <div class="dish-modal-body">
+        <div class="modal-title-row">
+          <h2 class="modal-dish-title" id="dishModalTitle"></h2>
+          <span class="modal-dish-price" id="dishModalPrice"></span>
+        </div>
+
+        <div class="modal-meta-row" id="dishModalMeta"></div>
+        <p class="modal-dish-desc" id="dishModalDesc"></p>
+
+        <div class="modifiers-section" id="dishModifiersSection">
+          <div class="modifiers-heading">Добавить в блюдо по вкусу:</div>
+          <div class="modifiers-list" id="dishModalModifiersList"></div>
         </div>
       </div>
-      <div class="dish-modal-action">
-        <button class="btn-checkout-primary" id="dishModalAddBtn">
+
+      <div class="dish-modal-footer">
+        <button class="btn-add-modal-submit" id="dishModalAddBtn">
           Добавить в корзину
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Restaurant Info Modal -->
-  <div class="modal-backdrop" id="infoModalBackdrop">
-    <div class="modal-window" style="max-width: 480px;">
-      <button class="modal-close-btn" id="infoModalClose">✕</button>
-      <div style="padding: 24px;">
-        <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 14px;">Кафе «Фрито Буррито»</h2>
-        
-        <div style="display: flex; flex-direction: column; gap: 14px; font-size: 14px;">
-          <div>
-            <div style="font-weight: 700; color: var(--color-text-secondary); margin-bottom: 2px;">📍 Адрес:</div>
-            <div>г. Краснодар, ул. имени Петра Метальникова, 3/1А (ЖК «Времена года»)</div>
-          </div>
-
-          <div>
-            <div style="font-weight: 700; color: var(--color-text-secondary); margin-bottom: 2px;">⏰ Режим работы:</div>
-            <div>Ежедневно с 10:00 до 23:00 без перерывов</div>
-          </div>
-
-          <div>
-            <div style="font-weight: 700; color: var(--color-text-secondary); margin-bottom: 2px;">📞 Телефон заведения:</div>
-            <div><a href="tel:+79996505576" style="color: #000; font-weight: 700; text-decoration: underline;">+7 (999) 650-55-76</a></div>
-          </div>
-
-          <div>
-            <div style="font-weight: 700; color: var(--color-text-secondary); margin-bottom: 2px;">🛵 Зона доставки:</div>
-            <div>Прикубанский округ, Музыкальный микрорайон, Петра Метальникова, Российская и прилегающие районы. Бесплатная доставка от 800 ₽.</div>
-          </div>
-
-          <div style="background-color: var(--color-bg-subtle); padding: 12px; border-radius: var(--radius-md); margin-top: 6px;">
-            <div style="font-weight: 700; margin-bottom: 4px;">🌮 О нашей кухне:</div>
-            <div style="color: var(--color-text-secondary); line-height: 1.45;">
-              Мы готовим мексиканский стритфуд из свежих ингредиентов прямо при вас. Плотная поджаренная тортилья, которая держит форму и не размокает, много сочного мяса и свежих овощей.
-            </div>
-          </div>
-
-          <div style="margin-top: 10px;">
-            <a href="https://yandex.ru/maps/org/frito_burrito/201782394789/" target="_blank" rel="noopener noreferrer" class="btn-checkout-primary" style="text-align: center;">
-              Открыть на Яндекс Картах
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Checkout Modal (Seamless, fast, 1-2 clicks) -->
+  <!-- Checkout Modal -->
   <div class="modal-backdrop" id="checkoutModalBackdrop">
-    <div class="modal-window">
-      <button class="modal-close-btn" id="checkoutModalClose">✕</button>
-      <div class="checkout-modal-content">
-        <div class="checkout-header">
-          <h2 class="checkout-title">Оформление заказа</h2>
-          <div class="checkout-subtitle">Итого к оплате: <strong id="checkoutTotalDisplay" style="color: #000; font-size: 16px;">0 ₽</strong></div>
+    <div class="modal-card checkout-card">
+      <button class="modal-close" id="checkoutModalClose">✕</button>
+      
+      <div class="checkout-card-body">
+        <div class="checkout-card-header">
+          <h2 class="checkout-heading">Оформление заказа</h2>
+          <p class="checkout-subheading">Итого: <strong id="checkoutFinalTotalDisplay">0 ₽</strong></p>
         </div>
 
-        <form id="checkoutForm">
+        <form id="orderForm">
           
-          <!-- Contact Info -->
-          <div class="checkout-form-group">
-            <div class="checkout-row-2">
-              <div>
-                <label class="checkout-label">Ваше имя</label>
-                <input type="text" class="checkout-input" id="checkoutNameInput" placeholder="Иван" required>
+          <div class="form-row-2">
+            <div class="form-field">
+              <label>Ваше имя</label>
+              <input type="text" id="orderNameInput" placeholder="Иван" required>
+            </div>
+            <div class="form-field">
+              <label>Контактный телефон</label>
+              <input type="tel" id="orderPhoneInput" placeholder="+7 (999) 000-00-00" required>
+            </div>
+          </div>
+
+          <div id="deliveryAddressGroup">
+            <div class="form-field">
+              <label>Адрес доставки в Краснодаре</label>
+              <input type="text" id="orderAddressInput" value="ул. Петра Метальникова, " placeholder="ул. Петра Метальникова, д. 3/1" required>
+            </div>
+
+            <div class="form-row-4">
+              <div class="form-field">
+                <label>Подъезд</label>
+                <input type="text" placeholder="1">
               </div>
-              <div>
-                <label class="checkout-label">Телефон для связи</label>
-                <input type="tel" class="checkout-input" id="checkoutPhoneInput" placeholder="+7 (999) 000-00-00" required>
+              <div class="form-field">
+                <label>Этаж</label>
+                <input type="text" placeholder="5">
+              </div>
+              <div class="form-field">
+                <label>Квартира</label>
+                <input type="text" placeholder="42">
+              </div>
+              <div class="form-field">
+                <label>Домофон</label>
+                <input type="text" placeholder="42K">
               </div>
             </div>
           </div>
 
-          <!-- Delivery Address Fields -->
-          <div id="checkoutDeliveryFields">
-            <div class="checkout-form-group">
-              <label class="checkout-label">Улица и дом в Краснодаре</label>
-              <input type="text" class="checkout-input" id="checkoutStreetInput" value="ул. Петра Метальникова, " placeholder="ул. Петра Метальникова, д. 3/1" required>
-            </div>
+          <div id="pickupNoticeGroup" style="display: none;" class="pickup-info-box">
+            📍 <strong>Точка самовывоза:</strong> г. Краснодар, ул. Петра Метальникова, 3/1А. Приготовим за 15–20 минут.
+          </div>
 
-            <div class="checkout-form-group">
-              <div class="checkout-row-4">
-                <div>
-                  <label class="checkout-label">Подъезд</label>
-                  <input type="text" class="checkout-input" placeholder="1">
-                </div>
-                <div>
-                  <label class="checkout-label">Этаж</label>
-                  <input type="text" class="checkout-input" placeholder="4">
-                </div>
-                <div>
-                  <label class="checkout-label">Квартира</label>
-                  <input type="text" class="checkout-input" placeholder="42">
-                </div>
-                <div>
-                  <label class="checkout-label">Домофон</label>
-                  <input type="text" class="checkout-input" placeholder="42K">
-                </div>
+          <div class="form-field">
+            <label>Комментарий к заказу (необязательно)</label>
+            <input type="text" placeholder="Например: без халапеньо, позвонить за 5 минут">
+          </div>
+
+          <div class="form-field">
+            <label>Способ оплаты</label>
+            <div class="payment-selector-grid">
+              <div class="payment-card selected" id="pmCash">
+                <div class="pm-head">💵 При получении</div>
+                <div class="pm-sub">Наличными или картой курьеру (без сбоев)</div>
+              </div>
+              <div class="payment-card" id="pmOnline">
+                <div class="pm-head">💳 Онлайн / СБП</div>
+                <div class="pm-sub">Мгновенная оплата картой или QR-кодом</div>
               </div>
             </div>
           </div>
 
-          <!-- Pickup notification if pickup chosen -->
-          <div id="checkoutPickupFields" style="display: none; margin-bottom: 16px; background-color: #E8F5E9; padding: 12px 14px; border-radius: var(--radius-md); font-size: 13px;">
-            <strong>Точка самовывоза:</strong> г. Краснодар, ул. Петра Метальникова, 3/1А. Заказ будет готов через 15–20 минут после подтверждения.
-          </div>
-
-          <!-- Comment -->
-          <div class="checkout-form-group">
-            <label class="checkout-label">Комментарий курьеру или кухне (необязательно)</label>
-            <input type="text" class="checkout-input" placeholder="Например: позвонить за 5 минут, без лука">
-          </div>
-
-          <!-- Payment Options -->
-          <div class="checkout-form-group">
-            <label class="checkout-label">Способ оплаты</label>
-            <div class="payment-methods-grid">
-              <div class="payment-method-card selected" id="paymentCashOption">
-                <div class="pm-title">
-                  <span>💵</span> При получении
-                </div>
-                <div class="pm-desc">Наличными или картой курьеру (надежно, без сбоев)</div>
-              </div>
-
-              <div class="payment-method-card" id="paymentCardOption">
-                <div class="pm-title">
-                  <span>💳</span> Онлайн картой / СБП
-                </div>
-                <div class="pm-desc">Быстрая оплата без комиссии</div>
-              </div>
-            </div>
-          </div>
-
-          <button type="submit" class="btn-checkout-primary" style="margin-top: 20px;">
-            Подтвердить заказ
+          <button type="submit" class="btn-confirm-order">
+            Подтвердить и отправить заказ
           </button>
 
         </form>
@@ -401,99 +425,101 @@
     </div>
   </div>
 
-  <!-- Online Payment Simulator Modal (Fail-safe architecture) -->
+  <!-- Safe Online Payment Simulator -->
   <div class="modal-backdrop" id="paymentSimBackdrop">
-    <div class="modal-window" style="max-width: 440px;">
-      <div style="padding: 24px; text-align: center;">
-        <div style="font-size: 38px; margin-bottom: 10px;">🔒</div>
-        <h3 style="font-size: 20px; font-weight: 800;">Безопасная оплата заказа</h3>
-        <p style="font-size: 13px; color: var(--color-text-secondary); margin-top: 4px;">Сумма к оплате: <strong id="paymentSimSum" style="color: #000; font-size: 17px;"></strong></p>
+    <div class="modal-card" style="max-width: 440px; text-align: center;">
+      <div style="padding: 28px 20px;">
+        <div style="font-size: 42px; margin-bottom: 8px;">🔒</div>
+        <h3 style="font-size: 20px; font-weight: 800; color: #18181B;">Безопасная оплата</h3>
+        <p style="font-size: 14px; color: #71717A; margin-top: 4px;">Сумма: <strong id="simSumDisplay" style="color: #FF5722; font-size: 18px;">0 ₽</strong></p>
 
-        <div style="background-color: var(--color-bg-subtle); padding: 14px; border-radius: var(--radius-md); margin: 18px 0; text-align: left; font-size: 13px;">
-          <div style="margin-bottom: 6px;"><strong>Получатель:</strong> Кафе «Фрито Буррито»</div>
-          <div style="margin-bottom: 6px;"><strong>Назначение:</strong> Оплата заказа еды с доставкой</div>
-          <div style="color: var(--color-accent-green); font-weight: 700;">✓ Защищенный шлюз СБП / Банковские карты</div>
+        <div style="background-color: #F4F4F5; padding: 14px; border-radius: 12px; margin: 18px 0; text-align: left; font-size: 13px;">
+          <div><strong>Получатель:</strong> Frito Burrito (Краснодар)</div>
+          <div style="margin-top: 4px;"><strong>Назначение:</strong> Оплата заказа еды с доставкой</div>
+          <div style="margin-top: 6px; color: #10B981; font-weight: 700;">✓ Защищенный шлюз СБП / Банковские карты</div>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 10px;">
-          <button class="btn-checkout-primary" id="btnSimSuccess">
+          <button class="btn-confirm-order" id="btnSimPaySuccess">
             ✓ Оплатить (тестовая успешная оплата)
           </button>
           
-          <button class="btn-whatsapp-direct" id="btnSimFallbackCash" style="background:#FFF3E0; color:#E65100; border-color:#FFE0B2;">
+          <button class="btn-wa-order" id="btnSimFallbackCash" style="justify-content: center;">
             Оплатить курьеру при получении
           </button>
 
-          <button class="btn-info-modal" id="btnSimCancel" style="justify-content: center;">
-            Отменить и вернуться в меню
+          <button class="modal-close-simple" id="btnSimCancel">
+            Отменить и вернуться
           </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Order Status Live Tracker Modal -->
+  <!-- Live Order Tracker Modal -->
   <div class="modal-backdrop" id="trackerModalBackdrop">
-    <div class="modal-window" style="max-width: 480px;">
-      <button class="modal-close-btn" id="trackerModalClose">✕</button>
-      <div style="padding: 24px;">
-        
-        <div class="tracker-status-box">
-          <span class="tracker-badge" id="trackerOrderNum">Заказ №FB-1048</span>
-          <div class="tracker-title">Заказ успешно принят!</div>
-          <div class="tracker-time">Примерное время доставки: ~25–35 минут</div>
+    <div class="modal-card" style="max-width: 480px;">
+      <button class="modal-close" id="trackerModalClose">✕</button>
+      
+      <div style="padding: 28px 24px;">
+        <div class="tracker-header-box">
+          <span class="tracker-badge" id="trackerOrderNumber">Заказ #FB-1001</span>
+          <h2 class="tracker-status-title">Заказ успешно принят!</h2>
+          <p class="tracker-estimate">Примерное время доставки: ~25–35 минут</p>
         </div>
 
-        <!-- Live Status Timeline -->
-        <div class="steps-timeline">
-          <div class="timeline-step active" id="trackerStep1">
-            <div class="step-indicator">1</div>
-            <div class="step-name">Заказ принят рестораном</div>
-            <div class="step-desc">Оператор подтвердил заказ и передал на кухню</div>
+        <div class="tracker-steps">
+          <div class="t-step active" id="tStep1">
+            <div class="t-indicator">1</div>
+            <div class="t-info">
+              <strong>Заказ принят</strong>
+              <span>Передан поварам на открытую кухню</span>
+            </div>
           </div>
-
-          <div class="timeline-step" id="trackerStep2">
-            <div class="step-indicator">2</div>
-            <div class="step-name">Готовим на открытой кухне 🌯</div>
-            <div class="step-desc">Свежая лепешка, сочное мясо на гриле и овощи</div>
+          <div class="t-step" id="tStep2">
+            <div class="t-indicator">2</div>
+            <div class="t-info">
+              <strong>Готовим на гриле 🌯</strong>
+              <span>Свежая тортилья, сочное мясо и овощи</span>
+            </div>
           </div>
-
-          <div class="timeline-step" id="trackerStep3">
-            <div class="step-indicator">3</div>
-            <div class="step-name">Курьер в пути к вам 🛵</div>
-            <div class="step-desc">Бережная доставка в термосумке до вашей двери</div>
+          <div class="t-step" id="tStep3">
+            <div class="t-indicator">3</div>
+            <div class="t-info">
+              <strong>Курьер в пути 🛵</strong>
+              <span>Горячий заказ едет в термосумке к вашей двери</span>
+            </div>
           </div>
         </div>
 
-        <!-- Order Summary Details -->
-        <div style="background-color: var(--color-bg-subtle); padding: 14px; border-radius: var(--radius-md); font-size: 13px; margin-bottom: 18px;">
+        <div class="tracker-summary-box">
           <div style="font-weight: 700; margin-bottom: 8px;">Состав заказа:</div>
-          <div id="trackerItemsSummary"></div>
-          <div style="border-top: 1px dashed #D0D0D0; margin-top: 8px; padding-top: 8px; display: flex; justify-content: space-between; font-weight: 700;">
+          <div id="trackerItemsList"></div>
+          <div class="tracker-total-row">
             <span>Итого:</span>
-            <span id="trackerOrderTotal"></span>
+            <span id="trackerTotalCost"></span>
           </div>
-          <div style="margin-top: 6px; color: var(--color-text-secondary);">
-            Куда: <span id="trackerAddress"></span>
+          <div style="margin-top: 6px; font-size: 12px; color: #71717A;">
+            Куда: <span id="trackerDeliveryDest"></span>
           </div>
         </div>
 
-        <button class="btn-checkout-primary" id="btnNewOrder">
-          Отлично, понятно!
+        <button class="btn-confirm-order" id="btnTrackerDone">
+          Отлично, жду!
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Address Change Modal -->
+  <!-- Address Edit Modal -->
   <div class="modal-backdrop" id="addressModalBackdrop">
-    <div class="modal-window" style="max-width: 440px;">
-      <button class="modal-close-btn" id="addressModalClose">✕</button>
+    <div class="modal-card" style="max-width: 420px;">
+      <button class="modal-close" id="addressModalClose">✕</button>
       <div style="padding: 24px;">
-        <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 10px;">Укажите адрес доставки</h3>
-        <p style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 14px;">Краснодар и прилегающие районы</p>
-        <input type="text" class="checkout-input" id="addressInput" value="Краснодар, ул. Петра Метальникова, 3/1А" style="margin-bottom: 16px;">
-        <button class="btn-checkout-primary" id="btnSaveAddress">
+        <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">Адрес доставки</h3>
+        <p style="font-size: 13px; color: #71717A; margin-bottom: 14px;">Краснодар и прилегающие районы</p>
+        <input type="text" id="addressEditInput" value="ул. Петра Метальникова, 3/1А" class="edit-addr-input">
+        <button class="btn-confirm-order" id="btnSaveAddress">
           Сохранить адрес
         </button>
       </div>
@@ -501,8 +527,24 @@
   </div>
 
   <!-- Toast Container -->
-  <div class="toast-container" id="toastContainer"></div>
+  <div class="toast-stack" id="toastStack"></div>
 
-  <script src="app.js"></script>
+  <!-- Footer -->
+  <footer class="fb-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span class="f-logo">🌯 FRITO BURRITO</span>
+        <p>Настоящий мексиканский стритфуд в Краснодаре. Горячие буррито, тако, кесадильи и закуски.</p>
+      </div>
+      <div class="footer-contacts">
+        <strong>Контакты:</strong>
+        <span>ул. им. Петра Метальникова, 3/1А</span>
+        <a href="tel:+79996505576">+7 (999) 650-55-76</a>
+        <span>Ежедневно 10:00 — 23:00</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js?v=3"></script>
 </body>
 </html>

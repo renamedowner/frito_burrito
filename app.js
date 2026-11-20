@@ -1,212 +1,199 @@
 /**
- * Frito Burrito — Yandex Eda Style Application Core
- * Zero-bug architecture, dynamic cart, modals, checkout, WhatsApp direct & tracker
+ * FRITO BURRITO — Bespoke Restaurant Web Application
+ * Zero-lag, 100% responsive, real photography, dynamic cart drawer, checkout & tracker
  */
 
 (function () {
   'use strict';
 
-  // 1. Data Store (Loaded dynamically; includes in-memory default to ensure file:// & offline execution)
   let catalogData = null;
-  let activeCategory = 'popular';
+  let activeCategoryId = 'all';
   let deliveryType = 'delivery'; // 'delivery' or 'pickup'
   let cutleryCount = 1;
   let searchQuery = '';
+  let userAddress = 'ул. Петра Метальникова, 3/1А';
+  let selectedPaymentMethod = 'cash';
+  let activeOrderSimulation = null;
 
-  // In-memory Cart State (Never caches catalog; session state for user cart)
-  let cart = []; // Array of { id, dishId, name, price, basePrice, weight, image, modifiers, quantity }
+  // Cart: Array of { id, dishId, name, price, basePrice, weight, image, modifiers, quantity }
+  let cart = [];
 
-  // Current modal dish state
+  // Current modal state
   let currentModalDish = null;
   let currentSelectedModifiers = [];
 
   // DOM Elements cache
   const el = {
-    tabsWrapper: document.getElementById('tabsWrapper'),
-    catalogSections: document.getElementById('catalogSections'),
+    tabsTrack: document.getElementById('tabsTrack'),
+    catalogContainer: document.getElementById('catalogContainer'),
     searchInput: document.getElementById('searchInput'),
     searchClearBtn: document.getElementById('searchClearBtn'),
     
     // Header
+    headerAddressBtn: document.getElementById('headerAddressBtn'),
+    currentAddressDisplay: document.getElementById('currentAddressDisplay'),
     headerCartBtn: document.getElementById('headerCartBtn'),
     headerCartBadge: document.getElementById('headerCartBadge'),
     headerCartSum: document.getElementById('headerCartSum'),
     
-    // Desktop Cart
-    cartSidebar: document.getElementById('cartSidebar'),
-    cartItemsList: document.getElementById('cartItemsList'),
-    cartEmptyState: document.getElementById('cartEmptyState'),
-    cartFilledState: document.getElementById('cartFilledState'),
-    cartSummaryItemsCount: document.getElementById('cartSummaryItemsCount'),
-    cartItemsSum: document.getElementById('cartItemsSum'),
-    cartDeliveryRow: document.getElementById('cartDeliveryRow'),
-    cartDeliveryFee: document.getElementById('cartDeliveryFee'),
-    cartTotalSum: document.getElementById('cartTotalSum'),
-    deliveryThresholdBox: document.getElementById('deliveryThresholdBox'),
-    deliveryThresholdText: document.getElementById('deliveryThresholdText'),
-    deliveryProgressFill: document.getElementById('deliveryProgressFill'),
-    btnCheckout: document.getElementById('btnCheckout'),
-    btnWhatsAppDirect: document.getElementById('btnWhatsAppDirect'),
-    btnClearCart: document.getElementById('btnClearCart'),
-    cutleryCountDisplay: document.getElementById('cutleryCountDisplay'),
+    // Drawer Cart
+    cartDrawerBackdrop: document.getElementById('cartDrawerBackdrop'),
+    cartDrawer: document.getElementById('cartDrawer'),
+    drawerCloseBtn: document.getElementById('drawerCloseBtn'),
+    drawerItemsCount: document.getElementById('drawerItemsCount'),
+    deliveryBarBox: document.getElementById('deliveryBarBox'),
+    deliveryBarText: document.getElementById('deliveryBarText'),
+    deliveryFill: document.getElementById('deliveryFill'),
+    modeBtnDelivery: document.getElementById('modeBtnDelivery'),
+    modeBtnPickup: document.getElementById('modeBtnPickup'),
+    drawerItemsList: document.getElementById('drawerItemsList'),
+    drawerEmptyNotice: document.getElementById('drawerEmptyNotice'),
+    cutlerySection: document.getElementById('cutlerySection'),
     btnCutleryDec: document.getElementById('btnCutleryDec'),
     btnCutleryInc: document.getElementById('btnCutleryInc'),
+    cutleryCount: document.getElementById('cutleryCount'),
+    drawerFooter: document.getElementById('drawerFooter'),
+    summaryItemsTotal: document.getElementById('summaryItemsTotal'),
+    summaryDeliveryRow: document.getElementById('summaryDeliveryRow'),
+    summaryDeliveryCost: document.getElementById('summaryDeliveryCost'),
+    summaryFinalTotal: document.getElementById('summaryFinalTotal'),
+    btnOpenCheckoutModal: document.getElementById('btnOpenCheckoutModal'),
+    checkoutBtnSum: document.getElementById('checkoutBtnSum'),
+    btnQuickWhatsAppOrder: document.getElementById('btnQuickWhatsAppOrder'),
     
-    // Mobile Floating Bar
-    mobileCartBar: document.getElementById('mobileCartBar'),
+    // Mobile Floating Cart
+    mobileFloatCart: document.getElementById('mobileFloatCart'),
     mCartBadge: document.getElementById('mCartBadge'),
     mCartSum: document.getElementById('mCartSum'),
     
-    // Modals
+    // Dish Modal
     dishModalBackdrop: document.getElementById('dishModalBackdrop'),
     dishModalClose: document.getElementById('dishModalClose'),
-    dishModalEmoji: document.getElementById('dishModalEmoji'),
+    dishModalImg: document.getElementById('dishModalImg'),
     dishModalTitle: document.getElementById('dishModalTitle'),
+    dishModalPrice: document.getElementById('dishModalPrice'),
     dishModalMeta: document.getElementById('dishModalMeta'),
     dishModalDesc: document.getElementById('dishModalDesc'),
+    dishModifiersSection: document.getElementById('dishModifiersSection'),
     dishModalModifiersList: document.getElementById('dishModalModifiersList'),
     dishModalAddBtn: document.getElementById('dishModalAddBtn'),
-    
-    // Restaurant Info Modal
-    infoModalBackdrop: document.getElementById('infoModalBackdrop'),
-    btnOpenInfo: document.getElementById('btnOpenInfo'),
-    infoModalClose: document.getElementById('infoModalClose'),
     
     // Checkout Modal
     checkoutModalBackdrop: document.getElementById('checkoutModalBackdrop'),
     checkoutModalClose: document.getElementById('checkoutModalClose'),
-    checkoutForm: document.getElementById('checkoutForm'),
-    checkoutTotalDisplay: document.getElementById('checkoutTotalDisplay'),
-    checkoutPhoneInput: document.getElementById('checkoutPhoneInput'),
-    checkoutDeliveryFields: document.getElementById('checkoutDeliveryFields'),
-    checkoutPickupFields: document.getElementById('checkoutPickupFields'),
-    paymentCashOption: document.getElementById('paymentCashOption'),
-    paymentCardOption: document.getElementById('paymentCardOption'),
+    checkoutFinalTotalDisplay: document.getElementById('checkoutFinalTotalDisplay'),
+    orderForm: document.getElementById('orderForm'),
+    orderNameInput: document.getElementById('orderNameInput'),
+    orderPhoneInput: document.getElementById('orderPhoneInput'),
+    orderAddressInput: document.getElementById('orderAddressInput'),
+    deliveryAddressGroup: document.getElementById('deliveryAddressGroup'),
+    pickupNoticeGroup: document.getElementById('pickupNoticeGroup'),
+    pmCash: document.getElementById('pmCash'),
+    pmOnline: document.getElementById('pmOnline'),
     
-    // Online Payment Simulation Modal
+    // Payment Simulator
     paymentSimBackdrop: document.getElementById('paymentSimBackdrop'),
-    paymentSimSum: document.getElementById('paymentSimSum'),
-    btnSimSuccess: document.getElementById('btnSimSuccess'),
-    btnSimCancel: document.getElementById('btnSimCancel'),
+    simSumDisplay: document.getElementById('simSumDisplay'),
+    btnSimPaySuccess: document.getElementById('btnSimPaySuccess'),
     btnSimFallbackCash: document.getElementById('btnSimFallbackCash'),
+    btnSimCancel: document.getElementById('btnSimCancel'),
     
-    // Order Tracker Modal
+    // Tracker
     trackerModalBackdrop: document.getElementById('trackerModalBackdrop'),
     trackerModalClose: document.getElementById('trackerModalClose'),
-    trackerOrderNum: document.getElementById('trackerOrderNum'),
-    trackerOrderTotal: document.getElementById('trackerOrderTotal'),
-    trackerAddress: document.getElementById('trackerAddress'),
-    trackerItemsSummary: document.getElementById('trackerItemsSummary'),
-    step1: document.getElementById('trackerStep1'),
-    step2: document.getElementById('trackerStep2'),
-    step3: document.getElementById('trackerStep3'),
-    btnNewOrder: document.getElementById('btnNewOrder'),
-
-    // Address Change
-    addressPickerBtn: document.getElementById('addressPickerBtn'),
+    trackerOrderNumber: document.getElementById('trackerOrderNumber'),
+    trackerItemsList: document.getElementById('trackerItemsList'),
+    trackerTotalCost: document.getElementById('trackerTotalCost'),
+    trackerDeliveryDest: document.getElementById('trackerDeliveryDest'),
+    tStep1: document.getElementById('tStep1'),
+    tStep2: document.getElementById('tStep2'),
+    tStep3: document.getElementById('tStep3'),
+    btnTrackerDone: document.getElementById('btnTrackerDone'),
+    
+    // Address Edit
     addressModalBackdrop: document.getElementById('addressModalBackdrop'),
     addressModalClose: document.getElementById('addressModalClose'),
-    addressInput: document.getElementById('addressInput'),
+    addressEditInput: document.getElementById('addressEditInput'),
     btnSaveAddress: document.getElementById('btnSaveAddress'),
-    currentAddressDisplay: document.getElementById('currentAddressDisplay'),
     
-    // Toast Container
-    toastContainer: document.getElementById('toastContainer')
+    // Toast Stack
+    toastStack: document.getElementById('toastStack')
   };
 
-  let selectedPaymentMethod = 'cash'; // 'cash' or 'online'
-  let userAddress = 'Краснодар, ул. Петра Метальникова, 3/1А';
-  let activeOrderSimulation = null;
-
-  // 2. Fetch Catalog or Use Default Data (Prevents CORS blockage on local file preview)
-  async function initCatalog() {
+  // 1. Initialize
+  async function init() {
     try {
-      const resp = await fetch('dishes.json');
+      const resp = await fetch('dishes.json?v=3');
       if (resp.ok) {
         catalogData = await resp.json();
       } else {
-        throw new Error('Failed to fetch dishes.json');
+        throw new Error('fetch failed');
       }
     } catch (err) {
-      console.warn('Loading fallback embedded catalog data...', err);
       catalogData = getFallbackData();
     }
-    
-    renderCategoriesTabs();
+
+    renderCategoryTabs();
     renderCatalog();
-    setupScrollSpy();
     updateCartUI();
+    setupEventListeners();
   }
 
-  // 3. Render Navigation Tabs
-  function renderCategoriesTabs() {
+  // 2. Render Tabs
+  function renderCategoryTabs() {
     if (!catalogData || !catalogData.categories) return;
+
+    el.tabsTrack.innerHTML = '';
     
-    el.tabsWrapper.innerHTML = '';
-    catalogData.categories.forEach((cat, index) => {
-      const btn = document.createElement('button');
-      btn.className = `category-tab-btn ${index === 0 ? 'active' : ''}`;
-      btn.setAttribute('data-category', cat.id);
-      btn.textContent = cat.name;
-      btn.addEventListener('click', () => {
-        scrollToCategory(cat.id);
-      });
-      el.tabsWrapper.appendChild(btn);
+    // "All" tab
+    const allBtn = document.createElement('button');
+    allBtn.className = 'cat-pill active';
+    allBtn.textContent = '🔥 Все меню';
+    allBtn.addEventListener('click', () => {
+      filterCategory('all', allBtn);
     });
-  }
-
-  function scrollToCategory(catId) {
-    activeCategory = catId;
-    updateActiveTabHighlight(catId, true);
-    
-    const targetSection = document.getElementById(`section-${catId}`);
-    if (targetSection) {
-      const headerOffset = window.innerWidth <= 860 ? 116 : 80;
-      const elementPosition = targetSection.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      window.scrollTo({
-        top: Math.max(0, offsetPosition),
-        behavior: 'smooth'
-      });
-    }
-  }
-
-  function updateActiveTabHighlight(catId, shouldScrollTab = false) {
-    const tabs = el.tabsWrapper.querySelectorAll('.category-tab-btn');
-    tabs.forEach(tab => {
-      if (tab.getAttribute('data-category') === catId) {
-        tab.classList.add('active');
-        if (shouldScrollTab) {
-          const tabLeft = tab.offsetLeft;
-          const tabWidth = tab.offsetWidth;
-          const containerWidth = el.tabsWrapper.offsetWidth;
-          el.tabsWrapper.scrollTo({
-            left: Math.max(0, tabLeft - (containerWidth / 2) + (tabWidth / 2)),
-            behavior: 'smooth'
-          });
-        }
-      } else {
-        tab.classList.remove('active');
-      }
-    });
-  }
-
-  // 4. Render Catalog Sections & Dishes
-  function renderCatalog() {
-    if (!catalogData) return;
-    
-    el.catalogSections.innerHTML = '';
-    const q = searchQuery.trim().toLowerCase();
+    el.tabsTrack.appendChild(allBtn);
 
     catalogData.categories.forEach(cat => {
-      let dishes = [];
-      if (cat.id === 'popular') {
-        dishes = catalogData.dishes.filter(d => d.popular);
-      } else {
-        dishes = catalogData.dishes.filter(d => d.categoryId === cat.id);
-      }
+      const count = catalogData.dishes.filter(d => d.categoryId === cat.id).length;
+      const btn = document.createElement('button');
+      btn.className = 'cat-pill';
+      btn.textContent = `${cat.name} (${count})`;
+      btn.addEventListener('click', () => {
+        filterCategory(cat.id, btn);
+      });
+      el.tabsTrack.appendChild(btn);
+    });
+  }
 
-      // Filter by search query if present
+  function filterCategory(catId, btnElement) {
+    activeCategoryId = catId;
+    el.tabsTrack.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+    btnElement.classList.add('active');
+
+    // Smooth horizontal scroll of tabs
+    const trackLeft = el.tabsTrack.getBoundingClientRect().left;
+    const btnLeft = btnElement.getBoundingClientRect().left;
+    el.tabsTrack.scrollBy({ left: btnLeft - trackLeft - 16, behavior: 'smooth' });
+
+    renderCatalog();
+  }
+
+  // 3. Render Catalog
+  function renderCatalog() {
+    if (!catalogData) return;
+    el.catalogContainer.innerHTML = '';
+    const q = searchQuery.trim().toLowerCase();
+
+    const categoriesToRender = activeCategoryId === 'all' 
+      ? catalogData.categories 
+      : catalogData.categories.filter(c => c.id === activeCategoryId);
+
+    let totalDishesRendered = 0;
+
+    categoriesToRender.forEach(cat => {
+      let dishes = catalogData.dishes.filter(d => d.categoryId === cat.id);
+
       if (q) {
         dishes = dishes.filter(d => 
           d.name.toLowerCase().includes(q) || 
@@ -214,96 +201,83 @@
         );
       }
 
-      if (dishes.length === 0 && q) {
-        // Skip empty categories when searching
-        return;
-      }
+      if (dishes.length === 0) return;
 
-      const section = document.createElement('section');
-      section.className = 'category-section';
-      section.id = `section-${cat.id}`;
-      section.setAttribute('data-category-id', cat.id);
+      totalDishesRendered += dishes.length;
 
-      const header = document.createElement('div');
-      header.className = 'section-header';
-      header.innerHTML = `
-        <h2 class="section-title">${cat.name}</h2>
-        <span class="section-count">${dishes.length} ${getNoun(dishes.length, 'блюдо', 'блюда', 'блюд')}</span>
+      const sec = document.createElement('section');
+      sec.className = 'catalog-section-block';
+      sec.id = `cat-${cat.id}`;
+
+      const titleWrap = document.createElement('div');
+      titleWrap.className = 'section-title-wrap';
+      titleWrap.innerHTML = `
+        <h2 class="sec-title">${cat.name}</h2>
+        <span class="sec-count">${dishes.length} ${getNoun(dishes.length, 'блюдо', 'блюда', 'блюд')}</span>
       `;
-      section.appendChild(header);
+      sec.appendChild(titleWrap);
 
       const grid = document.createElement('div');
-      grid.className = 'dishes-grid';
+      grid.className = 'cards-grid';
 
       dishes.forEach(dish => {
-        const card = createDishCard(dish);
+        const card = createProductCard(dish);
         grid.appendChild(card);
       });
 
-      section.appendChild(grid);
-      el.catalogSections.appendChild(section);
+      sec.appendChild(grid);
+      el.catalogContainer.appendChild(sec);
     });
 
-    if (el.catalogSections.children.length === 0 && q) {
-      el.catalogSections.innerHTML = `
-        <div style="padding: 60px 20px; text-align: center; color: var(--color-text-secondary);">
-          <div style="font-size: 40px; margin-bottom: 12px;">🔍</div>
-          <h3 style="font-size: 18px; font-weight: 700; color: var(--color-text-main);">Ничего не нашлось</h3>
+    if (totalDishesRendered === 0 && q) {
+      el.catalogContainer.innerHTML = `
+        <div style="padding: 60px 20px; text-align: center; color: var(--c-muted);">
+          <div style="font-size: 48px; margin-bottom: 12px;">🔍</div>
+          <h3 style="font-size: 20px; font-weight: 800; color: var(--c-dark);">Ничего не нашлось</h3>
           <p style="font-size: 14px; margin-top: 6px;">Попробуйте поискать «буррито», «тако», «сыр» или «фри»</p>
         </div>
       `;
     }
   }
 
-  // 5. Create Product Card Element (Yandex Eda style)
-  function createDishCard(dish) {
+  // 4. Product Card
+  function createProductCard(dish) {
     const card = document.createElement('div');
-    card.className = 'dish-card';
+    card.className = 'product-card';
     card.setAttribute('data-dish-id', dish.id);
 
-    // Spicy & popular badges
-    let badgesHtml = '';
-    if (dish.spicy === 1) {
-      badgesHtml += '<span class="badge-tag spicy">🌶️ Острое</span>';
-    } else if (dish.spicy >= 2) {
-      badgesHtml += '<span class="badge-tag spicy">🌶️🌶️ Огонь</span>';
-    }
-    if (dish.popular) {
-      badgesHtml += '<span class="badge-tag popular">🔥 Хит</span>';
-    }
-
-    const emojiIcon = dish.emoji || '🌯';
+    // Badges
+    let badges = '';
+    if (dish.spicy === 1) badges += '<span class="c-badge spicy">🌶️ Острое</span>';
+    if (dish.spicy >= 2) badges += '<span class="c-badge spicy">🌶️🌶️ Огонь</span>';
+    if (dish.popular) badges += '<span class="c-badge hit">🔥 Хит</span>';
 
     card.innerHTML = `
-      <div class="dish-emoji-wrap">
-        <div class="dish-emoji-icon">${emojiIcon}</div>
-        <div class="dish-badges">${badgesHtml}</div>
+      <div class="card-img-holder">
+        <img src="${dish.image}?v=3" alt="${escapeHtml(dish.name)}" loading="lazy" onerror="this.src='img/burrito-classic.jpg?v=3'" />
+        <div class="card-badges-stack">${badges}</div>
       </div>
-      <div class="dish-content">
-        <div class="dish-price-row">
-          <span class="dish-price">${dish.price} ₽</span>
-          <span class="dish-weight">${dish.weight}</span>
+      <div class="card-info">
+        <div class="card-price-row">
+          <span class="card-price">${dish.price} ₽</span>
+          <span class="card-weight">${dish.weight}</span>
         </div>
-        <h3 class="dish-name">${escapeHtml(dish.name)}</h3>
-        <p class="dish-desc">${escapeHtml(dish.description)}</p>
-        <div class="dish-card-footer" id="card-footer-${dish.id}">
-          <!-- Action button will be inserted by updateCardButtonState -->
-        </div>
+        <h3 class="card-name">${escapeHtml(dish.name)}</h3>
+        <p class="card-desc">${escapeHtml(dish.description)}</p>
+        <div class="card-action-bar" id="card-action-${dish.id}"></div>
       </div>
     `;
 
-    // Click on card opens detailed modal (unless clicking plus/minus stepper)
+    // Click on card body opens modal (unless clicking stepper buttons)
     card.addEventListener('click', (e) => {
-      if (e.target.closest('.card-stepper') || e.target.closest('.btn-add-card')) {
-        // Let the button click handler do its thing
+      if (e.target.closest('.card-stepper-box') || e.target.closest('.btn-card-add')) {
         return;
       }
       openDishModal(dish);
     });
 
-    // Populate initial button/stepper state
-    const footer = card.querySelector(`#card-footer-${dish.id}`);
-    renderCardAction(footer, dish);
+    const actionContainer = card.querySelector(`#card-action-${dish.id}`);
+    renderCardAction(actionContainer, dish);
 
     return card;
   }
@@ -312,27 +286,27 @@
     const count = getDishTotalCountInCart(dish.id);
     if (count > 0) {
       container.innerHTML = `
-        <div class="card-stepper">
-          <button class="stepper-btn btn-dec" data-id="${dish.id}">−</button>
-          <span class="stepper-count">${count}</span>
-          <button class="stepper-btn btn-inc" data-id="${dish.id}">+</button>
+        <div class="card-stepper-box">
+          <button class="c-dec" data-id="${dish.id}">−</button>
+          <span>${count}</span>
+          <button class="c-inc" data-id="${dish.id}">+</button>
         </div>
       `;
-      container.querySelector('.btn-dec').addEventListener('click', (e) => {
+      container.querySelector('.c-dec').addEventListener('click', (e) => {
         e.stopPropagation();
-        decrementDishFromCard(dish.id);
+        decrementDish(dish.id);
       });
-      container.querySelector('.btn-inc').addEventListener('click', (e) => {
+      container.querySelector('.c-inc').addEventListener('click', (e) => {
         e.stopPropagation();
-        incrementDishFromCard(dish.id);
+        incrementDish(dish.id);
       });
     } else {
       container.innerHTML = `
-        <button class="btn-add-card" data-id="${dish.id}">
-          <span>+ ${dish.price} ₽</span>
+        <button class="btn-card-add" data-id="${dish.id}">
+          <span>+ В корзину • ${dish.price} ₽</span>
         </button>
       `;
-      container.querySelector('.btn-add-card').addEventListener('click', (e) => {
+      container.querySelector('.btn-card-add').addEventListener('click', (e) => {
         e.stopPropagation();
         addToCart(dish, []);
         showToast(`«${dish.name}» добавлен в корзину`);
@@ -343,76 +317,71 @@
   function updateAllCardsUI() {
     if (!catalogData) return;
     catalogData.dishes.forEach(dish => {
-      const footers = document.querySelectorAll(`#card-footer-${dish.id}`);
-      footers.forEach(f => renderCardAction(f, dish));
+      const actions = document.querySelectorAll(`#card-action-${dish.id}`);
+      actions.forEach(a => renderCardAction(a, dish));
     });
   }
 
-  // 6. Dish Detail Modal Logic
+  // 5. Dish Details Modal
   function openDishModal(dish) {
     currentModalDish = dish;
     currentSelectedModifiers = [];
 
-    el.dishModalEmoji.textContent = dish.emoji || '🌯';
+    el.dishModalImg.src = `${dish.image}?v=3`;
     el.dishModalTitle.textContent = dish.name;
+    el.dishModalPrice.textContent = `${dish.price} ₽`;
     el.dishModalMeta.innerHTML = `
-      <span>${dish.weight}</span>
+      <span>⚖️ ${dish.weight}</span>
       <span>•</span>
-      <span>${dish.calories || '450 ккал'}</span>
-      ${dish.spicy > 0 ? `<span>•</span> <span style="color: var(--color-accent-red); font-weight:700;">🌶️ ${dish.spicy === 1 ? 'Острое' : 'Очень острое'}</span>` : ''}
+      <span>🔥 ${dish.calories || '520 ккал'}</span>
+      ${dish.spicy > 0 ? `<span>•</span> <span style="color:#E53935; font-weight:800;">🌶️ ${dish.spicy === 1 ? 'Острое' : 'Очень острое'}</span>` : ''}
     `;
     el.dishModalDesc.textContent = dish.description;
 
-    // Modifiers list
     el.dishModalModifiersList.innerHTML = '';
     if (dish.modifiers && dish.modifiers.length > 0) {
-      dish.modifiers.forEach((mod, index) => {
-        const option = document.createElement('div');
-        option.className = 'modifier-option';
-        option.setAttribute('data-mod-index', index);
-        option.innerHTML = `
-          <div class="modifier-left">
-            <input type="checkbox" id="mod-${index}" />
-            <label for="mod-${index}">${escapeHtml(mod.name)}</label>
+      el.dishModifiersSection.style.display = 'block';
+      dish.modifiers.forEach((mod, idx) => {
+        const row = document.createElement('div');
+        row.className = 'mod-row';
+        row.innerHTML = `
+          <div class="mod-left">
+            <input type="checkbox" id="m-${idx}" />
+            <label for="m-${idx}">${escapeHtml(mod.name)}</label>
           </div>
-          <span class="modifier-price">${mod.price > 0 ? `+${mod.price} ₽` : 'Бесплатно'}</span>
+          <span class="mod-price">+${mod.price} ₽</span>
         `;
-
-        option.addEventListener('click', (e) => {
+        row.addEventListener('click', (e) => {
           if (e.target.tagName !== 'INPUT') {
-            const cb = option.querySelector('input');
+            const cb = row.querySelector('input');
             cb.checked = !cb.checked;
           }
-          toggleModifier(mod, option.querySelector('input').checked, option);
+          const isChecked = row.querySelector('input').checked;
+          if (isChecked) {
+            currentSelectedModifiers.push(mod);
+            row.classList.add('selected');
+          } else {
+            currentSelectedModifiers = currentSelectedModifiers.filter(m => m.name !== mod.name);
+            row.classList.remove('selected');
+          }
+          updateModalButtonPrice();
         });
-
-        el.dishModalModifiersList.appendChild(option);
+        el.dishModalModifiersList.appendChild(row);
       });
     } else {
-      el.dishModalModifiersList.innerHTML = '<p style="font-size: 13px; color: var(--color-text-tertiary);">К этому блюду нет дополнительных добавок</p>';
+      el.dishModifiersSection.style.display = 'none';
     }
 
-    updateDishModalAddButtonPrice();
+    updateModalButtonPrice();
     el.dishModalBackdrop.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
 
-  function toggleModifier(mod, isSelected, element) {
-    if (isSelected) {
-      currentSelectedModifiers.push(mod);
-      element.classList.add('selected');
-    } else {
-      currentSelectedModifiers = currentSelectedModifiers.filter(m => m.name !== mod.name);
-      element.classList.remove('selected');
-    }
-    updateDishModalAddButtonPrice();
-  }
-
-  function updateDishModalAddButtonPrice() {
+  function updateModalButtonPrice() {
     if (!currentModalDish) return;
-    const modsPrice = currentSelectedModifiers.reduce((acc, m) => acc + (m.price || 0), 0);
-    const total = currentModalDish.price + modsPrice;
-    el.dishModalAddBtn.innerHTML = `Добавить в корзину • ${total} ₽`;
+    const modsSum = currentSelectedModifiers.reduce((acc, m) => acc + (m.price || 0), 0);
+    const total = currentModalDish.price + modsSum;
+    el.dishModalAddBtn.textContent = `Добавить в корзину • ${total} ₽`;
   }
 
   function closeDishModal() {
@@ -422,15 +391,14 @@
     currentSelectedModifiers = [];
   }
 
-  // 7. Cart State Logic
+  // 6. Cart Logic
   function addToCart(dish, modifiers = []) {
-    // Generate a unique item key based on dish id and selected modifiers
     const modNames = modifiers.map(m => m.name).sort().join('|');
     const modsCost = modifiers.reduce((acc, m) => acc + (m.price || 0), 0);
     const itemPrice = dish.price + modsCost;
     const cartItemId = `${dish.id}__${modNames}`;
 
-    const existing = cart.find(item => item.id === cartItemId);
+    const existing = cart.find(i => i.id === cartItemId);
     if (existing) {
       existing.quantity += 1;
     } else {
@@ -438,10 +406,10 @@
         id: cartItemId,
         dishId: dish.id,
         name: dish.name,
-        emoji: dish.emoji || '🌯',
         price: itemPrice,
         basePrice: dish.price,
         weight: dish.weight,
+        image: dish.image,
         modifiers: [...modifiers],
         quantity: 1
       });
@@ -451,8 +419,7 @@
     updateAllCardsUI();
   }
 
-  function incrementDishFromCard(dishId) {
-    // Find the first item with this dishId in cart, or add a vanilla one
+  function incrementDish(dishId) {
     const item = cart.find(i => i.dishId === dishId);
     if (item) {
       item.quantity += 1;
@@ -465,8 +432,7 @@
     updateAllCardsUI();
   }
 
-  function decrementDishFromCard(dishId) {
-    // Find the last added item with this dishId in cart
+  function decrementDish(dishId) {
     const itemIndex = cart.map(i => i.dishId).lastIndexOf(dishId);
     if (itemIndex > -1) {
       if (cart[itemIndex].quantity > 1) {
@@ -480,17 +446,20 @@
   }
 
   function getDishTotalCountInCart(dishId) {
-    return cart
-      .filter(item => item.dishId === dishId)
-      .reduce((acc, item) => acc + item.quantity, 0);
+    return cart.filter(i => i.dishId === dishId).reduce((acc, i) => acc + i.quantity, 0);
   }
 
   function getCartItemsTotal() {
-    return cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    let sum = cart.reduce((acc, i) => acc + (i.price * i.quantity), 0);
+    if (deliveryType === 'pickup') {
+      // 10% discount on pickup!
+      sum = Math.round(sum * 0.9);
+    }
+    return sum;
   }
 
   function getCartItemsCount() {
-    return cart.reduce((acc, item) => acc + item.quantity, 0);
+    return cart.reduce((acc, i) => acc + i.quantity, 0);
   }
 
   function getDeliveryCost(itemsTotal) {
@@ -501,15 +470,15 @@
   }
 
   function updateCartUI() {
-    const totalCount = getCartItemsCount();
-    const itemsSum = getCartItemsTotal();
-    const deliveryFee = getDeliveryCost(itemsSum);
-    const finalTotal = itemsSum + deliveryFee;
+    const count = getCartItemsCount();
+    const itemsTotal = getCartItemsTotal();
+    const deliveryCost = getDeliveryCost(itemsTotal);
+    const finalTotal = itemsTotal + deliveryCost;
     const threshold = catalogData?.restaurant?.freeDeliveryThreshold || 800;
 
-    // Header cart state
-    if (totalCount > 0) {
-      el.headerCartBadge.textContent = totalCount;
+    // Header Trigger
+    if (count > 0) {
+      el.headerCartBadge.textContent = count;
       el.headerCartBadge.style.display = 'inline-block';
       el.headerCartSum.textContent = `${finalTotal} ₽`;
     } else {
@@ -517,49 +486,71 @@
       el.headerCartSum.textContent = 'Корзина';
     }
 
-    // Mobile float bar state
-    if (totalCount > 0) {
-      el.mobileCartBar.style.display = 'flex';
-      el.mCartBadge.textContent = `${totalCount}`;
+    // Mobile Float Bar
+    if (count > 0) {
+      el.mobileFloatCart.style.display = 'flex';
+      el.mCartBadge.textContent = count;
       el.mCartSum.textContent = `${finalTotal} ₽`;
     } else {
-      el.mobileCartBar.style.display = 'none';
+      el.mobileFloatCart.style.display = 'none';
     }
 
-    // Desktop Cart Sidebar Render
-    if (totalCount === 0) {
-      el.cartEmptyState.style.display = 'flex';
-      el.cartFilledState.style.display = 'none';
-    } else {
-      el.cartEmptyState.style.display = 'none';
-      el.cartFilledState.style.display = 'flex';
+    // Drawer Cart
+    el.drawerItemsCount.textContent = `${count} ${getNoun(count, 'позиция', 'позиции', 'позиций')}`;
 
-      // Render items list
-      el.cartItemsList.innerHTML = '';
+    if (count === 0) {
+      el.drawerEmptyNotice.style.display = 'flex';
+      el.cutlerySection.style.display = 'none';
+      el.drawerFooter.style.display = 'none';
+      el.deliveryBarBox.style.display = 'none';
+      el.drawerItemsList.querySelectorAll('.drawer-item').forEach(e => e.remove());
+    } else {
+      el.drawerEmptyNotice.style.display = 'none';
+      el.cutlerySection.style.display = 'flex';
+      el.drawerFooter.style.display = 'block';
+
+      // Free delivery progress
+      if (deliveryType === 'delivery') {
+        el.deliveryBarBox.style.display = 'block';
+        if (itemsTotal >= threshold) {
+          el.deliveryBarText.innerHTML = `🎉 <b>Бесплатная доставка!</b>`;
+          el.deliveryFill.style.width = '100%';
+        } else {
+          const diff = threshold - itemsTotal;
+          const pct = Math.min(100, Math.round((itemsTotal / threshold) * 100));
+          el.deliveryBarText.innerHTML = `До бесплатной доставки: <b>${diff} ₽</b>`;
+          el.deliveryFill.style.width = `${pct}%`;
+        }
+      } else {
+        el.deliveryBarBox.style.display = 'none';
+      }
+
+      // Render Items
+      el.drawerItemsList.querySelectorAll('.drawer-item').forEach(e => e.remove());
       cart.forEach(item => {
-        const itemRow = document.createElement('div');
-        itemRow.className = 'cart-item';
+        const row = document.createElement('div');
+        row.className = 'drawer-item';
         
-        let modsDesc = '';
+        let modsStr = '';
         if (item.modifiers && item.modifiers.length > 0) {
-          modsDesc = item.modifiers.map(m => `+ ${m.name}`).join(', ');
+          modsStr = item.modifiers.map(m => `+ ${m.name}`).join(', ');
         }
 
-        itemRow.innerHTML = `
-          <div class="cart-item-emoji">${item.emoji || '🌯'}</div>
-          <div class="cart-item-details">
-            <div class="cart-item-name">${escapeHtml(item.name)}</div>
-            ${modsDesc ? `<div class="cart-item-modifiers">${escapeHtml(modsDesc)}</div>` : ''}
-            <div class="cart-item-price">${item.price * item.quantity} ₽</div>
+        row.innerHTML = `
+          <img src="${item.image}?v=3" alt="" class="drawer-item-img" onerror="this.src='img/burrito-classic.jpg?v=3'" />
+          <div class="drawer-item-info">
+            <div class="d-item-title">${escapeHtml(item.name)}</div>
+            ${modsStr ? `<div class="d-item-mods">${escapeHtml(modsStr)}</div>` : ''}
+            <div class="d-item-price">${item.price * item.quantity} ₽</div>
           </div>
-          <div class="cart-item-stepper">
-            <button class="c-step-dec" data-cart-id="${item.id}">−</button>
+          <div class="drawer-stepper">
+            <button class="d-dec">−</button>
             <span>${item.quantity}</span>
-            <button class="c-step-inc" data-cart-id="${item.id}">+</button>
+            <button class="d-inc">+</button>
           </div>
         `;
 
-        itemRow.querySelector('.c-step-dec').addEventListener('click', () => {
+        row.querySelector('.d-dec').addEventListener('click', () => {
           if (item.quantity > 1) {
             item.quantity -= 1;
           } else {
@@ -569,78 +560,64 @@
           updateAllCardsUI();
         });
 
-        itemRow.querySelector('.c-step-inc').addEventListener('click', () => {
+        row.querySelector('.d-inc').addEventListener('click', () => {
           item.quantity += 1;
           updateCartUI();
           updateAllCardsUI();
         });
 
-        el.cartItemsList.appendChild(itemRow);
+        el.drawerItemsList.appendChild(row);
       });
 
-      // Free delivery threshold progress bar
-      if (deliveryType === 'delivery') {
-        el.deliveryThresholdBox.style.display = 'block';
-        if (itemsSum >= threshold) {
-          el.deliveryThresholdText.innerHTML = `<span>🎉 Бесплатная доставка!</span> <span>0 ₽</span>`;
-          el.deliveryProgressFill.style.width = '100%';
-          el.deliveryProgressFill.className = 'delivery-progress-fill';
-        } else {
-          const diff = threshold - itemsSum;
-          const percent = Math.min(100, Math.round((itemsSum / threshold) * 100));
-          el.deliveryThresholdText.innerHTML = `<span>До бесплатной доставки: <b>${diff} ₽</b></span> <span>${threshold} ₽</span>`;
-          el.deliveryProgressFill.style.width = `${percent}%`;
-          el.deliveryProgressFill.className = 'delivery-progress-fill yellow';
-        }
-      } else {
-        el.deliveryThresholdBox.style.display = 'none';
-      }
-
-      // Cutlery selector display
-      el.cutleryCountDisplay.textContent = `${cutleryCount} шт`;
-
-      // Summary lines
-      el.cartSummaryItemsCount.textContent = `${totalCount} ${getNoun(totalCount, 'товар', 'товара', 'товаров')}`;
-      el.cartItemsSum.textContent = `${itemsSum} ₽`;
-      
+      // Footer summary
+      el.summaryItemsTotal.textContent = `${itemsTotal} ₽`;
       if (deliveryType === 'pickup') {
-        el.cartDeliveryFee.textContent = 'Самовывоз (0 ₽)';
-        el.cartDeliveryFee.style.color = 'var(--color-accent-green)';
+        el.summaryDeliveryCost.textContent = 'Самовывоз 0 ₽';
+        el.summaryDeliveryCost.style.color = 'var(--c-green)';
       } else {
-        if (deliveryFee === 0) {
-          el.cartDeliveryFee.textContent = 'Бесплатно';
-          el.cartDeliveryFee.style.color = 'var(--color-accent-green)';
+        if (deliveryCost === 0) {
+          el.summaryDeliveryCost.textContent = 'Бесплатно';
+          el.summaryDeliveryCost.style.color = 'var(--c-green)';
         } else {
-          el.cartDeliveryFee.textContent = `${deliveryFee} ₽`;
-          el.cartDeliveryFee.style.color = 'var(--color-text-main)';
+          el.summaryDeliveryCost.textContent = `${deliveryCost} ₽`;
+          el.summaryDeliveryCost.style.color = 'var(--c-dark)';
         }
       }
 
-      el.cartTotalSum.textContent = `${finalTotal} ₽`;
+      el.summaryFinalTotal.textContent = `${finalTotal} ₽`;
+      el.checkoutBtnSum.textContent = `${finalTotal} ₽`;
     }
   }
 
-  // 8. Checkout Modal Flow & WhatsApp Direct
+  // 7. Drawer Toggle
+  function openCartDrawer() {
+    el.cartDrawerBackdrop.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCartDrawer() {
+    el.cartDrawerBackdrop.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  // 8. Checkout Modal Flow
   function openCheckoutModal() {
-    const totalCount = getCartItemsCount();
-    if (totalCount === 0) {
+    closeCartDrawer();
+    const count = getCartItemsCount();
+    if (count === 0) {
       showToast('Ваша корзина пуста');
       return;
     }
 
-    const itemsSum = getCartItemsTotal();
-    const deliveryFee = getDeliveryCost(itemsSum);
-    const finalTotal = itemsSum + deliveryFee;
+    const finalTotal = getCartItemsTotal() + getDeliveryCost(getCartItemsTotal());
+    el.checkoutFinalTotalDisplay.textContent = `${finalTotal} ₽`;
 
-    el.checkoutTotalDisplay.textContent = `${finalTotal} ₽`;
-
-    // Toggle address fields according to delivery type
     if (deliveryType === 'pickup') {
-      el.checkoutDeliveryFields.style.display = 'none';
-      el.checkoutPickupFields.style.display = 'block';
+      el.deliveryAddressGroup.style.display = 'none';
+      el.pickupNoticeGroup.style.display = 'block';
     } else {
-      el.checkoutDeliveryFields.style.display = 'block';
-      el.checkoutPickupFields.style.display = 'none';
+      el.deliveryAddressGroup.style.display = 'block';
+      el.pickupNoticeGroup.style.display = 'none';
     }
 
     el.checkoutModalBackdrop.classList.add('active');
@@ -655,81 +632,78 @@
   function handlePaymentSelection(method) {
     selectedPaymentMethod = method;
     if (method === 'cash') {
-      el.paymentCashOption.classList.add('selected');
-      el.paymentCardOption.classList.remove('selected');
+      el.pmCash.classList.add('selected');
+      el.pmOnline.classList.remove('selected');
     } else {
-      el.paymentCardOption.classList.add('selected');
-      el.paymentCashOption.classList.remove('selected');
+      el.pmOnline.classList.add('selected');
+      el.pmCash.classList.remove('selected');
     }
   }
 
-  function formatOrderSummaryText() {
-    const itemsSum = getCartItemsTotal();
-    const deliveryFee = getDeliveryCost(itemsSum);
-    const finalTotal = itemsSum + deliveryFee;
+  function formatOrderWhatsAppText() {
+    const itemsTotal = getCartItemsTotal();
+    const deliveryCost = getDeliveryCost(itemsTotal);
+    const finalTotal = itemsTotal + deliveryCost;
 
-    let text = `🌯 *Заказ из Frito Burrito*:\n\n`;
+    let text = `🌯 *Заказ в Frito Burrito (Краснодар)*:\n\n`;
     cart.forEach(item => {
-      let modsStr = item.modifiers.length > 0 ? ` (${item.modifiers.map(m => m.name).join(', ')})` : '';
-      text += `• ${item.name}${modsStr} x${item.quantity} = ${item.price * item.quantity} ₽\n`;
+      let mods = item.modifiers.length > 0 ? ` (${item.modifiers.map(m => m.name).join(', ')})` : '';
+      text += `• ${item.name}${mods} x${item.quantity} = ${item.price * item.quantity} ₽\n`;
     });
 
     text += `\n🍴 Приборы: ${cutleryCount} шт.\n`;
-    text += `🛵 Тип: ${deliveryType === 'delivery' ? 'Доставка курьером' : 'Самовывоз из кафе'}\n`;
+    text += `📦 Способ: ${deliveryType === 'delivery' ? 'Доставка курьером' : 'Самовывоз (-10%)'}\n`;
     if (deliveryType === 'delivery') {
       text += `📍 Адрес: ${userAddress}\n`;
-      text += `📦 Доставка: ${deliveryFee === 0 ? 'Бесплатно' : deliveryFee + ' ₽'}\n`;
+      text += `🛵 Доставка: ${deliveryCost === 0 ? 'Бесплатно' : deliveryCost + ' ₽'}\n`;
     } else {
       text += `📍 Точка самовывоза: ул. Петра Метальникова, 3/1А\n`;
     }
-    text += `💳 Оплата: ${selectedPaymentMethod === 'cash' ? 'При получении (наличные/терминал)' : 'Онлайн'}\n`;
+    text += `💳 Оплата: ${selectedPaymentMethod === 'cash' ? 'При получении' : 'Онлайн'}\n`;
     text += `💰 *ИТОГО: ${finalTotal} ₽*`;
 
     return text;
   }
 
-  function openWhatsAppOrder() {
-    const totalCount = getCartItemsCount();
-    if (totalCount === 0) {
-      showToast('Сначала добавьте блюда в корзину');
+  function sendWhatsAppOrder() {
+    const count = getCartItemsCount();
+    if (count === 0) {
+      showToast('Добавьте блюда в корзину');
       return;
     }
-
-    const orderText = formatOrderSummaryText();
+    const orderText = formatOrderWhatsAppText();
     const phone = '79996505576';
     const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(orderText)}`;
     window.open(waUrl, '_blank');
-    showToast('Переходим в WhatsApp для подтверждения...');
+    showToast('Переходим в WhatsApp для заказа...');
   }
 
-  // 9. Process Checkout Submit
+  // Submit Order
   function submitOrder(e) {
     e.preventDefault();
-    const phone = el.checkoutPhoneInput.value.trim();
+    const phone = el.orderPhoneInput.value.trim();
     if (!phone || phone.length < 10) {
       showToast('Пожалуйста, укажите контактный телефон');
-      el.checkoutPhoneInput.focus();
+      el.orderPhoneInput.focus();
       return;
     }
 
-    const itemsSum = getCartItemsTotal();
-    const deliveryFee = getDeliveryCost(itemsSum);
-    const finalTotal = itemsSum + deliveryFee;
+    const itemsTotal = getCartItemsTotal();
+    const deliveryCost = getDeliveryCost(itemsTotal);
+    const finalTotal = itemsTotal + deliveryCost;
 
     closeCheckoutModal();
 
     if (selectedPaymentMethod === 'online') {
-      // Show online payment simulation gateway
       openOnlinePaymentSimulator(finalTotal);
     } else {
-      // Instant cash/card upon delivery completion
-      finalizeSuccessfulOrder(finalTotal, 'При получении курьеру');
+      finalizeOrder(finalTotal, 'При получении (наличные/терминал)');
     }
   }
 
-  // 10. Safe Payment Simulator (Prevents lockouts / allows 1-click fallback per rule)
+  // Safe Payment Simulator
   function openOnlinePaymentSimulator(sum) {
-    el.paymentSimSum.textContent = `${sum} ₽`;
+    el.simSumDisplay.textContent = `${sum} ₽`;
     el.paymentSimBackdrop.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
@@ -739,107 +713,78 @@
     document.body.style.overflow = '';
   }
 
-  // 11. Order Finalization & Tracker
-  function finalizeSuccessfulOrder(finalTotal, paymentDesc) {
+  // Order Finalize & Live Tracker
+  function finalizeOrder(finalTotal, paymentDesc) {
     closeOnlinePaymentSimulator();
     closeCheckoutModal();
 
-    const orderNumber = `FB-${Math.floor(1000 + Math.random() * 9000)}`;
+    const orderNum = `FB-${Math.floor(1000 + Math.random() * 9000)}`;
+    el.trackerOrderNumber.textContent = `Заказ #${orderNum}`;
+    el.trackerTotalCost.textContent = `${finalTotal} ₽ • ${paymentDesc}`;
+    el.trackerDeliveryDest.textContent = deliveryType === 'delivery' ? userAddress : 'Самовывоз: ул. Петра Метальникова, 3/1А';
 
-    el.trackerOrderNum.textContent = `Заказ №${orderNumber}`;
-    el.trackerOrderTotal.textContent = `${finalTotal} ₽ • ${paymentDesc}`;
-    el.trackerAddress.textContent = deliveryType === 'delivery' ? userAddress : 'Самовывоз: ул. Петра Метальникова, 3/1А';
-
-    // Summary of dishes
-    el.trackerItemsSummary.innerHTML = cart.map(i => 
+    el.trackerItemsList.innerHTML = cart.map(i => 
       `<div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:13px;">
         <span>${escapeHtml(i.name)} × ${i.quantity}</span>
-        <span style="font-weight:700;">${i.price * i.quantity} ₽</span>
+        <strong style="color:var(--c-flame);">${i.price * i.quantity} ₽</strong>
       </div>`
     ).join('');
 
-    // Reset cart
+    // Clear cart
     cart = [];
     updateCartUI();
     updateAllCardsUI();
 
-    // Show Tracker Modal
+    // Show Tracker
     el.trackerModalBackdrop.classList.add('active');
     document.body.style.overflow = 'hidden';
 
-    // Run simulated order progression: Accepted -> Cooking -> On the way
     runTrackerSimulation();
   }
 
   function runTrackerSimulation() {
     if (activeOrderSimulation) clearInterval(activeOrderSimulation);
 
-    // Step 1: Accepted
-    el.step1.className = 'timeline-step active';
-    el.step2.className = 'timeline-step';
-    el.step3.className = 'timeline-step';
+    el.tStep1.className = 't-step active';
+    el.tStep2.className = 't-step';
+    el.tStep3.className = 't-step';
 
-    let elapsed = 0;
+    let sec = 0;
     activeOrderSimulation = setInterval(() => {
-      elapsed += 3;
-      if (elapsed === 3) {
-        // Step 1 completed, Step 2 cooking active
-        el.step1.className = 'timeline-step completed';
-        el.step2.className = 'timeline-step active';
-      } else if (elapsed === 6) {
-        // Step 2 completed, Step 3 courier active
-        el.step2.className = 'timeline-step completed';
-        el.step3.className = 'timeline-step active';
+      sec += 3;
+      if (sec === 3) {
+        el.tStep1.className = 't-step completed';
+        el.tStep2.className = 't-step active';
+      } else if (sec === 6) {
+        el.tStep2.className = 't-step completed';
+        el.tStep3.className = 't-step active';
         clearInterval(activeOrderSimulation);
       }
-    }, 2800);
+    }, 2500);
   }
 
-  function closeTrackerModal() {
+  function closeTracker() {
     el.trackerModalBackdrop.classList.remove('active');
     document.body.style.overflow = '';
     if (activeOrderSimulation) clearInterval(activeOrderSimulation);
   }
 
-  // 12. ScrollSpy for Sticky Navigation Tabs
-  function setupScrollSpy() {
-    const observerOptions = {
-      root: null,
-      rootMargin: `-${80}px 0px -60% 0px`,
-      threshold: 0
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const catId = entry.target.getAttribute('data-category-id');
-          if (catId) {
-            updateActiveTabHighlight(catId);
-          }
-        }
-      });
-    }, observerOptions);
-
-    const sections = document.querySelectorAll('.category-section');
-    sections.forEach(s => observer.observe(s));
-  }
-
-  // 13. Toast Notification Helper
-  function showToast(msg, type = 'normal') {
-    const toast = document.createElement('div');
-    toast.className = `toast ${type === 'success' ? 'success' : ''}`;
-    toast.innerHTML = `<span>${escapeHtml(msg)}</span>`;
-    el.toastContainer.appendChild(toast);
+  // 9. Toast Helper
+  function showToast(msg) {
+    const t = document.createElement('div');
+    t.className = 'toast-item';
+    t.textContent = msg;
+    el.toastStack.appendChild(t);
 
     setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateY(10px)';
-      toast.style.transition = 'all 0.25s ease';
-      setTimeout(() => toast.remove(), 260);
+      t.style.opacity = '0';
+      t.style.transform = 'translateY(10px)';
+      t.style.transition = 'all 0.25s ease';
+      setTimeout(() => t.remove(), 260);
     }, 2400);
   }
 
-  // 14. Event Listeners Wiring
+  // 10. Wire Events
   function setupEventListeners() {
     // Search
     el.searchInput.addEventListener('input', (e) => {
@@ -857,59 +802,77 @@
       searchQuery = '';
       el.searchClearBtn.classList.remove('visible');
       renderCatalog();
-      el.searchInput.focus();
     });
 
-    // Delivery / Pickup toggles
-    document.querySelectorAll('.delivery-toggle-opt').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.delivery-toggle-opt').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        deliveryType = btn.getAttribute('data-type');
-        updateCartUI();
-        showToast(deliveryType === 'delivery' ? 'Выбрана доставка курьером' : 'Выбран самовывоз со скидкой');
-      });
+    // Cart open
+    el.headerCartBtn.addEventListener('click', openCartDrawer);
+    el.mobileFloatCart.addEventListener('click', openCartDrawer);
+    el.drawerCloseBtn.addEventListener('click', closeCartDrawer);
+    el.cartDrawerBackdrop.addEventListener('click', (e) => {
+      if (e.target === el.cartDrawerBackdrop) closeCartDrawer();
     });
 
-    // Cart buttons
-    el.headerCartBtn.addEventListener('click', () => {
-      if (window.innerWidth <= 980) {
-        openCheckoutModal();
-      } else {
-        el.cartSidebar.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+    // Delivery mode toggle
+    el.modeBtnDelivery.addEventListener('click', () => {
+      deliveryType = 'delivery';
+      el.modeBtnDelivery.classList.add('active');
+      el.modeBtnPickup.classList.remove('active');
+      updateCartUI();
+      showToast('Выбрана доставка курьером');
     });
 
-    el.mobileCartBar.addEventListener('click', () => {
-      openCheckoutModal();
+    el.modeBtnPickup.addEventListener('click', () => {
+      deliveryType = 'pickup';
+      el.modeBtnPickup.classList.add('active');
+      el.modeBtnDelivery.classList.remove('active');
+      updateCartUI();
+      showToast('Выбран самовывоз: скидка -10%!');
     });
 
-    el.btnCheckout.addEventListener('click', openCheckoutModal);
-    el.btnWhatsAppDirect.addEventListener('click', openWhatsAppOrder);
-
-    el.btnClearCart.addEventListener('click', () => {
-      if (confirm('Очистить корзину?')) {
-        cart = [];
-        updateCartUI();
-        updateAllCardsUI();
-        showToast('Корзина очищена');
-      }
-    });
-
-    // Cutlery controls
+    // Cutlery
     el.btnCutleryDec.addEventListener('click', () => {
       if (cutleryCount > 0) {
         cutleryCount -= 1;
-        el.cutleryCountDisplay.textContent = `${cutleryCount} шт`;
+        el.cutleryCount.textContent = cutleryCount;
       }
     });
 
     el.btnCutleryInc.addEventListener('click', () => {
       cutleryCount += 1;
-      el.cutleryCountDisplay.textContent = `${cutleryCount} шт`;
+      el.cutleryCount.textContent = cutleryCount;
     });
 
-    // Dish Modal events
+    // Checkout
+    el.btnOpenCheckoutModal.addEventListener('click', openCheckoutModal);
+    el.checkoutModalClose.addEventListener('click', closeCheckoutModal);
+    el.checkoutModalBackdrop.addEventListener('click', (e) => {
+      if (e.target === el.checkoutModalBackdrop) closeCheckoutModal();
+    });
+
+    el.pmCash.addEventListener('click', () => handlePaymentSelection('cash'));
+    el.pmOnline.addEventListener('click', () => handlePaymentSelection('online'));
+    el.orderForm.addEventListener('submit', submitOrder);
+
+    // WhatsApp orders
+    el.btnQuickWhatsAppOrder.addEventListener('click', sendWhatsAppOrder);
+
+    // Simulator
+    el.btnSimPaySuccess.addEventListener('click', () => {
+      finalizeOrder(getCartItemsTotal() + getDeliveryCost(getCartItemsTotal()), 'Оплачено картой / СБП');
+    });
+    el.btnSimFallbackCash.addEventListener('click', () => {
+      finalizeOrder(getCartItemsTotal() + getDeliveryCost(getCartItemsTotal()), 'При получении');
+    });
+    el.btnSimCancel.addEventListener('click', () => {
+      closeOnlinePaymentSimulator();
+      showToast('Оплата отменена. Корзина сохранена');
+    });
+
+    // Tracker
+    el.trackerModalClose.addEventListener('click', closeTracker);
+    el.btnTrackerDone.addEventListener('click', closeTracker);
+
+    // Dish Modal
     el.dishModalClose.addEventListener('click', closeDishModal);
     el.dishModalBackdrop.addEventListener('click', (e) => {
       if (e.target === el.dishModalBackdrop) closeDishModal();
@@ -922,50 +885,9 @@
       }
     });
 
-    // Info Modal events
-    el.btnOpenInfo.addEventListener('click', () => {
-      el.infoModalBackdrop.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    });
-    el.infoModalClose.addEventListener('click', () => {
-      el.infoModalBackdrop.classList.remove('active');
-      document.body.style.overflow = '';
-    });
-    el.infoModalBackdrop.addEventListener('click', (e) => {
-      if (e.target === el.infoModalBackdrop) {
-        el.infoModalBackdrop.classList.remove('active');
-        document.body.style.overflow = '';
-      }
-    });
-
-    // Checkout Modal events
-    el.checkoutModalClose.addEventListener('click', closeCheckoutModal);
-    el.checkoutModalBackdrop.addEventListener('click', (e) => {
-      if (e.target === el.checkoutModalBackdrop) closeCheckoutModal();
-    });
-    el.paymentCashOption.addEventListener('click', () => handlePaymentSelection('cash'));
-    el.paymentCardOption.addEventListener('click', () => handlePaymentSelection('online'));
-    el.checkoutForm.addEventListener('submit', submitOrder);
-
-    // Online Payment Simulator events
-    el.btnSimSuccess.addEventListener('click', () => {
-      finalizeSuccessfulOrder(getCartItemsTotal() + getDeliveryCost(getCartItemsTotal()), 'Оплачено онлайн (СБП)');
-    });
-    el.btnSimCancel.addEventListener('click', () => {
-      closeOnlinePaymentSimulator();
-      showToast('Оплата отменена. Корзина сохранена');
-    });
-    el.btnSimFallbackCash.addEventListener('click', () => {
-      finalizeSuccessfulOrder(getCartItemsTotal() + getDeliveryCost(getCartItemsTotal()), 'При получении (наличные/терминал)');
-    });
-
-    // Tracker Modal events
-    el.trackerModalClose.addEventListener('click', closeTrackerModal);
-    el.btnNewOrder.addEventListener('click', closeTrackerModal);
-
     // Address Change
-    el.addressPickerBtn.addEventListener('click', () => {
-      el.addressInput.value = userAddress;
+    el.headerAddressBtn.addEventListener('click', () => {
+      el.addressEditInput.value = userAddress;
       el.addressModalBackdrop.classList.add('active');
       document.body.style.overflow = 'hidden';
     });
@@ -973,96 +895,73 @@
       el.addressModalBackdrop.classList.remove('active');
       document.body.style.overflow = '';
     });
-    el.addressModalBackdrop.addEventListener('click', (e) => {
-      if (e.target === el.addressModalBackdrop) {
-        el.addressModalBackdrop.classList.remove('active');
-        document.body.style.overflow = '';
-      }
-    });
     el.btnSaveAddress.addEventListener('click', () => {
-      const val = el.addressInput.value.trim();
+      const val = el.addressEditInput.value.trim();
       if (val) {
         userAddress = val;
         el.currentAddressDisplay.textContent = val;
-        showToast('Адрес доставки обновлен');
+        el.orderAddressInput.value = val;
+        showToast('Адрес обновлен');
       }
       el.addressModalBackdrop.classList.remove('active');
       document.body.style.overflow = '';
     });
 
-    // Phone format mask on typing
-    el.checkoutPhoneInput.addEventListener('input', (e) => {
+    // Auto-mask phone input
+    el.orderPhoneInput.addEventListener('input', (e) => {
       let v = e.target.value.replace(/\D/g, '');
-      if (v.startsWith('7') || v.startsWith('8')) {
-        v = v.substring(1);
-      }
-      let formatted = '+7 (';
-      if (v.length > 0) formatted += v.substring(0, 3);
-      if (v.length >= 3) formatted += ') ' + v.substring(3, 6);
-      if (v.length >= 6) formatted += '-' + v.substring(6, 8);
-      if (v.length >= 8) formatted += '-' + v.substring(8, 10);
-      e.target.value = formatted;
+      if (v.startsWith('7') || v.startsWith('8')) v = v.substring(1);
+      let f = '+7 (';
+      if (v.length > 0) f += v.substring(0, 3);
+      if (v.length >= 3) f += ') ' + v.substring(3, 6);
+      if (v.length >= 6) f += '-' + v.substring(6, 8);
+      if (v.length >= 8) f += '-' + v.substring(8, 10);
+      e.target.value = f;
     });
 
-    // Keyboard ESC close
+    // Escape key
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeDishModal();
+        closeCartDrawer();
         closeCheckoutModal();
         closeOnlinePaymentSimulator();
-        closeTrackerModal();
-        el.infoModalBackdrop.classList.remove('active');
+        closeTracker();
         el.addressModalBackdrop.classList.remove('active');
         document.body.style.overflow = '';
       }
     });
   }
 
-  // 15. Helper utilities
+  // Helpers
   function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/[&<>"']/g, function (m) {
-      return ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-      })[m];
-    });
+    return str.replace(/[&<>"']/g, m => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+    })[m]);
   }
 
-  function getNoun(number, one, two, five) {
-    let n = Math.abs(number);
-    n %= 100;
-    if (n >= 5 && n <= 20) return five;
-    n %= 10;
-    if (n === 1) return one;
-    if (n >= 2 && n <= 4) return two;
+  function getNoun(n, one, two, five) {
+    let num = Math.abs(n) % 100;
+    if (num >= 5 && num <= 20) return five;
+    num %= 10;
+    if (num === 1) return one;
+    if (num >= 2 && num <= 4) return two;
     return five;
   }
 
-  // Fallback data in case dishes.json is blocked by local file:// restrictions
   function getFallbackData() {
     return {
       restaurant: {
         id: "frito-burrito-krd",
-        name: "Фрито Буррито",
-        cuisine: "Мексиканская кухня • Буррито • Тако",
+        name: "Frito Burrito",
+        cuisine: "Мексиканский стритфуд",
         rating: "5.0",
         reviewsCount: 240,
-        deliveryTime: "25–35 мин",
-        minOrder: 400,
         freeDeliveryThreshold: 800,
-        deliveryCost: 149,
-        address: "Краснодар, ул. им. Петра Метальникова, 3/1А",
-        phone: "+7 (999) 650-55-76",
-        phoneFormatted: "+7 (999) 650-55-76",
-        workingHours: "10:00 — 23:00 ежедневно",
-        yandexMapsUrl: "https://yandex.ru/maps/org/frito_burrito/201782394789/"
+        deliveryCost: 149
       },
       categories: [
-        { id: "popular", name: "🔥 Популярное" },
         { id: "burrito", name: "🌯 Буррито" },
         { id: "tacos-quesadilla", name: "🌮 Тако и Кесадильи" },
         { id: "snacks", name: "🍟 Горячие закуски" },
@@ -1075,113 +974,60 @@
           id: "burrito-classic",
           categoryId: "burrito",
           name: "Буррито «Эль Классико»",
-          emoji: "🌯",
           price: 250,
           weight: "360 г",
           popular: true,
           spicy: 0,
-          description: "Сочное куриное филе на гриле, свежие томаты, кукуруза, сыр моцарелла, свежая зелень и фирменный сливочный соус в подрумяненной тортилье.",
-          calories: "520 ккал",
-          modifiers: [{ name: "Двойной сыр Чеддер", price: 50 }, { name: "Перчик Халапеньо", price: 40 }]
+          image: "img/burrito-classic.jpg",
+          description: "Сочное куриное филе на гриле, свежие томаты, кукуруза, сыр моцарелла, свежая зелень и фирменный сливочный соус в подрумяненной тортилье."
         },
         {
           id: "burrito-juanita",
           categoryId: "burrito",
           name: "Буррито «Месть Хуаниты»",
-          emoji: "🌶️🌯",
           price: 300,
           weight: "380 г",
           popular: true,
           spicy: 1,
-          description: "Пикантная рубленая мраморная говядина, острый перчик халапеньо, красная фасоль пинто, тянущийся чеддер и аутентичная сальса роха.",
-          calories: "580 ккал",
-          modifiers: [{ name: "Экстра Халапеньо 🌶️", price: 40 }, { name: "Двойная говядина", price: 90 }]
+          image: "img/burrito-juanita.jpg",
+          description: "Пикантная рубленая мраморная говядина, острый перчик халапеньо, красная фасоль пинто, тянущийся чеддер и аутентичная сальса роха."
         },
         {
           id: "burrito-diablo",
           categoryId: "burrito",
           name: "Буррито «Эль Диабло»",
-          emoji: "🔥🌯",
           price: 330,
           weight: "390 г",
           popular: true,
           spicy: 2,
-          description: "Экстра-острый мексиканский хит! Мраморная говядина и цыпленок, острый соус чили-хабанеро, халапеньо, сладкая кукуруза и расплавленный чеддер.",
-          calories: "610 ккал",
-          modifiers: [{ name: "Острый соус Чили x2", price: 45 }]
-        },
-        {
-          id: "burrito-mushroom",
-          categoryId: "burrito",
-          name: "Буррито «Грибной Жюльен»",
-          emoji: "🍄🌯",
-          price: 330,
-          weight: "370 г",
-          popular: true,
-          spicy: 0,
-          description: "Нежнейшее куриное филе, обжаренные шампиньоны с карамелизованным луком, двойная порция сыра и фирменный соус ранч.",
-          calories: "540 ккал",
-          modifiers: [{ name: "Дополнительный сыр", price: 50 }]
+          image: "img/burrito-diablo.jpg",
+          description: "Экстра-острый мексиканский хит! Мраморная говядина и цыпленок, острый соус чили-хабанеро, халапеньо, сладкая кукуруза и расплавленный чеддер."
         },
         {
           id: "tacos-box",
           categoryId: "tacos-quesadilla",
           name: "Такос Ланч-Бокс (3 шт)",
-          emoji: "🌮",
           price: 500,
           weight: "380 г",
           popular: true,
           spicy: 1,
-          description: "Три хрустящих кукурузно-пшеничных тако: с томленым цыпленком, острой говядиной и свежими овощами с долькой сочного лайма.",
-          calories: "560 ккал",
-          modifiers: [{ name: "Соус Гуакамоле", price: 70 }]
+          image: "img/tacos-box.jpg",
+          description: "Три хрустящих кукурузно-пшеничных тако: с томленым цыпленком, острой говядиной и свежими овощами с долькой сочного лайма."
         },
         {
           id: "fries-crispy",
           categoryId: "snacks",
           name: "Картофель Фри хрустящий",
-          emoji: "🍟",
           price: 170,
           weight: "150 г",
           popular: true,
           spicy: 0,
-          description: "Золотистые хрустящие брусочки картофеля фри с легкой морской солью и паприкой.",
-          calories: "320 ккал",
-          modifiers: [{ name: "Соус Сырный", price: 60 }]
-        },
-        {
-          id: "sauce-guacamole",
-          categoryId: "sauces",
-          name: "Фирменный Гуакамоле",
-          emoji: "🥑",
-          price: 120,
-          weight: "50 г",
-          popular: true,
-          spicy: 0,
-          description: "Аутентичный мексиканский дип из спелого авокадо, сока лайма, томатов и свежей кинзы.",
-          calories: "95 ккал",
-          modifiers: []
-        },
-        {
-          id: "combo-mexican",
-          categoryId: "combos",
-          name: "Комбо «Мексиканец»",
-          emoji: "🌯🍟",
-          price: 490,
-          weight: "650 г",
-          popular: true,
-          spicy: 0,
-          description: "Сытный набор для одного: Буррито «Эль Классико» + Картофель Фри + Соус Сальса Роха + Напиток на выбор. Выгода 90 ₽!",
-          calories: "980 ккал",
-          modifiers: []
+          image: "img/fries-crispy.jpg",
+          description: "Золотистые хрустящие брусочки картофеля фри с легкой морской солью и паприкой."
         }
       ]
     };
   }
 
-  // Start App
-  document.addEventListener('DOMContentLoaded', () => {
-    setupEventListeners();
-    initCatalog();
-  });
+  document.addEventListener('DOMContentLoaded', init);
 })();

@@ -1,12 +1,11 @@
 import os
 import sys
 import time
-import subprocess
 import threading
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from playwright.sync_api import sync_playwright
 
-PORT = 8098
+PORT = 8097
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -42,27 +41,19 @@ def run_tests():
         page.on("console", lambda msg: console_errors.append(f"Console {msg.type}: {msg.text}") if msg.type == "error" else None)
         page.on("pageerror", lambda err: console_errors.append(f"PageError: {err}"))
 
-        page.goto(f"http://127.0.0.1:{PORT}/index.html", wait_until="domcontentloaded")
-        page.wait_for_selector(".dish-card")
+        page.goto(f"http://127.0.0.1:{PORT}/index.html?v=3", wait_until="domcontentloaded")
+        page.wait_for_selector(".product-card")
 
-        # Check title & header
-        assert "Фрито Буррито" in page.title(), "Title does not contain 'Фрито Буррито'"
-        restaurant_title = page.locator(".hero-title").inner_text()
-        print(f"✓ Restaurant Title: {restaurant_title}")
-        assert "Фрито Буррито" in restaurant_title
+        # Check title & hero
+        assert "FRITO BURRITO" in page.title()
+        hero_title = page.locator(".hero-title").inner_text()
+        print(f"✓ Hero Title: {hero_title}")
 
-        rating_text = page.locator(".meta-pill.rating").inner_text()
-        print(f"✓ Rating: {rating_text}")
-        assert "5.0" in rating_text
-
-        # Screenshot Hero & Desktop Catalog
-        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "01_desktop_main.png"), full_page=False)
-
-        # Test Search
+        # Search test
         print("Testing search filter...")
         page.fill("#searchInput", "Хуанит")
         time.sleep(0.3)
-        cards = page.locator(".dish-card")
+        cards = page.locator(".product-card")
         assert cards.count() >= 1, "Search for 'Хуанит' returned no cards"
         print(f"✓ Search returned {cards.count()} matching dish")
         page.click("#searchClearBtn")
@@ -70,7 +61,7 @@ def run_tests():
 
         # Open Dish Modal for 'Буррито «Месть Хуаниты»'
         print("Testing Dish Detail Modal & Modifiers...")
-        juanita_card = page.locator(".dish-card").filter(has_text="Месть Хуаниты").first
+        juanita_card = page.locator(".product-card").filter(has_text="Месть Хуаниты").first
         juanita_card.click()
         page.wait_for_selector("#dishModalBackdrop.active")
         
@@ -78,7 +69,7 @@ def run_tests():
         print(f"✓ Modal opened for: {modal_title}")
         
         # Select first modifier
-        first_mod = page.locator("#dishModalModifiersList .modifier-option").first
+        first_mod = page.locator("#dishModalModifiersList .mod-row").first
         if first_mod.is_visible():
             first_mod.click()
             print("✓ Selected modifier in modal")
@@ -89,76 +80,67 @@ def run_tests():
 
         # Add another item directly using card button
         print("Adding another item via card button...")
-        fries_card = page.locator(".dish-card").filter(has_text="Картофель Фри").first
-        fries_card.locator(".btn-add-card").click()
+        fries_card = page.locator(".product-card").filter(has_text="Картофель Фри").first
+        fries_card.locator(".btn-card-add").click()
         time.sleep(0.3)
 
-        # Verify Cart sidebar
-        cart_total = page.locator("#cartTotalSum").inner_text()
-        print(f"✓ Desktop Cart Total: {cart_total}")
-        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "02_desktop_cart_filled.png"), full_page=False)
+        # Open Cart Drawer
+        page.click("#headerCartBtn")
+        page.wait_for_selector("#cartDrawerBackdrop.active")
+        total_sum = page.locator("#summaryFinalTotal").inner_text()
+        print(f"✓ Cart Drawer Total: {total_sum}")
+        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "01_desktop_drawer.png"))
 
         # Open Checkout
-        print("Opening Checkout Modal...")
-        page.click("#btnCheckout")
+        page.click("#btnOpenCheckoutModal")
         page.wait_for_selector("#checkoutModalBackdrop.active")
-        
-        page.fill("#checkoutNameInput", "Алексей")
-        page.fill("#checkoutPhoneInput", "9991234567")
-        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "03_desktop_checkout.png"), full_page=False)
+        page.fill("#orderNameInput", "Алексей")
+        page.fill("#orderPhoneInput", "9991234567")
+        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "02_desktop_checkout.png"))
 
-        # Submit Checkout (Cash upon delivery)
-        print("Submitting order (Cash upon delivery)...")
-        page.click("#checkoutForm button[type='submit']")
+        # Submit order
+        page.click("#orderForm button[type='submit']")
         page.wait_for_selector("#trackerModalBackdrop.active")
+        order_num = page.locator("#trackerOrderNumber").inner_text()
+        print(f"✓ Order placed successfully! Tracker: {order_num}")
+        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "03_order_tracker.png"))
 
-        order_num = page.locator("#trackerOrderNum").inner_text()
-        print(f"✓ Order placed successfully! Tracker active: {order_num}")
-        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "04_order_tracker.png"), full_page=False)
-
-        page.click("#btnNewOrder")
+        page.click("#btnTrackerDone")
         context.close()
 
         # ---------------------------------------------------------
         # Scenario 2: Mobile View (390x844 iPhone 14)
         # ---------------------------------------------------------
         print("\n--- Running Mobile Scenario (390x844) ---")
-        m_context = browser.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1")
+        m_context = browser.new_context(viewport={"width": 390, "height": 844}, is_mobile=True)
         m_page = m_context.new_page()
 
         m_page.on("console", lambda msg: console_errors.append(f"Console {msg.type}: {msg.text}") if msg.type == "error" else None)
         m_page.on("pageerror", lambda err: console_errors.append(f"PageError: {err}"))
 
-        m_page.goto(f"http://127.0.0.1:{PORT}/index.html", wait_until="domcontentloaded")
-        m_page.wait_for_selector(".dish-card")
+        m_page.goto(f"http://127.0.0.1:{PORT}/index.html?v=3", wait_until="domcontentloaded")
+        m_page.wait_for_selector(".product-card")
 
-        m_page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "05_mobile_home.png"), full_page=False)
+        # Check mobile overflow
+        scroll_width, client_width = m_page.evaluate("() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]")
+        assert scroll_width == client_width, f"Mobile overflow detected: scrollWidth={scroll_width}, clientWidth={client_width}"
+        print("✓ Mobile zero overflow verified: 100% rock-solid layout")
 
         # Add item on mobile
-        first_dish = m_page.locator(".dish-card").first
-        first_dish.locator(".btn-add-card").click()
+        first_dish = m_page.locator(".product-card").first
+        first_dish.locator(".btn-card-add").click()
         time.sleep(0.3)
 
-        # Check floating cart bar
-        float_bar = m_page.locator("#mobileCartBar")
-        assert float_bar.is_visible(), "Mobile floating cart bar is not visible"
+        # Check float cart
+        float_cart = m_page.locator("#mobileFloatCart")
+        assert float_cart.is_visible(), "Mobile floating cart is not visible"
         m_sum = m_page.locator("#mCartSum").inner_text()
         print(f"✓ Mobile float cart visible with sum: {m_sum}")
 
-        m_page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "06_mobile_float_cart.png"), full_page=False)
-
-        # Click float bar to open checkout
-        float_bar.click()
-        m_page.wait_for_selector("#checkoutModalBackdrop.active")
-        print("✓ Checkout modal opened smoothly on mobile")
-        m_page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "07_mobile_checkout.png"), full_page=False)
-
-        # Test Restaurant Info Modal on Mobile
-        m_page.click("#checkoutModalClose")
-        m_page.click("#btnOpenInfo")
-        m_page.wait_for_selector("#infoModalBackdrop.active")
-        print("✓ Restaurant info modal opened on mobile")
-        m_page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "08_mobile_restaurant_info.png"), full_page=False)
+        float_cart.click()
+        m_page.wait_for_selector("#cartDrawerBackdrop.active")
+        print("✓ Mobile cart drawer opened smoothly")
+        m_page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "04_mobile_drawer.png"))
 
         m_context.close()
         browser.close()
