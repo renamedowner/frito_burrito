@@ -801,24 +801,49 @@ a {
   transform: translateY(-2px);
 }
 
-/* Слот под реальное фото блюда */
+/* Слот под фото блюда с аккуратным серым логотипом */
 .dish-photo-slot {
   width: 100%;
-  height: 135px;
+  height: 115px;
   position: relative;
   overflow: hidden;
-  background-color: #16171E;
+  background: radial-gradient(circle at center, #1C1E27 0%, #13141B 100%);
+  border-bottom: 1px solid #232532;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.dish-card-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
+.dish-placeholder-card-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  opacity: 0.65;
+  transition: all var(--trans-fast);
 }
 
-.minimal-dish-card:hover .dish-card-img {
+.minimal-dish-card:hover .dish-placeholder-card-logo {
+  opacity: 0.95;
   transform: scale(1.05);
+}
+
+.dish-placeholder-card-logo svg {
+  color: #6A7085;
+  transition: color var(--trans-fast);
+}
+
+.minimal-dish-card:hover .dish-placeholder-card-logo svg {
+  color: #8C93AB;
+}
+
+.dish-placeholder-caption {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #6A7085;
+  text-transform: uppercase;
 }
 
 .dish-badges-overlay {
@@ -1281,8 +1306,87 @@ a {
 }
 
 /* ==========================================================================
-   8. Мобильная адаптивность (Mobile Floating Bar & Drawer)
+   8. Мобильная адаптивность (Mobile Bottom Nav, Floating Bar & Drawer)
    ========================================================================== */
+
+/* Нижняя панель навигации для телефонов */
+.mobile-nav-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 58px;
+  background-color: rgba(16, 17, 22, 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid #262936;
+  z-index: 1000;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 4px;
+}
+
+.mobile-nav-item {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex: 1;
+  height: 100%;
+  padding: 4px 0;
+  cursor: pointer;
+  color: #7E849A;
+  transition: color var(--trans-fast);
+  outline: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-nav-item:hover,
+.mobile-nav-item.active {
+  color: var(--k-green);
+}
+
+.mobile-nav-item.relative-btn {
+  position: relative;
+}
+
+.mn-icon {
+  font-size: 19px;
+  line-height: 1;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mn-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.mn-badge {
+  position: absolute;
+  top: -4px;
+  right: -9px;
+  background-color: var(--k-green);
+  color: #0E0F12;
+  font-size: 9px;
+  font-weight: 900;
+  min-width: 15px;
+  height: 15px;
+  line-height: 15px;
+  border-radius: 10px;
+  text-align: center;
+  padding: 0 3px;
+  border: 1px solid #101116;
+}
+
 .mobile-bottom-bar {
   display: none !important;
   position: fixed;
@@ -1409,7 +1513,7 @@ a {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1417,6 +1521,8 @@ a {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-backdrop.active {
@@ -1430,9 +1536,12 @@ a {
   border-radius: var(--k-radius-lg);
   width: 100%;
   max-width: 480px;
+  max-height: 92vh;
   position: relative;
   box-shadow: var(--k-shadow-pop);
-  overflow: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: auto;
 }
 
 .modal-close-btn {
@@ -1465,15 +1574,33 @@ a {
 
 .dish-modal-photo-wrap {
   width: 100%;
-  height: 190px;
+  height: 180px;
   overflow: hidden;
   background-color: #14151B;
 }
 
-.dish-modal-img {
+.dish-placeholder-modal-icon {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: radial-gradient(circle at center, #1E202B 0%, #13141B 100%);
+  border-bottom: 1px solid var(--k-border);
+}
+
+.dish-placeholder-modal-icon svg {
+  opacity: 0.7;
+}
+
+.dish-placeholder-modal-icon .placeholder-caption {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #6C7286;
+  text-transform: uppercase;
 }
 
 .dish-modal-body {
@@ -1573,26 +1700,45 @@ a {
   padding: 22px;
 }
 
-.checkout-header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
+.checkout-header-block {
+  padding-right: 44px; /* исключаем наложение крестика закрытия */
+  margin-bottom: 14px;
 }
 
 .checkout-heading {
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 900;
+  line-height: 1.2;
 }
 
-.checkout-pay-badge {
+.checkout-sub {
   font-size: 12px;
   color: var(--k-text-muted);
+  margin-top: 3px;
 }
 
-.checkout-pay-badge strong {
+.checkout-total-banner {
+  background: linear-gradient(135deg, rgba(0, 224, 84, 0.12) 0%, rgba(0, 180, 68, 0.04) 100%);
+  border: 1px solid rgba(0, 224, 84, 0.35);
+  border-radius: var(--k-radius-md);
+  padding: 12px 18px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkout-total-banner .ct-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #A0A5B8;
+}
+
+.checkout-total-banner .ct-amount {
+  font-size: 22px;
+  font-weight: 900;
   color: var(--k-green);
-  font-size: 16px;
+  letter-spacing: -0.5px;
 }
 
 .form-row-2 {
@@ -2240,8 +2386,15 @@ a {
     display: none;
   }
 
-  .header-cart-mobile-btn {
+  /* Показываем нижнюю панель навигации на телефонах и планшетах */
+  .mobile-nav-bar {
     display: flex;
+  }
+
+  /* Плавающая полоска корзины приподнимается ровно над нижней панелью навигации */
+  .mobile-bottom-bar {
+    bottom: 58px;
+    z-index: 999;
   }
 
   .mobile-bottom-bar.visible {
@@ -2249,18 +2402,19 @@ a {
   }
 
   .toast-stack {
-    bottom: 80px;
+    bottom: 74px;
   }
 
   .cookie-banner-bar {
     left: 10px;
     right: 10px;
     max-width: calc(100% - 20px);
-    bottom: 70px;
+    bottom: 66px;
   }
 
   .page-container {
-    margin-bottom: 90px;
+    padding-bottom: 76px;
+    margin-bottom: 0;
   }
 
   .promo-slide-inner {
@@ -2295,7 +2449,7 @@ a {
   }
 
   .dish-photo-slot {
-    height: 105px;
+    height: 95px;
   }
 
   .dish-title {
@@ -2312,5 +2466,19 @@ a {
 
   .form-row-2, .form-row-4 {
     grid-template-columns: 1fr;
+  }
+
+  .modal-backdrop {
+    padding: 10px;
+    align-items: flex-start;
+  }
+
+  .modal-window {
+    max-height: 94vh;
+    margin: 8px auto;
+  }
+
+  .checkout-modal-body {
+    padding: 16px;
   }
 }

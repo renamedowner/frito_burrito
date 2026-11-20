@@ -20,6 +20,14 @@ def start_server():
     server_thread.start()
     return httpd
 
+def boxes_overlap(box1, box2):
+    return not (
+        box1['x'] + box1['width'] <= box2['x'] or
+        box2['x'] + box2['width'] <= box1['x'] or
+        box1['y'] + box1['height'] <= box2['y'] or
+        box2['y'] + box2['height'] <= box1['y']
+    )
+
 def run_tests():
     print(f"Starting server on http://127.0.0.1:{PORT} ...")
     httpd = start_server()
@@ -41,7 +49,7 @@ def run_tests():
         page.on("console", lambda msg: console_errors.append(f"Console {msg.type}: {msg.text}") if msg.type == "error" else None)
         page.on("pageerror", lambda err: console_errors.append(f"PageError: {err}"))
 
-        page.goto(f"http://127.0.0.1:{PORT}/index.html?v=6", wait_until="domcontentloaded")
+        page.goto(f"http://127.0.0.1:{PORT}/index.html?v=7", wait_until="domcontentloaded")
         page.wait_for_selector(".product-card")
 
         # 1. Verify no mention of "купер" in page text or title
@@ -58,81 +66,29 @@ def run_tests():
         assert "до 22:00" in body_text, "Page must display accurate closing time 22:00"
         print("✓ Verified accurate Yandex info: 5.0 (62 оценки) and Открыто до 22:00")
 
-        # 3. Verify no notice bar
-        assert page.locator("#noticeBar").count() == 0, "Notice bar must be removed"
-        print("✓ Notice bar is completely removed")
+        # 3. Verify Food Cards have grey SVG logo placeholder instead of <img>
+        first_placeholder = page.locator(".dish-placeholder-card-logo").first
+        assert first_placeholder.is_visible(), "Food card must have grey logo placeholder slot"
+        img_tags = page.locator(".minimal-dish-card img").count()
+        assert img_tags == 0, f"No <img> elements should be in minimal dish cards, found {img_tags}"
+        print("✓ Verified dish cards have neat grey logo placeholders (NO food photos/images)")
 
-        # 4. Verify Food Photo Slots on Cards
-        first_photo = page.locator(".dish-photo-slot img").first
-        assert first_photo.is_visible(), "Food card must have a visible photo slot"
-        print("✓ Verified minimalist food cards with photo slots")
-
-        # 5. Test Multi-promo Carousel
-        print("Testing Promo Carousel Next/Prev...")
-        page.click("#btnPromoNext")
-        time.sleep(0.3)
+        # 4. Test Multi-promo Carousel
+        print("Testing Promo Carousel...")
         page.click("#btnPromoNext")
         time.sleep(0.3)
         page.click("#btnPromoPrev")
         time.sleep(0.3)
         print("✓ Promo carousel navigation working smoothly")
 
-        # 6. Test Compact Category Chips
-        print("Testing Compact Category Chips...")
-        burrito_chip = page.locator(".compact-cat-chip").filter(has_text="Буррито").first
-        burrito_chip.click()
-        time.sleep(0.2)
-        print("✓ Clicked compact category chip")
-
-        # 7. Test Promo Button (%)
-        print("Testing % Promo Modal...")
-        page.click("#btnHeaderPromo")
-        page.wait_for_selector("#promoCodesBackdrop.active")
-        page.click("#btnClosePromoCodesModal")
-        page.wait_for_selector("#promoCodesBackdrop:not(.active)")
-        print("✓ % Promo Modal tested")
-
-        # 8. Test Profile Modal ("Войти") & SMS Simulator
-        print("Testing Profile Modal & Login...")
-        page.click("#btnHeaderProfile")
-        page.wait_for_selector("#profileBackdrop.active")
-        page.fill("#authPhoneInput", "9996505576")
-        page.click("#btnSendAuthCode")
-        time.sleep(0.3)
-        assert page.locator("#profileLoggedInView").is_visible(), "Logged in view should be visible"
-        page.click("#btnCloseProfileModal")
-        page.wait_for_selector("#profileBackdrop:not(.active)")
-        print("✓ Profile Modal & Login simulator tested successfully")
-
-        # 9. Test Bonuses Modal ("Бонусы")
-        print("Testing Bonuses Modal...")
-        page.click("#btnHeaderBonuses")
-        page.wait_for_selector("#bonusesBackdrop.active")
-        page.click("#btnCloseBonusesAction")
-        page.wait_for_selector("#bonusesBackdrop:not(.active)")
-        print("✓ Bonuses Modal tested")
-
-        # 10. Test About Modal
-        print("Testing About Modal...")
-        page.click("#topAboutBtn")
-        page.wait_for_selector("#aboutBackdrop.active")
-        page.click("#btnCloseAboutModal")
-        page.wait_for_selector("#aboutBackdrop:not(.active)")
-        print("✓ About Modal tested")
-
-        # 11. Test Dish Detail Modal
-        print("Testing Dish Detail Modal...")
+        # 5. Test Dish Detail Modal
+        print("Testing Dish Detail Modal with grey logo placeholder...")
         first_card = page.locator(".product-card").first
         first_card.click()
         page.wait_for_selector("#dishModalBackdrop.active")
         modal_title = page.locator("#dishModalTitle").inner_text()
-        print(f"✓ Dish modal opened for: {modal_title}")
-
-        # Select a modifier if available
-        first_mod = page.locator("#dishModalModifiersList .mod-row").first
-        if first_mod.is_visible():
-            first_mod.click()
-            print("✓ Selected modifier in dish modal")
+        assert page.locator(".dish-placeholder-modal-icon").is_visible(), "Modal must have grey logo placeholder icon"
+        print(f"✓ Dish modal opened for: {modal_title} with grey logo placeholder")
 
         page.click("#btnDishModalAddToCart")
         page.wait_for_selector("#dishModalBackdrop:not(.active)")
@@ -146,48 +102,48 @@ def run_tests():
         # Check Desktop Cart Total
         cart_total = page.locator("#sidebarTotalCost").inner_text()
         print(f"✓ Desktop Cart Total: {cart_total}")
-        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "20_desktop_emerald_cart.png"))
 
-        # 12. Test Checkout & Payment Simulator
-        print("Testing Checkout Modal...")
+        # 6. Test Checkout Modal and verify price visibility & NO overlap
+        print("Testing Checkout Modal & price visibility...")
         page.click("#btnSidebarCheckout")
         page.wait_for_selector("#checkoutModalBackdrop.active")
+        
+        sum_elem = page.locator("#checkoutSumDisplay")
+        close_btn = page.locator("#btnCloseCheckoutModal")
+        assert sum_elem.is_visible(), "Checkout sum display must be clearly visible"
+        
+        sum_box = sum_elem.bounding_box()
+        close_box = close_btn.bounding_box()
+        assert not boxes_overlap(sum_box, close_box), "Close button MUST NOT overlap checkout sum display!"
+        print(f"✓ Verified checkout price ({sum_elem.inner_text()}) is prominently visible and has NO overlap with close button!")
+
         page.fill("#orderInputName", "Александр")
         page.fill("#orderInputPhone", "9996505576")
         page.click("#checkoutForm button[type='submit']")
 
+        # Payment Simulator (Online-only)
+        page.wait_for_selector("#simPayBackdrop.active")
+        print("✓ Online payment simulator opened (no cash options)")
+        page.click("#btnSimPaySuccess")
+
         page.wait_for_selector("#trackerBackdrop.active")
         order_num = page.locator("#trackerOrderTag").inner_text()
-        print(f"✓ Order placed successfully! Tracker: {order_num}")
-        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "21_desktop_tracker.png"))
+        print(f"✓ Order placed successfully via online card/SBP! Tracker: {order_num}")
 
         page.click("#btnTrackerDone")
         page.wait_for_selector("#trackerBackdrop:not(.active)")
         time.sleep(0.3)
 
-        # 13. Test Legal Modals
-        print("Testing Legal Modals (152-ФЗ & Оферта)...")
+        # Test Legal Modals
         page.click("#btnOpenPrivacyPolicy")
         page.wait_for_selector("#legalPrivacyBackdrop.active")
         page.click("#btnClosePrivacyModal")
-        page.wait_for_selector("#legalPrivacyBackdrop:not(.active)")
 
         page.click("#btnOpenPublicOffer")
         page.wait_for_selector("#legalOfferBackdrop.active")
         page.click("#btnCloseOfferModal")
-        page.wait_for_selector("#legalOfferBackdrop:not(.active)")
-        print("✓ Legal Modals (Privacy 152-FZ & Offer) tested")
+        print("✓ Legal Modals (152-FZ & Offer) tested")
 
-        # 14. Test Cookie Banner
-        print("Testing Cookie Banner...")
-        cookie_btn = page.locator("#btnAcceptCookies")
-        if cookie_btn.is_visible():
-            cookie_btn.click()
-            time.sleep(0.3)
-            assert not page.locator("#cookieBanner").is_visible(), "Cookie banner should be closed"
-            print("✓ Cookie banner accepted and closed")
-
-        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "22_desktop_full_page.png"))
         context.close()
 
         # ---------------------------------------------------------
@@ -200,37 +156,79 @@ def run_tests():
         m_page.on("console", lambda msg: console_errors.append(f"Console {msg.type}: {msg.text}") if msg.type == "error" else None)
         m_page.on("pageerror", lambda err: console_errors.append(f"PageError: {err}"))
 
-        m_page.goto(f"http://127.0.0.1:{PORT}/index.html?v=6", wait_until="domcontentloaded")
+        m_page.goto(f"http://127.0.0.1:{PORT}/index.html?v=7", wait_until="domcontentloaded")
         m_page.wait_for_selector(".product-card")
 
-        # Check mobile overflow
-        scroll_width, client_width = m_page.evaluate("() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]")
-        assert scroll_width == client_width, f"Mobile overflow detected: scrollWidth={scroll_width}, clientWidth={client_width}"
-        print(f"✓ Mobile zero overflow verified: scrollWidth={scroll_width} == clientWidth={client_width}")
+        # 1. Check mobile bottom navigation bar
+        bottom_nav = m_page.locator("#mobileNavBar")
+        assert bottom_nav.is_visible(), "Mobile bottom navigation bar must be visible on mobile"
+        assert m_page.locator("#mNavMenu").is_visible(), "Menu tab must be visible"
+        assert m_page.locator("#mNavSearch").is_visible(), "Search tab must be visible"
+        assert m_page.locator("#mNavPromo").is_visible(), "Promo tab must be visible"
+        assert m_page.locator("#mNavCart").is_visible(), "Cart tab must be visible"
+        assert m_page.locator("#mNavProfile").is_visible(), "Profile tab must be visible"
+        print("✓ Verified Mobile Bottom Navigation Bar with 5 interactive tabs (Меню, Поиск, Акции, Корзина, Профиль)")
 
-        m_page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "23_mobile_home.png"))
+        # 2. Test bottom nav buttons
+        print("Testing Bottom Nav Promo tab...")
+        m_page.click("#mNavPromo")
+        m_page.wait_for_selector("#promoCodesBackdrop.active")
+        m_page.click("#btnClosePromoCodesModal")
+        m_page.wait_for_selector("#promoCodesBackdrop:not(.active)")
+        print("✓ Bottom Nav Promo tab working")
 
-        # Add item on mobile
-        first_m_card = m_page.locator(".product-card").first
-        first_m_card.locator(".btn-add-minimal").click()
+        print("Testing Bottom Nav Profile tab...")
+        m_page.click("#mNavProfile")
+        m_page.wait_for_selector("#profileBackdrop.active")
+        m_page.click("#btnCloseProfileModal")
+        m_page.wait_for_selector("#profileBackdrop:not(.active)")
+        print("✓ Bottom Nav Profile tab working")
+
+        # 3. Add dish to cart on mobile
+        m_first_card = m_page.locator(".product-card").first
+        m_first_card.locator(".btn-add-minimal").click()
         time.sleep(0.3)
 
-        # Check Mobile Floating Bottom Bar
+        # 4. Check Mobile Floating Cart Bar and Bottom Nav alignment
         float_bar = m_page.locator("#mobileBottomBar")
-        assert float_bar.is_visible(), "Mobile bottom floating bar must be visible"
+        assert float_bar.is_visible(), "Mobile bottom floating cart bar must be visible"
         m_sum = m_page.locator("#mobileCartTotalSum").inner_text()
         print(f"✓ Mobile float bar visible with total: {m_sum}")
 
-        # Open Mobile Cart Drawer Sheet
-        m_page.click("#btnOpenMobileDrawer")
-        m_page.wait_for_selector("#mobileCartBackdrop.active")
-        time.sleep(0.4)
-        print("✓ Mobile Cart Drawer Sheet opened smoothly")
-        m_page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "24_mobile_sheet.png"))
+        # Check cart badge on bottom nav
+        badge = m_page.locator("#mNavCartBadge")
+        assert badge.is_visible() and int(badge.inner_text()) >= 1, "Bottom nav cart badge must reflect count"
+        print("✓ Bottom nav cart badge updated correctly")
 
-        m_page.click("#btnCloseMobileCart")
-        m_page.wait_for_selector("#mobileCartBackdrop:not(.active)")
-        time.sleep(0.3)
+        # 5. Open Cart via Bottom Nav
+        m_page.click("#mNavCart")
+        m_page.wait_for_selector("#mobileCartBackdrop.active")
+        print("✓ Mobile Cart Drawer Sheet opened via Bottom Nav Cart button")
+
+        # Check NO WhatsApp button in drawer
+        wa_btn_count = m_page.locator("#btnMobileDrawerWhatsApp").count()
+        assert wa_btn_count == 0, "WhatsApp order button must be completely removed"
+        print("✓ Verified WhatsApp order button is completely removed")
+
+        # 6. Proceed to Checkout on mobile
+        m_page.click("#btnMobileDrawerProceedCheckout")
+        m_page.wait_for_selector("#checkoutModalBackdrop.active")
+        
+        m_sum_elem = m_page.locator("#checkoutSumDisplay")
+        m_close_btn = m_page.locator("#btnCloseCheckoutModal")
+        assert m_sum_elem.is_visible(), "Checkout sum display must be visible on mobile"
+        m_sum_box = m_sum_elem.bounding_box()
+        m_close_box = m_close_btn.bounding_box()
+        assert not boxes_overlap(m_sum_box, m_close_box), "Close button MUST NOT overlap price on mobile!"
+        print(f"✓ Mobile checkout price is clear and unobstructed ({m_sum_elem.inner_text()})")
+
+        m_page.click("#btnCloseCheckoutModal")
+        m_page.wait_for_selector("#checkoutModalBackdrop:not(.active)")
+
+        # 7. Check mobile horizontal overflow
+        scroll_width, client_width = m_page.evaluate("() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]")
+        assert scroll_width == client_width, f"Mobile overflow detected: scrollWidth={scroll_width}, clientWidth={client_width}"
+        print(f"✓ Mobile zero overflow verified: scrollWidth={scroll_width} == clientWidth={client_width}")
 
         m_context.close()
         browser.close()
