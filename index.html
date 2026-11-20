@@ -3,43 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Фрито Буррито — Доставка еды в Краснодаре • Купер</title>
-  <meta name="description" content="Мексиканский стритфуд Фрито Буррито: сочные буррито, хрустящие тако, сырные кесадильи и горячие закуски с быстрой доставкой по Краснодару.">
+  <title>Фрито Буррито — Мексиканский стритфуд и доставка в Краснодаре</title>
+  <meta name="description" content="Фрито Буррито в Краснодаре: сочные буррито, хрустящие тако, сырные кесадильи и фирменные закуски на гриле. Быстрая доставка от 25 минут или самовывоз со скидкой 10%.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌯</text></svg>">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
-<body class="kuper-dark-theme">
+<body class="frito-dark-theme">
 
-  <!-- 1. Верхняя служебная строка в стиле Купер -->
-  <aside class="kuper-top-bar">
+  <!-- 1. Верхняя служебная строка -->
+  <aside class="top-service-bar">
     <div class="top-bar-container">
       <div class="top-bar-left">
-        <a href="#aboutModal" id="topAboutLink" class="top-link">🌯 О заведении «Фрито Буррито»</a>
+        <button id="topAboutBtn" class="top-link-btn">🌯 О кафе «Фрито Буррито»</button>
         <span class="top-dot">•</span>
-        <span class="top-info">Краснодар, ул. Петра Метальникова, 3/1А</span>
+        <span class="top-info">г. Краснодар, ул. им. Петра Метальникова, 3/1А</span>
       </div>
       <div class="top-bar-right">
-        <span class="top-info">⏰ 10:00 — 23:00 ежедневно</span>
+        <span class="top-info">⏰ Открыто до 22:00 (10:00 — 22:00)</span>
         <span class="top-dot">•</span>
         <a href="tel:+79996505576" class="top-link phone">+7 (999) 650-55-76</a>
         <span class="top-dot">•</span>
-        <a href="https://yandex.ru/maps/org/frito_burrito/201782394789/" target="_blank" rel="noopener noreferrer" class="top-link rating">
-          ★ 5.0 (240+ на картах) ↗
+        <a href="https://yandex.ru/maps/org/frito_burrito/201782394789/" target="_blank" rel="noopener noreferrer" class="top-link rating" title="Открыть карточку заведения на Яндекс Картах">
+          ★ 5.0 (62 оценки на картах) ↗
         </a>
       </div>
     </div>
   </aside>
 
-  <!-- 2. Главная шапка сайта в стиле Купер -->
-  <header class="kuper-main-header">
+  <!-- 2. Главная шапка сайта -->
+  <header class="main-header">
     <div class="header-inner">
       
-      <!-- Логотип Купер / Фрито Буррито -->
-      <a href="#" class="kuper-logo-link" title="Фрито Буррито Краснодар">
-        <div class="logo-kuper-text">
-          <span class="logo-white">купер</span><span class="logo-dot">.</span><span class="logo-sub">фрито</span>
+      <!-- Логотип ФРИТО БУРРИТО -->
+      <a href="#" class="brand-logo-link" title="Фрито Буррито — Главная">
+        <div class="brand-logo-wrap">
+          <span class="brand-logo-icon">🌯</span>
+          <div class="brand-text-block">
+            <div class="brand-name"><span class="brand-white">ФРИТО</span> <span class="brand-green">БУРРИТО</span></div>
+            <div class="brand-slogan">мексиканский стритфуд</div>
+          </div>
         </div>
-        <div class="logo-tag">мексиканский стритфуд</div>
       </a>
 
       <!-- Поисковая строка "Что найти?" -->
@@ -52,8 +55,8 @@
         <button id="searchClearBtn" class="search-clear-btn" title="Очистить поиск">✕</button>
       </div>
 
-      <!-- Кнопка выбора адреса -->
-      <button class="header-action-btn address-btn" id="btnSelectAddress" title="Изменить адрес доставки">
+      <!-- Кнопка выбора адреса доставки -->
+      <button class="header-pill-btn address-btn" id="btnSelectAddress" title="Выбрать адрес доставки">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
           <circle cx="12" cy="10" r="3"></circle>
@@ -63,12 +66,12 @@
       </button>
 
       <!-- Промо-кнопка % -->
-      <button class="header-icon-btn promo-btn" id="btnHeaderPromo" title="Акции и промокоды">
+      <button class="header-circle-btn promo-btn" id="btnHeaderPromo" title="Акции и промокоды">
         <span>%</span>
       </button>
 
       <!-- Кнопка Войти / Профиль -->
-      <button class="header-action-btn user-btn" id="btnHeaderProfile" title="Личный кабинет">
+      <button class="header-pill-btn user-btn" id="btnHeaderProfile" title="Личный кабинет и бонусы">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
           <circle cx="12" cy="7" r="4"></circle>
@@ -76,15 +79,15 @@
         <span id="userProfileLabel">Войти</span>
       </button>
 
-      <!-- Бонусы Спасибо / Лояльность -->
-      <div class="bonuses-badge" id="btnHeaderBonuses" title="Бонусы Спасибо">
-        <span class="bonus-label">Бонусы</span>
-        <span class="bonus-val" id="bonusValDisplay">500</span>
-        <span class="bonus-icon">💚</span>
-      </div>
+      <!-- Бонусы лояльности -->
+      <button class="bonuses-pill" id="btnHeaderBonuses" title="Программа лояльности">
+        <span class="bonus-lbl">Бонусы</span>
+        <span class="bonus-num" id="bonusValDisplay">500</span>
+        <span class="bonus-leaf">💚</span>
+      </button>
 
       <!-- Мобильная кнопка корзины в шапке -->
-      <button class="header-cart-mobile-btn" id="btnMobileHeaderCart">
+      <button class="header-cart-mobile-btn" id="btnMobileHeaderCart" title="Открыть корзину">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
           <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
           <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -96,76 +99,163 @@
     </div>
   </header>
 
-  <!-- 3. Плашка уведомления Купер (dismissible notice) -->
-  <div class="kuper-notice-bar" id="noticeBar">
-    <div class="notice-inner">
-      <div class="notice-left">
-        <span class="notice-star">★</span>
-        <span class="notice-text">Вы в официальном сервисе <strong>Фрито Буррито</strong> на платформе доставки! Готовим на гриле и доставляем за 25–35 минут 💚</span>
-      </div>
-      <button class="notice-close" id="btnCloseNotice" title="Скрыть">✕</button>
-    </div>
-  </div>
-
-  <!-- 4. Основная двухколоночная раскладка Купер -->
-  <div class="kuper-page-container">
-    <div class="kuper-layout-grid">
+  <!-- 3. Основная двухколоночная раскладка -->
+  <div class="page-container">
+    <div class="layout-grid">
       
       <!-- ============================================================
-           ЛЕВАЯ КОЛОНКА (Каталог, Промо-баннер, Категории)
+           ЛЕВАЯ КОЛОНКА (Промо-панели, Категории, Каталог с фото)
            ============================================================ -->
-      <main class="kuper-main-content">
+      <main class="main-content-column">
         
-        <!-- Большой баннер с купоном и промокодом в стиле Купер -->
-        <section class="kuper-hero-promo">
-          <div class="promo-card">
-            
-            <div class="promo-left">
-              <span class="promo-pill">Акция для новых гостей</span>
-              <h1 class="promo-heading">Скидка 15% на первый заказ</h1>
-              <p class="promo-subheading">При заказе от 1 000 ₽ на самовывоз или доставку курьером в термосумке</p>
+        <!-- Секция промо-панелей (Карусель со скидками и акциями в изумрудном стиле) -->
+        <section class="promo-carousel-section">
+          
+          <div class="promo-carousel-container">
+            <div class="promo-carousel-track" id="promoCarouselTrack">
               
-              <div class="promo-actions">
-                <button class="btn-promo-apply" id="btnApplyHeroPromo">
-                  Применить скидку
-                </button>
-                <div class="promo-meta-specs">
-                  <span>🛵 Доставка от 25 мин</span>
-                  <span>•</span>
-                  <span>Бесплатно от 800 ₽</span>
+              <!-- Панель 1: Скидка 15% на первый заказ -->
+              <div class="promo-banner-slide active" data-slide="0">
+                <div class="promo-slide-inner emerald-theme">
+                  <div class="slide-left">
+                    <span class="promo-badge-pill">🔥 Хит недели для новых гостей</span>
+                    <h2 class="slide-heading">Скидка 15% на первый заказ</h2>
+                    <p class="slide-subheading">При заказе от 1 000 ₽ на самовывоз или доставку курьером в термосумке</p>
+                    
+                    <div class="slide-actions-row">
+                      <button class="btn-promo-action" id="btnApplyPromo15">
+                        Применить скидку 15%
+                      </button>
+                      <div class="slide-specs">
+                        <span>🛵 Доставка от 25 мин</span>
+                        <span>•</span>
+                        <span>Бесплатно от 800 ₽</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="slide-right">
+                    <div class="perforated-ticket" id="ticketCode15" title="Нажмите, чтобы скопировать промокод">
+                      <div class="t-cut top"></div>
+                      <div class="t-header">
+                        <span>ФРИТО БУРРИТО</span>
+                        <span>🌯</span>
+                      </div>
+                      <div class="t-line"></div>
+                      <div class="t-content">
+                        <div class="t-label">ПРОМОКОД</div>
+                        <div class="t-code">ФРИТО15</div>
+                        <div class="t-hint">Нажмите, чтобы применить</div>
+                      </div>
+                      <div class="t-cut bottom"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              <!-- Панель 2: Самовывоз со скидкой 10% -->
+              <div class="promo-banner-slide" data-slide="1">
+                <div class="promo-slide-inner amber-emerald-theme">
+                  <div class="slide-left">
+                    <span class="promo-badge-pill amber">🏪 Быстро и выгодно</span>
+                    <h2 class="slide-heading">Самовывоз со скидкой 10%</h2>
+                    <p class="slide-subheading">Заберите горячий заказ без ожидания на ул. Петра Метальникова, 3/1А за 15–20 минут</p>
+                    
+                    <div class="slide-actions-row">
+                      <button class="btn-promo-action" id="btnActivatePickupPromo">
+                        Выбрать самовывоз (-10%)
+                      </button>
+                      <div class="slide-specs">
+                        <span>⏱ Готовность 15-20 мин</span>
+                        <span>•</span>
+                        <span>Парковка у входа</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="slide-right">
+                    <div class="perforated-ticket amber-ticket" id="ticketCodePickup" title="Нажмите, чтобы скопировать">
+                      <div class="t-cut top"></div>
+                      <div class="t-header">
+                        <span>САМОВЫВОЗ</span>
+                        <span>🏪</span>
+                      </div>
+                      <div class="t-line"></div>
+                      <div class="t-content">
+                        <div class="t-label">СКИДКА В КОРЗИНЕ</div>
+                        <div class="t-code">-10%</div>
+                        <div class="t-hint">Применяется к любому заказу</div>
+                      </div>
+                      <div class="t-cut bottom"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Панель 3: Бесплатная доставка от 800 ₽ -->
+              <div class="promo-banner-slide" data-slide="2">
+                <div class="promo-slide-inner forest-theme">
+                  <div class="slide-left">
+                    <span class="promo-badge-pill green">🛵 Горячая доставка</span>
+                    <h2 class="slide-heading">Бесплатная доставка от 800 ₽</h2>
+                    <p class="slide-subheading">Привезём буррито с хрустящей корочкой прямо с гриля в термосумке за 25–35 минут</p>
+                    
+                    <div class="slide-actions-row">
+                      <button class="btn-promo-action" id="btnGoToCombos">
+                        Выбрать комбо и сеты
+                      </button>
+                      <div class="slide-specs">
+                        <span>🚀 Скорость 25-35 мин</span>
+                        <span>•</span>
+                        <span>Термосумка</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="slide-right">
+                    <div class="perforated-ticket forest-ticket" id="ticketCodeFree" title="Нажмите, чтобы активировать">
+                      <div class="t-cut top"></div>
+                      <div class="t-header">
+                        <span>ДОСТАВКА</span>
+                        <span>🛵</span>
+                      </div>
+                      <div class="t-line"></div>
+                      <div class="t-content">
+                        <div class="t-label">ОТ 800 РУБЛЕЙ</div>
+                        <div class="t-code">0 ₽</div>
+                        <div class="t-hint">Автоматически в корзине</div>
+                      </div>
+                      <div class="t-cut bottom"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
 
-            <!-- Перфорированный купон-билет Купера -->
-            <div class="promo-right">
-              <div class="voucher-ticket">
-                <div class="ticket-cut top"></div>
-                <div class="ticket-header">
-                  <span class="ticket-logo">ФРИТО БУРРИТО</span>
-                  <span class="ticket-icon">🌯</span>
-                </div>
-                <div class="ticket-divider"></div>
-                <div class="ticket-body">
-                  <div class="ticket-label">ПРОМОКОД</div>
-                  <div class="ticket-code" id="heroTicketCode" title="Нажмите, чтобы скопировать">ФРИТО15</div>
-                  <div class="ticket-hint">Нажмите, чтобы скопировать</div>
-                </div>
-                <div class="ticket-cut bottom"></div>
+            <!-- Кнопки управления каруселью акций -->
+            <div class="promo-carousel-controls">
+              <button class="carousel-nav-btn prev" id="btnPromoPrev" title="Предыдущая акция">‹</button>
+              <div class="carousel-dots" id="promoCarouselDots">
+                <span class="dot active" data-index="0"></span>
+                <span class="dot" data-index="1"></span>
+                <span class="dot" data-index="2"></span>
               </div>
+              <button class="carousel-nav-btn next" id="btnPromoNext" title="Следующая акция">›</button>
             </div>
 
           </div>
+
         </section>
 
-        <!-- Плитки категорий с реалистичными 3D-эмодзи иконками (в точности как на скриншоте Купера) -->
-        <section class="kuper-categories-section">
-          <div class="categories-grid" id="categoriesGrid">
-            <!-- Генерируются автоматически скриптом: Буррито, Тако, Закуски, Соусы, Напитки, Комбо, Все меню -->
+        <!-- Компактная изумрудная панель категорий ("позжатее и под панель со скидкой") -->
+        <section class="compact-categories-bar" id="categoryNavSection">
+          <div class="compact-categories-container" id="compactCategoriesTrack">
+            <!-- Генерируются скриптом: Все меню, Буррито, Тако, Закуски, Соусы, Напитки, Комбо -->
           </div>
         </section>
 
-        <!-- Каталог блюд по секциям -->
+        <!-- Каталог блюд по категориям (Минималистичный дизайн со слотами под реальные фото) -->
         <div class="catalog-sections-wrap" id="catalogSectionsWrap">
           <!-- Секции блюд генерируются через app.js -->
         </div>
@@ -173,18 +263,18 @@
       </main>
 
       <!-- ============================================================
-           ПРАВАЯ КОЛОНКА (Постоянная корзина на десктопе, как в Купере!)
+           ПРАВАЯ КОЛОНКА (Постоянная корзина на десктопе)
            ============================================================ -->
-      <aside class="kuper-desktop-cart-sidebar" id="desktopCartSidebar">
+      <aside class="desktop-cart-sidebar" id="desktopCartSidebar">
         <div class="cart-sidebar-card">
           
           <div class="sidebar-cart-head">
             <h2 class="sidebar-cart-title">Корзина</h2>
-            <button class="sidebar-cart-clear" id="btnSidebarClearCart" style="display: none;" title="Очистить корзину">Очистить</button>
+            <button class="sidebar-cart-clear-btn" id="btnSidebarClearCart" style="display: none;" title="Очистить корзину">Очистить</button>
           </div>
 
-          <!-- Переключатель режима: Доставка / Самовывоз -->
-          <div class="cart-mode-selector">
+          <!-- Переключатель: Доставка / Самовывоз -->
+          <div class="cart-mode-toggle">
             <button class="mode-tab active" data-mode="delivery" id="cartModeDelivery">
               🛵 Доставка
             </button>
@@ -193,7 +283,7 @@
             </button>
           </div>
 
-          <!-- Прогресс-бар бесплатной доставки -->
+          <!-- Прогресс бесплатной доставки -->
           <div class="cart-free-delivery-box" id="cartFreeDeliveryBox" style="display: none;">
             <div class="cfd-labels">
               <span id="cfdText">До бесплатной доставки: 800 ₽</span>
@@ -204,38 +294,38 @@
             </div>
           </div>
 
-          <!-- Пустая корзина: Тот самый знаменитый фирменный пакет Купера с глазками! -->
+          <!-- Пустая корзина: фирменный крафтовый пакет с глазками -->
           <div class="cart-empty-state" id="cartEmptyState">
-            <div class="kuper-bag-illustration">
-              <svg width="110" height="130" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Ручки пакета -->
+            <div class="craft-bag-illustration">
+              <svg width="100" height="120" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Ручки крафтового пакета -->
                 <path d="M42 36V22C42 12.0589 50.0589 4 60 4C69.9411 4 78 12.0589 78 22V36" stroke="#464956" stroke-width="4.5" stroke-linecap="round"/>
-                <!-- Тело бумажного пакета -->
-                <path d="M22 38H98L92 128C91.6 133 87.5 137 82.5 137H37.5C32.5 137 28.4 133 28 128L22 38Z" fill="#262831" stroke="#3D404D" stroke-width="3"/>
-                <!-- Верхняя складка пакета -->
-                <path d="M20 38H100L98 48H22L20 38Z" fill="#2E313C"/>
+                <!-- Тело крафтового пакета -->
+                <path d="M22 38H98L92 128C91.6 133 87.5 137 82.5 137H37.5C32.5 137 28.4 133 28 128L22 38Z" fill="#1E2028" stroke="#363945" stroke-width="3"/>
+                <!-- Верхняя складка -->
+                <path d="M20 38H100L98 48H22L20 38Z" fill="#282B36"/>
                 <!-- Боковые складки -->
-                <path d="M46 48L50 128" stroke="#353844" stroke-width="2" stroke-dasharray="3 3"/>
-                <path d="M74 48L70 128" stroke="#353844" stroke-width="2" stroke-dasharray="3 3"/>
-                <!-- Глазки Купера ( ⚆ _ ⚆ ) -->
-                <circle cx="50" cy="80" r="4.5" fill="#9CA0B0"/>
-                <circle cx="50" cy="80" r="2" fill="#1B1C22"/>
-                <circle cx="70" cy="80" r="4.5" fill="#9CA0B0"/>
-                <circle cx="70" cy="80" r="2" fill="#1B1C22"/>
-                <!-- Недовольный/нейтральный ротик -->
-                <line x1="56" y1="92" x2="64" y2="92" stroke="#9CA0B0" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M46 48L50 128" stroke="#30333E" stroke-width="2" stroke-dasharray="3 3"/>
+                <path d="M74 48L70 128" stroke="#30333E" stroke-width="2" stroke-dasharray="3 3"/>
+                <!-- Глазки ( • _ • ) -->
+                <circle cx="50" cy="80" r="4.5" fill="#8E92A2"/>
+                <circle cx="50" cy="80" r="2" fill="#14151B"/>
+                <circle cx="70" cy="80" r="4.5" fill="#8E92A2"/>
+                <circle cx="70" cy="80" r="2" fill="#14151B"/>
+                <!-- Ротик -->
+                <line x1="56" y1="92" x2="64" y2="92" stroke="#8E92A2" stroke-width="2.5" stroke-linecap="round"/>
               </svg>
             </div>
             <h3 class="empty-state-title">В корзине пусто</h3>
-            <p class="empty-state-desc">В каталоге или поиске найдётся всё — от сытного буррито до сочных тако</p>
+            <p class="empty-state-desc">Выберите вкусные блюда в меню, чтобы сделать заказ</p>
           </div>
 
-          <!-- Список позиций в корзине -->
+          <!-- Список добавленных блюд -->
           <div class="cart-items-scroll-list" id="cartItemsList" style="display: none;">
             <!-- Позиции генерируются через app.js -->
           </div>
 
-          <!-- Приборы (бесплатно) -->
+          <!-- Приборы и салфетки (бесплатно) -->
           <div class="cart-cutlery-box" id="cartCutleryBox" style="display: none;">
             <div class="cutlery-label-wrap">
               <span class="cutlery-icon">🍴</span>
@@ -257,7 +347,7 @@
             </div>
             
             <div class="calc-row" id="sidebarDiscountRow" style="display: none;">
-              <span class="calc-lbl promo">Скидка по промокоду</span>
+              <span class="calc-lbl promo">Скидка по акции</span>
               <span class="calc-val promo" id="sidebarDiscountVal">-0 ₽</span>
             </div>
 
@@ -271,14 +361,14 @@
               <span class="calc-val" id="sidebarTotalCost">0 ₽</span>
             </div>
 
-            <!-- Главная кнопка оформления заказа в стиле Купер -->
-            <button class="btn-kuper-checkout-main" id="btnSidebarCheckout">
+            <!-- Главная кнопка оформления заказа -->
+            <button class="btn-checkout-primary" id="btnSidebarCheckout">
               <span>Оформить заказ</span>
               <span id="btnSidebarCheckoutSum">0 ₽</span>
             </button>
 
             <!-- Быстрый заказ через WhatsApp -->
-            <button class="btn-kuper-whatsapp" id="btnSidebarWhatsApp">
+            <button class="btn-whatsapp-action" id="btnSidebarWhatsApp">
               <span class="wa-icon">💬</span>
               <span>Заказать через WhatsApp</span>
             </button>
@@ -291,8 +381,8 @@
     </div>
   </div>
 
-  <!-- 5. Плавающая мобильная панель корзины (для экранов < 992px) -->
-  <aside class="mobile-bottom-bar" id="mobileBottomBar" style="display: none;">
+  <!-- 4. Плавающая мобильная панель корзины (для смартфонов < 992px) -->
+  <aside class="mobile-bottom-bar" id="mobileBottomBar">
     <button class="mobile-bottom-cart-btn" id="btnOpenMobileDrawer">
       <div class="m-cart-summary">
         <span class="m-count-tag" id="mobileCartCountTag">0</span>
@@ -307,7 +397,7 @@
     </button>
   </aside>
 
-  <!-- 6. Мобильный выкатной дровер корзины (для телефонов) -->
+  <!-- 5. Мобильный выкатной дровер корзины (Bottom Sheet) -->
   <div class="modal-backdrop" id="mobileCartBackdrop">
     <div class="mobile-drawer-sheet" id="mobileCartSheet">
       <div class="sheet-handle-bar"><div class="sheet-handle"></div></div>
@@ -326,11 +416,15 @@
     </div>
   </div>
 
-  <!-- 7. Модальное окно блюда (добавки, описание, КБЖУ) -->
+  <!-- 6. Модальное окно блюда (добавки, КБЖУ, фото) -->
   <div class="modal-backdrop" id="dishModalBackdrop">
     <div class="modal-window dish-detail-window">
       <button class="modal-close-btn" id="btnCloseDishModal">✕</button>
       
+      <div class="dish-modal-photo-wrap">
+        <img src="" alt="" id="dishModalImg" class="dish-modal-img">
+      </div>
+
       <div class="dish-modal-body">
         <div class="dish-modal-header">
           <h2 class="dish-modal-title" id="dishModalTitle"></h2>
@@ -347,14 +441,15 @@
       </div>
 
       <div class="dish-modal-footer">
-        <button class="btn-kuper-checkout-main" id="btnDishModalAddToCart">
-          Добавить в корзину
+        <button class="btn-checkout-primary" id="btnDishModalAddToCart">
+          <span>Добавить в корзину</span>
+          <span id="dishModalBtnSum">0 ₽</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- 8. Модальное окно оформления заказа (Чекаут Купер) -->
+  <!-- 7. Модальное окно оформления заказа (Чекаут) -->
   <div class="modal-backdrop" id="checkoutModalBackdrop">
     <div class="modal-window checkout-window">
       <button class="modal-close-btn" id="btnCloseCheckoutModal">✕</button>
@@ -429,7 +524,11 @@
             </div>
           </div>
 
-          <button type="submit" class="btn-kuper-checkout-main submit-order-btn">
+          <div class="legal-consent-text">
+            Нажимая кнопку, вы подтверждаете согласие с условиями <a href="#offer" class="legal-link" id="linkConsentOffer">Публичной оферты</a> и даете согласие на обработку персональных данных в соответствии с <a href="#privacy" class="legal-link" id="linkConsentPrivacy">Политикой конфиденциальности</a>.
+          </div>
+
+          <button type="submit" class="btn-checkout-primary submit-order-btn">
             Подтвердить и отправить заказ
           </button>
 
@@ -438,12 +537,12 @@
     </div>
   </div>
 
-  <!-- 9. Безопасный онлайн-симулятор оплаты -->
+  <!-- 8. Безопасный онлайн-симулятор оплаты -->
   <div class="modal-backdrop" id="simPayBackdrop">
     <div class="modal-window sim-pay-window">
       <div class="sim-pay-content">
         <div class="sim-icon">🔒</div>
-        <h3 class="sim-title">Безопасный платёж Купер</h3>
+        <h3 class="sim-title">Безопасная оплата заказа</h3>
         <p class="sim-sub">Сумма к списанию: <strong id="simAmountDisplay">0 ₽</strong></p>
 
         <div class="sim-secure-box">
@@ -453,13 +552,13 @@
         </div>
 
         <div class="sim-buttons-stack">
-          <button class="btn-kuper-checkout-main" id="btnSimPaySuccess">
+          <button class="btn-checkout-primary" id="btnSimPaySuccess">
             ✓ Оплатить (тестовый платеж)
           </button>
-          <button class="btn-kuper-secondary" id="btnSimFallbackCash">
+          <button class="btn-secondary-flat" id="btnSimFallbackCash">
             Оплатить курьеру при получении
           </button>
-          <button class="btn-kuper-cancel" id="btnSimCancel">
+          <button class="btn-cancel-flat" id="btnSimCancel">
             Отменить и вернуться в корзину
           </button>
         </div>
@@ -467,7 +566,7 @@
     </div>
   </div>
 
-  <!-- 10. Живой трекер статуса заказа -->
+  <!-- 9. Живой трекер статуса заказа -->
   <div class="modal-backdrop" id="trackerBackdrop">
     <div class="modal-window tracker-window">
       <button class="modal-close-btn" id="btnCloseTracker">✕</button>
@@ -518,58 +617,234 @@
           </div>
         </div>
 
-        <button class="btn-kuper-checkout-main" id="btnTrackerDone">
+        <button class="btn-checkout-primary" id="btnTrackerDone">
           Отлично, жду!
         </button>
       </div>
     </div>
   </div>
 
-  <!-- 11. Модалка выбора адреса -->
+  <!-- 10. Модалка выбора адреса -->
   <div class="modal-backdrop" id="addressBackdrop">
     <div class="modal-window address-window">
       <button class="modal-close-btn" id="btnCloseAddressModal">✕</button>
       <div class="address-modal-content">
         <h3 class="addr-title">Куда доставить заказ?</h3>
         <p class="addr-sub">г. Краснодар и прилегающие районы</p>
-        <input type="text" id="addressInputModal" value="ул. Петра Метальникова, 3/1А" class="kuper-input">
-        <button class="btn-kuper-checkout-main" id="btnSaveAddress">
+        <input type="text" id="addressInputModal" value="ул. Петра Метальникова, 3/1А" class="clean-dark-input">
+        <button class="btn-checkout-primary" id="btnSaveAddress">
           Сохранить адрес доставки
         </button>
       </div>
     </div>
   </div>
 
-  <!-- 12. Модалка "О заведении" -->
+  <!-- 11. Модалка "О заведении" -->
   <div class="modal-backdrop" id="aboutBackdrop">
     <div class="modal-window about-window">
       <button class="modal-close-btn" id="btnCloseAboutModal">✕</button>
       <div class="about-modal-content">
         <div class="about-photo-wrap">
-          <img src="img/hero-cover.jpg?v=5" alt="Фрито Буррито фасад заведения" class="about-hero-img">
+          <img src="img/hero-cover.jpg?v=6" alt="Кафе Фрито Буррито" class="about-hero-img">
           <div class="about-tag">Открытая кухня • Свежие рецепты</div>
         </div>
         <h3 class="about-title">Кафе «Фрито Буррито»</h3>
         <p class="about-text">
-          Настоящий мексиканский стритфуд в Краснодаре. Готовим сытные подрумяненные буррито, хрустящие тако, сырные кесадильи и фирменные закуски. Свежие овощи, отборное мясо, аутентичные специи и соусы.
+          «Фрито Буррито» — это кафе мексиканской кухни в Краснодаре, где готовят вкусные и сочные буррито, хрустящие тако, сырные кесадильи и фирменные закуски прямо на открытом гриле.
         </p>
         <div class="about-specs-list">
-          <div>📍 <strong>Адрес:</strong> г. Краснодар, ул. им. Петра Метальникова, 3/1А (ЖК «Времена года»)</div>
-          <div>⏰ <strong>Режим работы:</strong> ежедневно 10:00 — 23:00</div>
+          <div>📍 <strong>Адрес:</strong> г. Краснодар, ул. Петра Метальникова, 3/1А (микрорайон имени Петра Метальникова)</div>
+          <div>⏰ <strong>Режим работы:</strong> ежедневно 10:00 — 22:00 (открыто до 22:00)</div>
           <div>📞 <strong>Телефон:</strong> <a href="tel:+79996505576">+7 (999) 650-55-76</a></div>
-          <div>★ <strong>Рейтинг:</strong> 5.0 на Яндекс Картах (более 240 отзывов)</div>
+          <div>★ <strong>Рейтинг:</strong> 5.0 на Яндекс Картах (62 оценки)</div>
         </div>
-        <a href="https://yandex.ru/maps/org/frito_burrito/201782394789/" target="_blank" rel="noopener noreferrer" class="btn-kuper-secondary" style="margin-top:14px; text-align:center; display:block;">
+        <a href="https://yandex.ru/maps/org/frito_burrito/201782394789/" target="_blank" rel="noopener noreferrer" class="btn-secondary-flat" style="margin-top:14px; text-align:center; display:block;">
           Открыть в Яндекс Картах ↗
         </a>
       </div>
     </div>
   </div>
 
-  <!-- 13. Стек всплывающих toast-уведомлений -->
+  <!-- 12. Модалка Акций и промокодов (%) -->
+  <div class="modal-backdrop" id="promoCodesBackdrop">
+    <div class="modal-window promo-codes-window">
+      <button class="modal-close-btn" id="btnClosePromoCodesModal">✕</button>
+      <div class="promo-codes-content">
+        <h3 class="promo-win-title">🎁 Акции и промокоды</h3>
+        <p class="promo-win-sub">Выберите промокод для применения в вашей корзине:</p>
+        
+        <div class="promo-codes-list">
+          <div class="promo-item-row" data-code="ФРИТО15">
+            <div class="p-left">
+              <strong>Скидка 15% на первый заказ</strong>
+              <span>От 1 000 ₽ • Промокод: <code>ФРИТО15</code></span>
+            </div>
+            <button class="btn-apply-code" data-code="ФРИТО15">Применить</button>
+          </div>
+
+          <div class="promo-item-row" data-code="САМОВЫВОЗ">
+            <div class="p-left">
+              <strong>Скидка 10% на самовывоз</strong>
+              <span>На любой заказ при самовывозе с Петра Метальникова, 3/1А</span>
+            </div>
+            <button class="btn-apply-code" data-code="САМОВЫВОЗ">Выбрать</button>
+          </div>
+
+          <div class="promo-item-row" data-code="ДОСТАВКА">
+            <div class="p-left">
+              <strong>Бесплатная доставка от 800 ₽</strong>
+              <span>При заказе от 800 ₽ доставка курьером 0 ₽</span>
+            </div>
+            <button class="btn-apply-code" data-code="ДОСТАВКА">Применить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 13. Модалка Профиля / Входа -->
+  <div class="modal-backdrop" id="profileBackdrop">
+    <div class="modal-window profile-window">
+      <button class="modal-close-btn" id="btnCloseProfileModal">✕</button>
+      <div class="profile-content">
+        <h3 class="profile-title">Личный кабинет гостя</h3>
+        <p class="profile-sub">Вход по номеру телефона для накопления бонусов</p>
+
+        <div id="profileLoggedOutView">
+          <div class="input-field-group">
+            <label>Номер телефона</label>
+            <input type="tel" id="authPhoneInput" placeholder="+7 (999) 000-00-00">
+          </div>
+          <button class="btn-checkout-primary" id="btnSendAuthCode">
+            Получить код по SMS
+          </button>
+        </div>
+
+        <div id="profileLoggedInView" style="display: none;">
+          <div class="profile-card-badge">
+            <div class="p-avatar">🌯</div>
+            <div>
+              <strong id="profileUserName">Гость</strong>
+              <div id="profileUserPhone" style="font-size: 12px; color: var(--k-text-muted);">+7 (999) 650-55-76</div>
+            </div>
+          </div>
+
+          <div class="bonus-stat-box">
+            <span>Ваш баланс бонусов:</span>
+            <strong style="color: var(--k-green); font-size: 20px;">500 ₽</strong>
+          </div>
+
+          <button class="btn-secondary-flat" id="btnLogoutProfile" style="margin-top: 14px; width: 100%;">
+            Выйти из профиля
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 14. Модалка Бонусов (Лояльность) -->
+  <div class="modal-backdrop" id="bonusesBackdrop">
+    <div class="modal-window bonuses-window">
+      <button class="modal-close-btn" id="btnCloseBonusesModal">✕</button>
+      <div class="bonuses-content">
+        <div style="font-size: 38px; text-align: center; margin-bottom: 8px;">💚</div>
+        <h3 class="bonuses-title" style="text-align: center;">Программа лояльности</h3>
+        <div class="bonus-big-count" style="text-align: center; font-size: 28px; font-weight: 900; color: var(--k-green); margin: 6px 0;">500 бонусов</div>
+        
+        <p style="font-size: 13px; color: var(--k-text-muted); line-height: 1.45; text-align: center; margin-bottom: 16px;">
+          1 бонус = 1 рубль. Начисляем 5% кешбэка с каждого заказа. Бонусами можно оплатить до 30% суммы любого заказа в корзине!
+        </p>
+
+        <button class="btn-checkout-primary" id="btnCloseBonusesAction">
+          Понятно
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 15. Модалка Политики конфиденциальности (152-ФЗ) -->
+  <div class="modal-backdrop" id="legalPrivacyBackdrop">
+    <div class="modal-window legal-window">
+      <button class="modal-close-btn" id="btnClosePrivacyModal">✕</button>
+      <div class="legal-modal-body">
+        <h3 class="legal-heading">Политика конфиденциальности и обработки персональных данных (152-ФЗ)</h3>
+        <div class="legal-text-scroll">
+          <p><strong>1. Общие положения</strong><br>
+          Настоящая Политика обработки персональных данных составлена в соответствии с требованиями Федерального закона от 27.07.2006 № 152-ФЗ «О персональных данных» и определяет порядок обработки персональных данных и меры по обеспечению безопасности кафе «Фрито Буррито» (далее — Оператор).</p>
+
+          <p><strong>2. Цели обработки</strong><br>
+          Оператор обрабатывает персональные данные Пользователей (имя, контактный номер телефона, адрес доставки) исключительно в целях:
+          - оформления и доставки заказов ресторанных блюд;<br>
+          - обратной связи с клиентом для подтверждения заказа;<br>
+          - начисления бонусов программы лояльности.</p>
+
+          <p><strong>3. Безопасность и защита данных</strong><br>
+          Оператор не передает персональные данные третьим лицам, за исключением случаев, предусмотренных действующим законодательством РФ. Данные хранятся на защищенных серверах на территории РФ.</p>
+        </div>
+        <button class="btn-checkout-primary" id="btnAcceptPrivacyModal" style="margin-top: 14px;">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 16. Модалка Публичной оферты и условий заказа -->
+  <div class="modal-backdrop" id="legalOfferBackdrop">
+    <div class="modal-window legal-window">
+      <button class="modal-close-btn" id="btnCloseOfferModal">✕</button>
+      <div class="legal-modal-body">
+        <h3 class="legal-heading">Публичная оферта и правила заказа</h3>
+        <div class="legal-text-scroll">
+          <p><strong>1. Предмет оферты</strong><br>
+          Кафе «Фрито Буррито» предлагает услуги общественного питания и доставки готовых блюд по г. Краснодару на условиях настоящей Публичной оферты в соответствии со ст. 437 Гражданского кодекса РФ.</p>
+
+          <p><strong>2. Условия доставки и оплаты</strong><br>
+          - Бесплатная доставка осуществляется при сумме заказа от 800 ₽.<br>
+          - При заказе до 800 ₽ стоимость доставки курьером составляет 149 ₽.<br>
+          - Оплата может быть произведена наличными или банковской картой при получении курьеру, либо онлайн через защищенный шлюз СБП/карт.</p>
+
+          <p><strong>3. Возврат и отмена</strong><br>
+          Поскольку продукция относится к категории пищевых продуктов быстрого приготовления, отмена возможна до момента начала приготовления блюд на гриле.</p>
+        </div>
+        <button class="btn-checkout-primary" id="btnAcceptOfferModal" style="margin-top: 14px;">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 17. Ненавязчивый подвал с реквизитами по закону (Legal Footer) -->
+  <footer class="legal-site-footer">
+    <div class="footer-container">
+      <div class="f-brand-info">
+        <div class="f-title">Кафе «Фрито Буррито»</div>
+        <div class="f-desc">Мексиканский стритфуд в Краснодаре • Свежая открытая кухня, горячий гриль и быстрая доставка.</div>
+        <div class="f-legal-info">г. Краснодар, ул. им. Петра Метальникова, 3/1А (ЖК «Времена года») • Тел: +7 (999) 650-55-76</div>
+      </div>
+
+      <div class="f-links-column">
+        <button class="footer-legal-btn" id="btnOpenPrivacyPolicy">Политика конфиденциальности (152-ФЗ)</button>
+        <button class="footer-legal-btn" id="btnOpenPublicOffer">Публичная оферта и доставка</button>
+        <button class="footer-legal-btn" id="btnOpenCookieInfo">Файлы Cookie</button>
+      </div>
+    </div>
+
+    <div class="footer-copyright">
+      © 2026 Фрито Буррито. Все права защищены. Информация на сайте не является публичной офертой в толковании ст. 435 ГК РФ.
+    </div>
+  </footer>
+
+  <!-- 18. Ненавязчивая плашка Cookie (в соответствии с 152-ФЗ) -->
+  <aside class="cookie-banner-bar" id="cookieBanner">
+    <div class="cookie-inner">
+      <span class="cookie-icon">🍪</span>
+      <span class="cookie-text">
+        Мы используем файлы cookie для корректной работы сервиса и оформления заказов в соответствии с <a href="#privacy" class="cookie-link" id="cookiePrivacyLink">152-ФЗ</a>.
+      </span>
+      <button class="btn-cookie-accept" id="btnAcceptCookies">Понятно</button>
+    </div>
+  </aside>
+
+  <!-- 19. Стек всплывающих toast-уведомлений -->
   <div class="toast-stack" id="toastStack"></div>
 
   <!-- Скрипт приложения -->
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

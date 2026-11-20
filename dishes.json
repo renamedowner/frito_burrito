@@ -1,18 +1,18 @@
 {
   "restaurant": {
     "id": "frito-burrito-krd",
-    "name": "Frito Burrito",
-    "cuisine": "Мексиканский стритфуд",
+    "name": "Фрито Буррито",
+    "cuisine": "Мексиканская кухня",
     "rating": "5.0",
-    "reviewsCount": 240,
+    "reviewsCount": 62,
     "deliveryTime": "25–35 мин",
     "minOrder": 400,
     "freeDeliveryThreshold": 800,
     "deliveryCost": 149,
-    "address": "Краснодар, ул. им. Петра Метальникова, 3/1А",
+    "address": "г. Краснодар, ул. Петра Метальникова, 3/1А",
     "phone": "+7 (999) 650-55-76",
     "phoneFormatted": "+7 (999) 650-55-76",
-    "workingHours": "10:00 — 23:00 ежедневно",
+    "workingHours": "10:00 — 22:00 ежедневно",
     "yandexMapsUrl": "https://yandex.ru/maps/org/frito_burrito/201782394789/"
   },
   "categories": [

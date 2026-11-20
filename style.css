@@ -1,43 +1,44 @@
 /* ==========================================================================
-   FRITO BURRITO — KUPER DELIVERY DARK THEME (Копия стиля Купер в темной теме)
-   Bespoke, Clean, 0-Lag, 100% Responsive, Zero-Bug Architecture
+   FRITO BURRITO — OFFICIAL RESTAURANT DARK THEME & DELIVERY INTERFACE
+   Emerald & Dark Charcoal palette, Minimalist cards with photo slots,
+   Compact Emerald Category Bar, Multi-promo Panels, Legal Compliance
    ========================================================================== */
 
 :root {
   --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
-  /* Темная палитра Купер */
-  --k-bg: #121316;               /* Основной фон страницы */
-  --k-surface: #1B1C22;          /* Фон карточек и панелей */
-  --k-surface-light: #242630;    /* Инпуты, чипы, второстепенные плашки */
-  --k-surface-hover: #2D303C;    /* Ховер элементов */
-  --k-border: #2B2D38;           /* Границы блоков */
-  --k-border-subtle: #22242D;
+  /* Темная фирменная палитра */
+  --k-bg: #111215;               /* Глубокий темный фон */
+  --k-surface: #1A1B22;          /* Поверхность карточек */
+  --k-surface-light: #242631;    /* Второстепенные плашки */
+  --k-surface-hover: #2C2F3D;    /* Ховер элементов */
+  --k-border: #2B2E3C;           /* Границы блоков */
+  --k-border-subtle: #21232D;
   
-  /* Фирменный зеленый Купер */
-  --k-green: #00E054;            /* Яркий фирменный неоново-зеленый Купер */
+  /* Фирменный изумрудно-зеленый акцент */
+  --k-green: #00E054;            /* Яркий сочный зеленый */
   --k-green-hover: #00C84B;
   --k-green-light: rgba(0, 224, 84, 0.12);
   --k-green-border: rgba(0, 224, 84, 0.28);
   
-  /* Текстовые цвета */
-  --k-text: #FFFFFF;
-  --k-text-muted: #9DA1B0;
-  --k-text-dim: #6B6F7D;
-  
-  /* Акценты */
+  /* Акцентные цвета */
+  --k-amber: #FFA726;
   --k-spicy: #FF5252;
   --k-spicy-bg: rgba(255, 82, 82, 0.15);
   --k-yellow: #FFD600;
-  --k-ticket-bg: #162C1E;
+  
+  /* Текст */
+  --k-text: #FFFFFF;
+  --k-text-muted: #9DA1B0;
+  --k-text-dim: #6B6F7D;
   
   --k-radius-sm: 8px;
   --k-radius-md: 14px;
   --k-radius-lg: 20px;
   --k-radius-full: 9999px;
   
-  --k-shadow-card: 0 4px 16px rgba(0, 0, 0, 0.24);
-  --k-shadow-pop: 0 8px 30px rgba(0, 0, 0, 0.45);
+  --k-shadow-card: 0 4px 16px rgba(0, 0, 0, 0.25);
+  --k-shadow-pop: 0 8px 32px rgba(0, 0, 0, 0.5);
   
   --container-max: 1360px;
   --trans-fast: 0.16s ease-out;
@@ -80,8 +81,8 @@ a {
 /* ==========================================================================
    1. Верхняя служебная строка (Top Bar)
    ========================================================================== */
-.kuper-top-bar {
-  background-color: #0E0F12;
+.top-service-bar {
+  background-color: #0D0E11;
   border-bottom: 1px solid var(--k-border-subtle);
   font-size: 11px;
   color: var(--k-text-muted);
@@ -106,18 +107,23 @@ a {
   flex-wrap: wrap;
 }
 
-.top-link {
+.top-link, .top-link-btn {
   color: var(--k-text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 11px;
   transition: color var(--trans-fast);
 }
 
-.top-link:hover {
-  color: var(--k-text);
+.top-link:hover, .top-link-btn:hover {
+  color: #FFFFFF;
 }
 
 .top-link.phone {
   font-weight: 700;
-  color: var(--k-text);
+  color: #FFFFFF;
 }
 
 .top-link.rating {
@@ -130,9 +136,9 @@ a {
 }
 
 /* ==========================================================================
-   2. Главная шапка в стиле Купер (Header)
+   2. Главная шапка (Header)
    ========================================================================== */
-.kuper-main-header {
+.main-header {
   position: sticky;
   top: 0;
   z-index: 100;
@@ -151,42 +157,53 @@ a {
   gap: 12px;
 }
 
-/* Логотип Купер */
-.kuper-logo-link {
+/* Логотип ФРИТО БУРРИТО */
+.brand-logo-link {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   flex-shrink: 0;
   user-select: none;
 }
 
-.logo-kuper-text {
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: -0.6px;
+.brand-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-logo-icon {
+  font-size: 26px;
   line-height: 1;
 }
 
-.logo-white {
+.brand-text-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  line-height: 1.05;
+}
+
+.brand-white {
   color: #FFFFFF;
 }
 
-.logo-dot {
+.brand-green {
   color: var(--k-green);
 }
 
-.logo-sub {
-  color: var(--k-green);
-}
-
-.logo-tag {
+.brand-slogan {
   font-size: 10px;
   color: var(--k-text-muted);
   font-weight: 600;
   letter-spacing: 0.2px;
-  margin-top: 2px;
 }
 
-/* Поиск "Что найти?" */
+/* Поиск "Что найти в меню?" */
 .search-box-wrap {
   flex: 1;
   min-width: 180px;
@@ -202,7 +219,7 @@ a {
 
 .search-box-wrap:focus-within {
   border-color: var(--k-green);
-  background-color: #282A35;
+  background-color: #272A38;
   box-shadow: 0 0 0 2px var(--k-green-light);
 }
 
@@ -239,7 +256,7 @@ a {
 }
 
 /* Кнопки в шапке */
-.header-action-btn {
+.header-pill-btn {
   background-color: var(--k-surface-light);
   border: 1px solid var(--k-border);
   border-radius: var(--k-radius-full);
@@ -256,9 +273,9 @@ a {
   white-space: nowrap;
 }
 
-.header-action-btn:hover {
+.header-pill-btn:hover {
   background-color: var(--k-surface-hover);
-  border-color: #3D4050;
+  border-color: #3C4052;
 }
 
 .address-btn {
@@ -276,7 +293,7 @@ a {
   color: var(--k-text-dim);
 }
 
-.header-icon-btn.promo-btn {
+.header-circle-btn.promo-btn {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -293,13 +310,13 @@ a {
   transition: all var(--trans-fast);
 }
 
-.header-icon-btn.promo-btn:hover {
+.header-circle-btn.promo-btn:hover {
   background-color: var(--k-green-light);
   border-color: var(--k-green);
 }
 
-/* Бонусы Спасибо */
-.bonuses-badge {
+/* Бонусы */
+.bonuses-pill {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -314,16 +331,15 @@ a {
   flex-shrink: 0;
 }
 
-.bonus-label {
+.bonus-lbl {
   color: #FFFFFF;
   font-weight: 600;
 }
 
-.bonus-val {
+.bonus-num {
   font-weight: 900;
 }
 
-/* Мобильная кнопка корзины в шапке (для телефонов) */
 .header-cart-mobile-btn {
   display: none;
   background-color: var(--k-green);
@@ -354,78 +370,57 @@ a {
 }
 
 /* ==========================================================================
-   3. Уведомление Купер (Notice Bar)
+   3. Двухколоночный макет (Page Layout)
    ========================================================================== */
-.kuper-notice-bar {
-  background-color: #191B22;
-  border-bottom: 1px solid var(--k-border);
-  font-size: 12px;
-  color: var(--k-text-muted);
-}
-
-.notice-inner {
-  max-width: var(--container-max);
-  margin: 0 auto;
-  padding: 8px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.notice-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.notice-star {
-  color: var(--k-yellow);
-  font-size: 14px;
-}
-
-.notice-text strong {
-  color: #FFFFFF;
-}
-
-.notice-close {
-  background: transparent;
-  border: none;
-  color: var(--k-text-dim);
-  cursor: pointer;
-  font-size: 14px;
-}
-
-/* ==========================================================================
-   4. Двухколоночный макет Купер (Page Layout Grid)
-   ========================================================================== */
-.kuper-page-container {
+.page-container {
   max-width: var(--container-max);
   margin: 18px auto 60px;
   padding: 0 16px;
   width: 100%;
 }
 
-.kuper-layout-grid {
+.layout-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 340px;
   gap: 22px;
   align-items: start;
 }
 
-.kuper-main-content {
+.main-content-column {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 /* ==========================================================================
-   5. Большой промо-баннер Купер с купоном (Hero Promo)
+   4. Карусель промо-панелей (Много панелей в красивом изумрудном стиле)
    ========================================================================== */
-.promo-card {
-  background: linear-gradient(135deg, #152A1C 0%, #171922 60%, #1E202B 100%);
-  border: 1px solid #23462E;
+.promo-carousel-section {
+  width: 100%;
+}
+
+.promo-carousel-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--k-radius-lg);
+  box-shadow: var(--k-shadow-card);
+}
+
+.promo-carousel-track {
+  display: flex;
+  transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1);
+  width: 100%;
+}
+
+.promo-banner-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 100%;
+}
+
+.promo-slide-inner {
   border-radius: var(--k-radius-lg);
   padding: 24px 28px;
   display: flex;
@@ -434,15 +429,30 @@ a {
   gap: 20px;
   position: relative;
   overflow: hidden;
-  box-shadow: var(--k-shadow-card);
 }
 
-.promo-left {
+/* Темы для панелей в любимом изумрудном градиенте */
+.promo-slide-inner.emerald-theme {
+  background: linear-gradient(135deg, #14281B 0%, #171A24 60%, #1C1F2B 100%);
+  border: 1px solid #23462E;
+}
+
+.promo-slide-inner.amber-emerald-theme {
+  background: linear-gradient(135deg, #242214 0%, #191B24 60%, #15261C 100%);
+  border: 1px solid #433E23;
+}
+
+.promo-slide-inner.forest-theme {
+  background: linear-gradient(135deg, #0F281E 0%, #141D26 60%, #1C2621 100%);
+  border: 1px solid #1E4633;
+}
+
+.slide-left {
   flex: 1;
   min-width: 240px;
 }
 
-.promo-pill {
+.promo-badge-pill {
   display: inline-block;
   background-color: var(--k-green-light);
   color: var(--k-green);
@@ -454,8 +464,20 @@ a {
   margin-bottom: 10px;
 }
 
-.promo-heading {
-  font-size: 26px;
+.promo-badge-pill.amber {
+  background-color: rgba(255, 167, 38, 0.12);
+  color: var(--k-amber);
+  border-color: rgba(255, 167, 38, 0.3);
+}
+
+.promo-badge-pill.green {
+  background-color: rgba(0, 224, 84, 0.15);
+  color: var(--k-green);
+  border-color: rgba(0, 224, 84, 0.35);
+}
+
+.slide-heading {
+  font-size: 24px;
   font-weight: 900;
   line-height: 1.2;
   letter-spacing: -0.5px;
@@ -463,22 +485,22 @@ a {
   margin-bottom: 8px;
 }
 
-.promo-subheading {
+.slide-subheading {
   font-size: 13px;
   color: var(--k-text-muted);
   line-height: 1.45;
   margin-bottom: 16px;
-  max-width: 520px;
+  max-width: 500px;
 }
 
-.promo-actions {
+.slide-actions-row {
   display: flex;
   align-items: center;
   gap: 14px;
   flex-wrap: wrap;
 }
 
-.btn-promo-apply {
+.btn-promo-action {
   background-color: var(--k-green);
   color: #0E0F12;
   font-weight: 900;
@@ -490,12 +512,12 @@ a {
   transition: all var(--trans-fast);
 }
 
-.btn-promo-apply:hover {
+.btn-promo-action:hover {
   background-color: var(--k-green-hover);
   transform: translateY(-1px);
 }
 
-.promo-meta-specs {
+.slide-specs {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -504,12 +526,12 @@ a {
   font-weight: 600;
 }
 
-/* Перфорированный билет Купера */
-.promo-right {
+/* Перфорированный билет */
+.slide-right {
   flex-shrink: 0;
 }
 
-.voucher-ticket {
+.perforated-ticket {
   width: 170px;
   background: linear-gradient(180deg, #00C84B 0%, #009E38 100%);
   color: #0A1C10;
@@ -522,29 +544,41 @@ a {
   transition: transform var(--trans-fast);
 }
 
-.voucher-ticket:hover {
+.perforated-ticket:hover {
   transform: scale(1.03);
 }
 
-.ticket-cut {
+.perforated-ticket.amber-ticket {
+  background: linear-gradient(180deg, #FFA726 0%, #E65100 100%);
+  box-shadow: 0 8px 24px rgba(255, 167, 38, 0.25);
+  color: #1A1208;
+}
+
+.perforated-ticket.forest-ticket {
+  background: linear-gradient(180deg, #00E054 0%, #008736 100%);
+  box-shadow: 0 8px 24px rgba(0, 224, 84, 0.25);
+  color: #0A1C10;
+}
+
+.t-cut {
   position: absolute;
   width: 16px;
   height: 16px;
-  background-color: #171922;
+  background-color: #171A24;
   border-radius: 50%;
   left: 50%;
   transform: translateX(-50%);
 }
 
-.ticket-cut.top {
+.t-cut.top {
   top: -8px;
 }
 
-.ticket-cut.bottom {
+.t-cut.bottom {
   bottom: -8px;
 }
 
-.ticket-header {
+.t-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -553,96 +587,166 @@ a {
   margin-bottom: 6px;
 }
 
-.ticket-divider {
+.t-line {
   border-bottom: 1px dashed rgba(10, 28, 16, 0.35);
   margin: 6px 0 10px;
 }
 
-.ticket-label {
+.t-label {
   font-size: 10px;
   font-weight: 900;
   letter-spacing: 0.5px;
   opacity: 0.85;
 }
 
-.ticket-code {
+.t-code {
   font-size: 19px;
   font-weight: 900;
   letter-spacing: 0.5px;
-  color: #0A1C10;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.45);
   padding: 4px 6px;
   border-radius: var(--k-radius-sm);
   margin: 4px 0;
 }
 
-.ticket-hint {
+.t-hint {
   font-size: 9px;
   font-weight: 700;
   opacity: 0.75;
 }
 
-/* ==========================================================================
-   6. Плитки категорий Купер (Categories Tiles Grid)
-   ========================================================================== */
-.categories-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 10px;
-  width: 100%;
+/* Навигация карусели */
+.promo-carousel-controls {
+  position: absolute;
+  bottom: 10px;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 5;
 }
 
-.cat-tile {
-  background-color: var(--k-surface);
+.carousel-nav-btn {
+  background-color: rgba(18, 20, 26, 0.85);
   border: 1px solid var(--k-border);
-  border-radius: var(--k-radius-md);
-  padding: 12px 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+  color: #FFFFFF;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: 900;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--trans-fast);
+}
+
+.carousel-nav-btn:hover {
+  background-color: var(--k-green);
+  color: #0E0F12;
+  border-color: var(--k-green);
+}
+
+.carousel-dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.carousel-dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #3E4252;
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+
+.carousel-dots .dot.active {
+  width: 20px;
+  border-radius: var(--k-radius-full);
+  background-color: var(--k-green);
+}
+
+/* ==========================================================================
+   5. Компактная изумрудная панель категорий ("позжатее и под панель со скидкой")
+   ========================================================================== */
+.compact-categories-bar {
+  background: linear-gradient(135deg, rgba(20, 40, 27, 0.75) 0%, rgba(24, 26, 35, 0.95) 100%);
+  border: 1px solid rgba(0, 224, 84, 0.22);
+  border-radius: var(--k-radius-md);
+  padding: 8px 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  position: sticky;
+  top: 68px;
+  z-index: 80;
+  backdrop-filter: blur(8px);
+}
+
+.compact-categories-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.compact-categories-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Компактный чип категории */
+.compact-cat-chip {
+  background-color: rgba(18, 20, 26, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--k-radius-full);
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: all var(--trans-fast);
   user-select: none;
 }
 
-.cat-tile:hover {
-  background-color: var(--k-surface-light);
-  border-color: #3B3F4E;
-  transform: translateY(-2px);
+.compact-cat-chip:hover {
+  background-color: rgba(36, 40, 52, 0.9);
+  border-color: rgba(0, 224, 84, 0.4);
 }
 
-.cat-tile.active {
-  background-color: var(--k-surface-light);
+.compact-cat-chip.active {
+  background-color: var(--k-green);
+  color: #0E0F12;
   border-color: var(--k-green);
-  box-shadow: 0 0 0 1px var(--k-green);
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(0, 224, 84, 0.35);
 }
 
-.cat-tile-icon {
-  font-size: 28px;
-  margin-bottom: 6px;
+.chip-icon {
+  font-size: 15px;
   line-height: 1;
 }
 
-.cat-tile-name {
+.chip-name {
   font-size: 12px;
   font-weight: 700;
-  color: var(--k-text);
-  line-height: 1.25;
 }
 
-.cat-tile-count {
+.chip-count {
   font-size: 10px;
-  color: var(--k-text-dim);
-  margin-top: 2px;
+  opacity: 0.75;
 }
 
 /* ==========================================================================
-   7. Каталог блюд (Темные карточки Купер)
+   6. Минималистичные карточки блюд с местом под фото
    ========================================================================== */
 .catalog-section {
-  margin-bottom: 28px;
-  scroll-margin-top: 80px;
+  margin-bottom: 24px;
+  scroll-margin-top: 130px;
 }
 
 .section-head-bar {
@@ -655,7 +759,7 @@ a {
 }
 
 .section-title {
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 900;
   letter-spacing: -0.3px;
   color: #FFFFFF;
@@ -667,20 +771,20 @@ a {
   font-weight: 600;
 }
 
-/* Сетка карточек блюд */
+/* Сетка карточек */
 .dishes-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
   gap: 12px;
   width: 100%;
 }
 
-/* Карточка блюда в темной теме */
-.kuper-dish-card {
+/* Минималистичная карточка со слотом под фото */
+.minimal-dish-card {
   background-color: var(--k-surface);
   border: 1px solid var(--k-border);
   border-radius: var(--k-radius-md);
-  padding: 14px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -690,148 +794,162 @@ a {
   transition: all var(--trans-fast);
 }
 
-.kuper-dish-card:hover {
+.minimal-dish-card:hover {
   background-color: #20222B;
-  border-color: #3E4254;
+  border-color: #3C4154;
   box-shadow: var(--k-shadow-card);
+  transform: translateY(-2px);
 }
 
-.dish-card-top {
-  margin-bottom: 10px;
+/* Слот под реальное фото блюда */
+.dish-photo-slot {
+  width: 100%;
+  height: 135px;
+  position: relative;
+  overflow: hidden;
+  background-color: #16171E;
 }
 
-.dish-badges-row {
+.dish-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.minimal-dish-card:hover .dish-card-img {
+  transform: scale(1.05);
+}
+
+.dish-badges-overlay {
+  position: absolute;
+  top: 8px;
+  left: 8px;
   display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 2;
 }
 
 .badge-tag {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
-  padding: 2px 7px;
+  padding: 2px 6px;
   border-radius: var(--k-radius-full);
   white-space: nowrap;
 }
 
 .badge-tag.spicy {
-  background-color: var(--k-spicy-bg);
-  color: var(--k-spicy);
-  border: 1px solid rgba(255, 82, 82, 0.3);
+  background-color: rgba(229, 57, 53, 0.9);
+  color: #FFFFFF;
 }
 
 .badge-tag.hit {
-  background-color: rgba(255, 214, 0, 0.12);
-  color: var(--k-yellow);
-  border: 1px solid rgba(255, 214, 0, 0.3);
+  background-color: rgba(255, 167, 38, 0.95);
+  color: #1A1208;
 }
 
-.dish-card-name {
-  font-size: 15px;
+/* Текстовая часть карточки */
+.dish-card-content {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.dish-title {
+  font-size: 14px;
   font-weight: 800;
   line-height: 1.25;
   color: #FFFFFF;
-  margin-bottom: 6px;
-  word-break: break-word;
+  margin-bottom: 4px;
 }
 
-.dish-card-desc {
-  font-size: 12px;
+.dish-desc-brief {
+  font-size: 11px;
   color: var(--k-text-muted);
-  line-height: 1.4;
+  line-height: 1.35;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  margin-bottom: 8px;
 }
 
-.dish-card-bottom {
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid var(--k-border-subtle);
+.dish-footer-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--k-border-subtle);
+  margin-top: auto;
 }
 
-.dish-price-box {
-  display: flex;
-  flex-direction: column;
-}
-
-.dish-price {
-  font-size: 17px;
+.dish-price-text {
+  font-size: 16px;
   font-weight: 900;
   color: #FFFFFF;
-  line-height: 1.1;
 }
 
-.dish-weight {
+.dish-weight-sub {
   font-size: 10px;
   color: var(--k-text-dim);
   font-weight: 600;
 }
 
-/* Кнопка добавления Купер (зеленая) */
-.btn-kuper-add {
+.btn-add-minimal {
   background-color: var(--k-green-light);
   color: var(--k-green);
   border: 1px solid var(--k-green-border);
-  padding: 6px 14px;
+  padding: 5px 12px;
   border-radius: var(--k-radius-full);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   cursor: pointer;
   white-space: nowrap;
   transition: all var(--trans-fast);
 }
 
-.btn-kuper-add:hover {
+.btn-add-minimal:hover {
   background-color: var(--k-green);
   color: #0E0F12;
   border-color: var(--k-green);
 }
 
-/* Счётчик прямо на карточке */
-.dish-card-stepper {
+.card-stepper-minimal {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   background-color: var(--k-green);
   border-radius: var(--k-radius-full);
-  padding: 3px 6px;
+  padding: 2px 5px;
 }
 
-.dish-card-stepper button {
-  width: 22px;
-  height: 22px;
+.card-stepper-minimal button {
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background-color: #0E0F12;
   color: #FFFFFF;
   border: none;
-  font-size: 13px;
-  font-weight: 900;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.dish-card-stepper span {
   font-size: 12px;
   font-weight: 900;
+  cursor: pointer;
+}
+
+.card-stepper-minimal span {
+  font-size: 11px;
+  font-weight: 900;
   color: #0E0F12;
-  min-width: 16px;
+  min-width: 14px;
   text-align: center;
 }
 
 /* ==========================================================================
-   8. Постоянная корзина на десктопе в стиле Купер (Sidebar Cart)
+   7. Постоянная корзина на десктопе (Desktop Cart Sidebar)
    ========================================================================== */
-.kuper-desktop-cart-sidebar {
+.desktop-cart-sidebar {
   position: sticky;
   top: 76px;
   width: 100%;
@@ -841,7 +959,7 @@ a {
   background-color: var(--k-surface);
   border: 1px solid var(--k-border);
   border-radius: var(--k-radius-lg);
-  padding: 18px;
+  padding: 16px;
   box-shadow: var(--k-shadow-card);
   display: flex;
   flex-direction: column;
@@ -851,16 +969,16 @@ a {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .sidebar-cart-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 900;
   color: #FFFFFF;
 }
 
-.sidebar-cart-clear {
+.sidebar-cart-clear-btn {
   background: transparent;
   border: none;
   color: var(--k-text-dim);
@@ -869,12 +987,11 @@ a {
   cursor: pointer;
 }
 
-.sidebar-cart-clear:hover {
+.sidebar-cart-clear-btn:hover {
   color: var(--k-spicy);
 }
 
-/* Переключатель режима Доставка / Самовывоз */
-.cart-mode-selector {
+.cart-mode-toggle {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
@@ -940,53 +1057,53 @@ a {
   transition: width 0.3s ease;
 }
 
-/* Пустая корзина: Пакет Купера с глазками */
+/* Пустая корзина */
 .cart-empty-state {
   text-align: center;
-  padding: 30px 10px;
+  padding: 24px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.kuper-bag-illustration {
-  margin-bottom: 12px;
+.craft-bag-illustration {
+  margin-bottom: 10px;
 }
 
 .empty-state-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
   color: #FFFFFF;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .empty-state-desc {
   font-size: 12px;
   color: var(--k-text-dim);
   line-height: 1.4;
-  max-width: 220px;
+  max-width: 200px;
 }
 
 /* Список добавленных блюд */
 .cart-items-scroll-list {
-  max-height: 320px;
+  max-height: 280px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   padding-right: 2px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .cart-items-scroll-list::-webkit-scrollbar {
   width: 4px;
 }
 .cart-items-scroll-list::-webkit-scrollbar-thumb {
-  background-color: #3D4050;
+  background-color: #383B4A;
   border-radius: 4px;
 }
 
-.sidebar-cart-item {
+.cart-item-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1038,12 +1155,12 @@ a {
   font-size: 13px;
   font-weight: 800;
   cursor: pointer;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .item-stepper span {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   min-width: 14px;
   text-align: center;
@@ -1057,7 +1174,7 @@ a {
   padding: 8px 10px;
   background-color: var(--k-surface-light);
   border-radius: var(--k-radius-sm);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   font-size: 11px;
 }
 
@@ -1085,10 +1202,10 @@ a {
   color: #FFFFFF;
 }
 
-/* Подвал корзины */
+/* Расчет и подвал корзины */
 .cart-sidebar-footer {
   border-top: 1px solid var(--k-border);
-  padding-top: 12px;
+  padding-top: 10px;
 }
 
 .calc-row {
@@ -1096,14 +1213,14 @@ a {
   justify-content: space-between;
   font-size: 12px;
   color: var(--k-text-muted);
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 
 .calc-row.total {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 900;
   color: #FFFFFF;
-  margin: 10px 0 14px;
+  margin: 8px 0 12px;
   padding-top: 8px;
   border-top: 1px dashed var(--k-border);
 }
@@ -1117,15 +1234,15 @@ a {
   color: var(--k-green);
 }
 
-/* Главная кнопка оформления в стиле Купер */
-.btn-kuper-checkout-main {
+/* Кнопки оформления */
+.btn-checkout-primary {
   width: 100%;
   background-color: var(--k-green);
   color: #0E0F12;
   font-weight: 900;
-  font-size: 14px;
+  font-size: 13px;
   border: none;
-  padding: 12px 18px;
+  padding: 12px 16px;
   border-radius: var(--k-radius-full);
   display: flex;
   align-items: center;
@@ -1134,20 +1251,19 @@ a {
   transition: all var(--trans-fast);
 }
 
-.btn-kuper-checkout-main:hover {
+.btn-checkout-primary:hover {
   background-color: var(--k-green-hover);
   transform: translateY(-1px);
 }
 
-/* Кнопка заказа WhatsApp */
-.btn-kuper-whatsapp {
+.btn-whatsapp-action {
   width: 100%;
   background-color: var(--k-surface-light);
   border: 1px solid var(--k-border);
   color: #FFFFFF;
   font-weight: 700;
   font-size: 12px;
-  padding: 10px 14px;
+  padding: 9px 12px;
   border-radius: var(--k-radius-full);
   display: flex;
   align-items: center;
@@ -1158,14 +1274,14 @@ a {
   transition: all var(--trans-fast);
 }
 
-.btn-kuper-whatsapp:hover {
+.btn-whatsapp-action:hover {
   background-color: #25D366;
   border-color: #25D366;
   color: #FFFFFF;
 }
 
 /* ==========================================================================
-   9. Мобильная адаптивность (Mobile Bottom Bar & Drawer)
+   8. Мобильная адаптивность (Mobile Floating Bar & Drawer)
    ========================================================================== */
 .mobile-bottom-bar {
   display: none !important;
@@ -1175,7 +1291,7 @@ a {
   right: 0;
   z-index: 99;
   padding: 10px 14px;
-  background-color: rgba(18, 19, 22, 0.95);
+  background-color: rgba(17, 18, 21, 0.95);
   backdrop-filter: blur(8px);
   border-top: 1px solid var(--k-border);
 }
@@ -1220,7 +1336,7 @@ a {
   font-size: 13px;
 }
 
-/* Мобильный дровер корзины */
+/* Мобильный выкатной дровер */
 .mobile-drawer-sheet {
   position: fixed;
   bottom: 0;
@@ -1287,7 +1403,7 @@ a {
 }
 
 /* ==========================================================================
-   10. Модальные окна (Modals)
+   9. Модальные окна (Modals)
    ========================================================================== */
 .modal-backdrop {
   position: fixed;
@@ -1347,8 +1463,21 @@ a {
   max-width: 440px;
 }
 
+.dish-modal-photo-wrap {
+  width: 100%;
+  height: 190px;
+  overflow: hidden;
+  background-color: #14151B;
+}
+
+.dish-modal-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .dish-modal-body {
-  padding: 24px 22px 14px;
+  padding: 18px 20px 12px;
 }
 
 .dish-modal-header {
@@ -1356,18 +1485,17 @@ a {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .dish-modal-title {
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 900;
   color: #FFFFFF;
-  line-height: 1.25;
 }
 
 .dish-modal-price {
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 900;
   color: var(--k-green);
   white-space: nowrap;
@@ -1379,18 +1507,18 @@ a {
   gap: 8px;
   font-size: 12px;
   color: var(--k-text-dim);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .dish-modal-desc {
   font-size: 13px;
   color: var(--k-text-muted);
   line-height: 1.45;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .modifiers-title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
   margin-bottom: 8px;
   color: #FFFFFF;
@@ -1406,17 +1534,13 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 9px 12px;
+  padding: 8px 12px;
   background-color: var(--k-surface-light);
   border: 1px solid var(--k-border);
   border-radius: var(--k-radius-sm);
   cursor: pointer;
   transition: all var(--trans-fast);
-  font-size: 13px;
-}
-
-.mod-row:hover {
-  background-color: #2F3342;
+  font-size: 12px;
 }
 
 .mod-row.selected {
@@ -1436,7 +1560,7 @@ a {
 }
 
 .dish-modal-footer {
-  padding: 12px 22px 20px;
+  padding: 10px 20px 18px;
   border-top: 1px solid var(--k-border-subtle);
 }
 
@@ -1446,23 +1570,23 @@ a {
 }
 
 .checkout-modal-body {
-  padding: 24px;
+  padding: 22px;
 }
 
 .checkout-header-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .checkout-heading {
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 900;
 }
 
 .checkout-pay-badge {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--k-text-muted);
 }
 
@@ -1498,7 +1622,7 @@ a {
   color: var(--k-text-dim);
 }
 
-.input-field-group input, .kuper-input {
+.input-field-group input, .clean-dark-input {
   background-color: var(--k-surface-light);
   border: 1px solid var(--k-border);
   border-radius: var(--k-radius-sm);
@@ -1510,7 +1634,7 @@ a {
   transition: border-color var(--trans-fast);
 }
 
-.input-field-group input:focus, .kuper-input:focus {
+.input-field-group input:focus, .clean-dark-input:focus {
   border-color: var(--k-green);
 }
 
@@ -1557,9 +1681,21 @@ a {
   line-height: 1.3;
 }
 
+.legal-consent-text {
+  font-size: 10px;
+  color: var(--k-text-dim);
+  line-height: 1.4;
+  margin: 12px 0;
+}
+
+.legal-link {
+  color: var(--k-green);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .submit-order-btn {
   justify-content: center;
-  margin-top: 14px;
 }
 
 /* Симулятор платежа */
@@ -1569,12 +1705,12 @@ a {
 }
 
 .sim-pay-content {
-  padding: 26px 20px;
+  padding: 24px 20px;
 }
 
 .sim-icon {
-  font-size: 40px;
-  margin-bottom: 8px;
+  font-size: 38px;
+  margin-bottom: 6px;
 }
 
 .sim-title {
@@ -1583,7 +1719,7 @@ a {
 }
 
 .sim-sub {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--k-text-muted);
   margin-top: 4px;
 }
@@ -1614,7 +1750,7 @@ a {
   gap: 8px;
 }
 
-.btn-kuper-secondary {
+.btn-secondary-flat {
   background-color: var(--k-surface-light);
   border: 1px solid var(--k-border);
   color: #FFFFFF;
@@ -1625,7 +1761,7 @@ a {
   cursor: pointer;
 }
 
-.btn-kuper-cancel {
+.btn-cancel-flat {
   background: transparent;
   border: none;
   color: var(--k-text-dim);
@@ -1666,7 +1802,7 @@ a {
 }
 
 .tracker-title {
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 900;
 }
 
@@ -1680,7 +1816,7 @@ a {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin: 18px 0;
+  margin: 16px 0;
 }
 
 .track-step {
@@ -1708,12 +1844,7 @@ a {
   justify-content: center;
 }
 
-.track-step.active .step-num {
-  background-color: var(--k-green);
-  color: #0E0F12;
-}
-
-.track-step.completed .step-num {
+.track-step.active .step-num, .track-step.completed .step-num {
   background-color: var(--k-green);
   color: #0E0F12;
 }
@@ -1760,21 +1891,124 @@ a {
   margin-top: 4px;
 }
 
-/* Модалка О заведении */
-.about-window {
-  max-width: 480px;
+/* Модалки акций, профиля, бонусов */
+.promo-codes-window, .profile-window, .bonuses-window, .about-window, .address-window, .legal-window {
+  max-width: 460px;
 }
 
-.about-modal-content {
+.promo-codes-content, .profile-content, .bonuses-content, .address-modal-content, .legal-modal-body {
   padding: 22px;
+}
+
+.promo-win-title, .profile-title, .addr-title, .legal-heading {
+  font-size: 17px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.promo-win-sub, .profile-sub, .addr-sub {
+  font-size: 12px;
+  color: var(--k-text-dim);
+  margin-bottom: 14px;
+}
+
+.promo-codes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.promo-item-row {
+  background-color: var(--k-surface-light);
+  border: 1px solid var(--k-border);
+  border-radius: var(--k-radius-sm);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.p-left {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+}
+
+.p-left strong {
+  color: #FFFFFF;
+}
+
+.p-left span {
+  color: var(--k-text-dim);
+  font-size: 11px;
+}
+
+.p-left code {
+  color: var(--k-green);
+  font-weight: 800;
+}
+
+.btn-apply-code {
+  background-color: var(--k-green);
+  color: #0E0F12;
+  border: none;
+  padding: 5px 12px;
+  border-radius: var(--k-radius-full);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.profile-card-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--k-surface-light);
+  padding: 12px;
+  border-radius: var(--k-radius-sm);
+  margin-bottom: 12px;
+}
+
+.p-avatar {
+  font-size: 26px;
+}
+
+.bonus-stat-box {
+  background-color: var(--k-green-light);
+  border: 1px solid var(--k-green-border);
+  padding: 12px;
+  border-radius: var(--k-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Юридические модалки (152-ФЗ, Оферта) */
+.legal-text-scroll {
+  max-height: 280px;
+  overflow-y: auto;
+  font-size: 12px;
+  color: var(--k-text-muted);
+  line-height: 1.5;
+  padding-right: 4px;
+  margin: 12px 0;
+}
+
+.legal-text-scroll p {
+  margin-bottom: 10px;
+}
+
+.legal-text-scroll strong {
+  color: #FFFFFF;
 }
 
 .about-photo-wrap {
   position: relative;
-  height: 180px;
-  border-radius: var(--k-radius-md);
+  height: 170px;
   overflow: hidden;
-  margin-bottom: 14px;
+  border-radius: var(--k-radius-md);
+  margin-bottom: 12px;
 }
 
 .about-hero-img {
@@ -1785,8 +2019,8 @@ a {
 
 .about-tag {
   position: absolute;
-  bottom: 10px;
-  left: 10px;
+  bottom: 8px;
+  left: 8px;
   background-color: rgba(0,0,0,0.75);
   color: #FFFFFF;
   padding: 3px 8px;
@@ -1798,14 +2032,14 @@ a {
 .about-title {
   font-size: 18px;
   font-weight: 900;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .about-text {
   font-size: 13px;
   color: var(--k-text-muted);
   line-height: 1.45;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .about-specs-list {
@@ -1828,26 +2062,136 @@ a {
   text-decoration: underline;
 }
 
-/* Модалка выбора адреса */
-.address-modal-content {
-  padding: 22px;
+/* ==========================================================================
+   10. Подвал и юридическая информация по закону (Legal Site Footer)
+   ========================================================================== */
+.legal-site-footer {
+  background-color: #0C0D10;
+  border-top: 1px solid var(--k-border);
+  padding: 28px 16px 20px;
+  width: 100%;
+  margin-top: 40px;
 }
 
-.addr-title {
-  font-size: 17px;
+.footer-container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.f-brand-info {
+  max-width: 500px;
+}
+
+.f-title {
+  font-size: 16px;
   font-weight: 800;
+  color: #FFFFFF;
   margin-bottom: 4px;
 }
 
-.addr-sub {
+.f-desc {
   font-size: 12px;
-  color: var(--k-text-dim);
-  margin-bottom: 12px;
+  color: var(--k-text-muted);
+  margin-bottom: 6px;
 }
 
-.address-modal-content button {
-  margin-top: 10px;
-  justify-content: center;
+.f-legal-info {
+  font-size: 11px;
+  color: var(--k-text-dim);
+}
+
+.f-links-column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer-legal-btn {
+  background: transparent;
+  border: none;
+  color: var(--k-text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  padding: 2px 0;
+  transition: color var(--trans-fast);
+}
+
+.footer-legal-btn:hover {
+  color: var(--k-green);
+  text-decoration: underline;
+}
+
+.footer-copyright {
+  max-width: var(--container-max);
+  margin: 20px auto 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--k-border-subtle);
+  font-size: 11px;
+  color: var(--k-text-dim);
+  text-align: center;
+}
+
+/* ==========================================================================
+   11. Ненавязчивая плашка Cookie (в соответствии с 152-ФЗ)
+   ========================================================================== */
+.cookie-banner-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  max-width: 420px;
+  z-index: 950;
+  background-color: #1A1C24;
+  border: 1px solid var(--k-border);
+  border-radius: var(--k-radius-md);
+  padding: 12px 14px;
+  box-shadow: var(--k-shadow-pop);
+  animation: cookieIn 0.3s ease-out;
+}
+
+@keyframes cookieIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cookie-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cookie-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.cookie-text {
+  font-size: 11px;
+  color: var(--k-text-muted);
+  line-height: 1.35;
+}
+
+.cookie-link {
+  color: var(--k-green);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.btn-cookie-accept {
+  background-color: var(--k-green);
+  color: #0E0F12;
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--k-radius-full);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 /* Toast Notifications */
@@ -1867,7 +2211,7 @@ a {
   background-color: #242630;
   border: 1px solid var(--k-green-border);
   color: #FFFFFF;
-  padding: 10px 18px;
+  padding: 9px 16px;
   border-radius: var(--k-radius-full);
   font-size: 13px;
   font-weight: 700;
@@ -1881,18 +2225,18 @@ a {
 }
 
 /* ==========================================================================
-   11. Медиа-запросы (Адаптивность)
+   12. Медиа-запросы (Адаптивность)
    ========================================================================== */
 @media (max-width: 992px) {
-  .kuper-layout-grid {
+  .layout-grid {
     grid-template-columns: 100%;
   }
 
-  .kuper-desktop-cart-sidebar {
+  .desktop-cart-sidebar {
     display: none;
   }
 
-  .header-action-btn.address-btn {
+  .header-pill-btn.address-btn {
     display: none;
   }
 
@@ -1908,16 +2252,23 @@ a {
     bottom: 80px;
   }
 
-  .kuper-page-container {
+  .cookie-banner-bar {
+    left: 10px;
+    right: 10px;
+    max-width: calc(100% - 20px);
+    bottom: 70px;
+  }
+
+  .page-container {
     margin-bottom: 90px;
   }
 
-  .promo-card {
+  .promo-slide-inner {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .voucher-ticket {
+  .perforated-ticket {
     width: 100%;
   }
 }
@@ -1934,8 +2285,8 @@ a {
     min-width: 100%;
   }
 
-  .promo-heading {
-    font-size: 20px;
+  .slide-heading {
+    font-size: 19px;
   }
 
   .dishes-cards-grid {
@@ -1943,16 +2294,20 @@ a {
     gap: 8px;
   }
 
-  .kuper-dish-card {
-    padding: 10px;
+  .dish-photo-slot {
+    height: 105px;
   }
 
-  .dish-card-name {
-    font-size: 13px;
+  .dish-title {
+    font-size: 12px;
   }
 
-  .dish-price {
-    font-size: 15px;
+  .dish-desc-brief {
+    display: none;
+  }
+
+  .dish-price-text {
+    font-size: 14px;
   }
 
   .form-row-2, .form-row-4 {

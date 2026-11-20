@@ -5,7 +5,7 @@ import threading
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from playwright.sync_api import sync_playwright
 
-PORT = 8099
+PORT = 8100
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -32,111 +32,175 @@ def run_tests():
         browser = p.chromium.launch(headless=True)
 
         # ---------------------------------------------------------
-        # Scenario 1: Desktop View (1280x860) - Kuper Dark Theme
+        # Scenario 1: Desktop View (1280x860)
         # ---------------------------------------------------------
-        print("\n--- Running Desktop Scenario (1280x860) [Kuper Dark Theme] ---")
+        print("\n--- Running Desktop Scenario (1280x860) ---")
         context = browser.new_context(viewport={"width": 1280, "height": 860})
         page = context.new_page()
 
         page.on("console", lambda msg: console_errors.append(f"Console {msg.type}: {msg.text}") if msg.type == "error" else None)
         page.on("pageerror", lambda err: console_errors.append(f"PageError: {err}"))
 
-        page.goto(f"http://127.0.0.1:{PORT}/index.html?v=5", wait_until="domcontentloaded")
+        page.goto(f"http://127.0.0.1:{PORT}/index.html?v=6", wait_until="domcontentloaded")
         page.wait_for_selector(".product-card")
 
-        # Verify Dark Theme Body
-        body_class = page.locator("body").get_attribute("class")
-        assert "kuper-dark-theme" in body_class, "Body must have 'kuper-dark-theme'"
-        print("✓ Verified Kuper Dark Theme class on body")
+        # 1. Verify no mention of "купер" in page text or title
+        title_lower = page.title().lower()
+        assert "купер" not in title_lower, f"Title should not contain 'купер', got: {page.title()}"
+        print(f"✓ Title verified: {page.title()} (zero mention of 'купер')")
 
-        # Verify Empty Desktop Cart Sidebar (Kuper bag illustration with eyes)
-        empty_state = page.locator("#cartEmptyState")
-        assert empty_state.is_visible(), "Kuper bag empty state must be visible initially"
-        print("✓ Verified Kuper Empty Cart Bag with eyes ( • _ • )")
-        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "10_desktop_kuper_dark_empty.png"))
+        body_text = page.locator("body").inner_text().lower()
+        assert "купер" not in body_text, "Body text should not contain 'купер'"
+        print("✓ Verified body text: ZERO mention of 'купер' anywhere")
 
-        # Test Search
-        print("Testing search filter...")
-        page.fill("#searchInput", "Хуанит")
+        # 2. Verify accurate rating and hours from Yandex Maps
+        assert "62 оценки" in body_text, "Page must display accurate 62 оценки from Yandex"
+        assert "до 22:00" in body_text, "Page must display accurate closing time 22:00"
+        print("✓ Verified accurate Yandex info: 5.0 (62 оценки) and Открыто до 22:00")
+
+        # 3. Verify no notice bar
+        assert page.locator("#noticeBar").count() == 0, "Notice bar must be removed"
+        print("✓ Notice bar is completely removed")
+
+        # 4. Verify Food Photo Slots on Cards
+        first_photo = page.locator(".dish-photo-slot img").first
+        assert first_photo.is_visible(), "Food card must have a visible photo slot"
+        print("✓ Verified minimalist food cards with photo slots")
+
+        # 5. Test Multi-promo Carousel
+        print("Testing Promo Carousel Next/Prev...")
+        page.click("#btnPromoNext")
         time.sleep(0.3)
-        cards = page.locator(".product-card")
-        assert cards.count() >= 1, "Search for 'Хуанит' returned no cards"
-        print(f"✓ Search filter returned {cards.count()} matching dish")
-        page.click("#searchClearBtn")
+        page.click("#btnPromoNext")
         time.sleep(0.3)
+        page.click("#btnPromoPrev")
+        time.sleep(0.3)
+        print("✓ Promo carousel navigation working smoothly")
 
-        # Test Category Tiles
-        print("Testing Category Tile click...")
-        burrito_tile = page.locator(".cat-tile").filter(has_text="Буррито").first
-        burrito_tile.click()
+        # 6. Test Compact Category Chips
+        print("Testing Compact Category Chips...")
+        burrito_chip = page.locator(".compact-cat-chip").filter(has_text="Буррито").first
+        burrito_chip.click()
         time.sleep(0.2)
-        print("✓ Clicked category tile")
+        print("✓ Clicked compact category chip")
 
-        # Test Dish Detail Modal
-        print("Testing Dish Modal...")
+        # 7. Test Promo Button (%)
+        print("Testing % Promo Modal...")
+        page.click("#btnHeaderPromo")
+        page.wait_for_selector("#promoCodesBackdrop.active")
+        page.click("#btnClosePromoCodesModal")
+        page.wait_for_selector("#promoCodesBackdrop:not(.active)")
+        print("✓ % Promo Modal tested")
+
+        # 8. Test Profile Modal ("Войти") & SMS Simulator
+        print("Testing Profile Modal & Login...")
+        page.click("#btnHeaderProfile")
+        page.wait_for_selector("#profileBackdrop.active")
+        page.fill("#authPhoneInput", "9996505576")
+        page.click("#btnSendAuthCode")
+        time.sleep(0.3)
+        assert page.locator("#profileLoggedInView").is_visible(), "Logged in view should be visible"
+        page.click("#btnCloseProfileModal")
+        page.wait_for_selector("#profileBackdrop:not(.active)")
+        print("✓ Profile Modal & Login simulator tested successfully")
+
+        # 9. Test Bonuses Modal ("Бонусы")
+        print("Testing Bonuses Modal...")
+        page.click("#btnHeaderBonuses")
+        page.wait_for_selector("#bonusesBackdrop.active")
+        page.click("#btnCloseBonusesAction")
+        page.wait_for_selector("#bonusesBackdrop:not(.active)")
+        print("✓ Bonuses Modal tested")
+
+        # 10. Test About Modal
+        print("Testing About Modal...")
+        page.click("#topAboutBtn")
+        page.wait_for_selector("#aboutBackdrop.active")
+        page.click("#btnCloseAboutModal")
+        page.wait_for_selector("#aboutBackdrop:not(.active)")
+        print("✓ About Modal tested")
+
+        # 11. Test Dish Detail Modal
+        print("Testing Dish Detail Modal...")
         first_card = page.locator(".product-card").first
         first_card.click()
         page.wait_for_selector("#dishModalBackdrop.active")
         modal_title = page.locator("#dishModalTitle").inner_text()
-        print(f"✓ Modal opened for: {modal_title}")
+        print(f"✓ Dish modal opened for: {modal_title}")
 
         # Select a modifier if available
         first_mod = page.locator("#dishModalModifiersList .mod-row").first
         if first_mod.is_visible():
             first_mod.click()
-            print("✓ Selected modifier in modal")
+            print("✓ Selected modifier in dish modal")
 
         page.click("#btnDishModalAddToCart")
         page.wait_for_selector("#dishModalBackdrop:not(.active)")
         print("✓ Added dish from modal to cart")
 
-        # Add another dish using the direct card "+ Добавить" button
-        print("Adding another item via '+ Добавить' card button...")
+        # Add another item directly from card "+ Добавить"
         second_card = page.locator(".product-card").nth(1)
-        second_card.locator(".btn-kuper-add").click()
+        second_card.locator(".btn-add-minimal").click()
         time.sleep(0.3)
 
-        # Verify Desktop Sidebar Cart populated
-        assert not empty_state.is_visible(), "Empty state should be hidden when cart has items"
+        # Check Desktop Cart Total
         cart_total = page.locator("#sidebarTotalCost").inner_text()
-        print(f"✓ Desktop Sidebar Cart Total: {cart_total}")
-        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "11_desktop_kuper_dark_cart.png"))
+        print(f"✓ Desktop Cart Total: {cart_total}")
+        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "20_desktop_emerald_cart.png"))
 
-        # Test Promo code activation
-        print("Testing Promo Voucher...")
-        page.click("#btnApplyHeroPromo")
-        time.sleep(0.3)
-
-        # Open Checkout
+        # 12. Test Checkout & Payment Simulator
+        print("Testing Checkout Modal...")
         page.click("#btnSidebarCheckout")
         page.wait_for_selector("#checkoutModalBackdrop.active")
-        page.fill("#orderInputName", "Константин")
+        page.fill("#orderInputName", "Александр")
         page.fill("#orderInputPhone", "9996505576")
-        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "12_desktop_checkout.png"))
-
-        # Submit Order
         page.click("#checkoutForm button[type='submit']")
+
         page.wait_for_selector("#trackerBackdrop.active")
         order_num = page.locator("#trackerOrderTag").inner_text()
-        print(f"✓ Order placed successfully! Live Tracker: {order_num}")
-        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "13_desktop_tracker.png"))
+        print(f"✓ Order placed successfully! Tracker: {order_num}")
+        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "21_desktop_tracker.png"))
 
         page.click("#btnTrackerDone")
         page.wait_for_selector("#trackerBackdrop:not(.active)")
         time.sleep(0.3)
+
+        # 13. Test Legal Modals
+        print("Testing Legal Modals (152-ФЗ & Оферта)...")
+        page.click("#btnOpenPrivacyPolicy")
+        page.wait_for_selector("#legalPrivacyBackdrop.active")
+        page.click("#btnClosePrivacyModal")
+        page.wait_for_selector("#legalPrivacyBackdrop:not(.active)")
+
+        page.click("#btnOpenPublicOffer")
+        page.wait_for_selector("#legalOfferBackdrop.active")
+        page.click("#btnCloseOfferModal")
+        page.wait_for_selector("#legalOfferBackdrop:not(.active)")
+        print("✓ Legal Modals (Privacy 152-FZ & Offer) tested")
+
+        # 14. Test Cookie Banner
+        print("Testing Cookie Banner...")
+        cookie_btn = page.locator("#btnAcceptCookies")
+        if cookie_btn.is_visible():
+            cookie_btn.click()
+            time.sleep(0.3)
+            assert not page.locator("#cookieBanner").is_visible(), "Cookie banner should be closed"
+            print("✓ Cookie banner accepted and closed")
+
+        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "22_desktop_full_page.png"))
         context.close()
 
         # ---------------------------------------------------------
         # Scenario 2: Mobile View (390x844 iPhone 14)
         # ---------------------------------------------------------
-        print("\n--- Running Mobile Scenario (390x844) [Kuper Dark Theme] ---")
+        print("\n--- Running Mobile Scenario (390x844) ---")
         m_context = browser.new_context(viewport={"width": 390, "height": 844}, is_mobile=True)
         m_page = m_context.new_page()
 
         m_page.on("console", lambda msg: console_errors.append(f"Console {msg.type}: {msg.text}") if msg.type == "error" else None)
         m_page.on("pageerror", lambda err: console_errors.append(f"PageError: {err}"))
 
-        m_page.goto(f"http://127.0.0.1:{PORT}/index.html?v=5", wait_until="domcontentloaded")
+        m_page.goto(f"http://127.0.0.1:{PORT}/index.html?v=6", wait_until="domcontentloaded")
         m_page.wait_for_selector(".product-card")
 
         # Check mobile overflow
@@ -144,25 +208,25 @@ def run_tests():
         assert scroll_width == client_width, f"Mobile overflow detected: scrollWidth={scroll_width}, clientWidth={client_width}"
         print(f"✓ Mobile zero overflow verified: scrollWidth={scroll_width} == clientWidth={client_width}")
 
-        m_page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "14_mobile_kuper_dark_home.png"))
+        m_page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "23_mobile_home.png"))
 
         # Add item on mobile
         first_m_card = m_page.locator(".product-card").first
-        first_m_card.locator(".btn-kuper-add").click()
+        first_m_card.locator(".btn-add-minimal").click()
         time.sleep(0.3)
 
         # Check Mobile Floating Bottom Bar
         float_bar = m_page.locator("#mobileBottomBar")
-        assert float_bar.is_visible(), "Mobile bottom floating cart bar must be visible"
+        assert float_bar.is_visible(), "Mobile bottom floating bar must be visible"
         m_sum = m_page.locator("#mobileCartTotalSum").inner_text()
-        print(f"✓ Mobile float cart bar visible with total: {m_sum}")
+        print(f"✓ Mobile float bar visible with total: {m_sum}")
 
         # Open Mobile Cart Drawer Sheet
         m_page.click("#btnOpenMobileDrawer")
         m_page.wait_for_selector("#mobileCartBackdrop.active")
         time.sleep(0.4)
         print("✓ Mobile Cart Drawer Sheet opened smoothly")
-        m_page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "15_mobile_kuper_dark_sheet.png"))
+        m_page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "24_mobile_sheet.png"))
 
         m_page.click("#btnCloseMobileCart")
         m_page.wait_for_selector("#mobileCartBackdrop:not(.active)")

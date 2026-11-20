@@ -1,11 +1,8 @@
 /**
- * FRITO BURRITO — KUPER DELIVERY DARK THEME
- * Full-featured bespoke delivery application:
- * - Kuper dark theme UI
- * - Desktop sticky sidebar cart with signature paper bag illustration
- * - Category tiles with 3D emoji
- * - Promo code support (ФРИТО15)
- * - Safe checkout, payment simulator, and live order tracker
+ * FRITO BURRITO — OFFICIAL RESTAURANT APPLICATION
+ * Emerald dark theme, multi-promo carousel, compact category chips,
+ * minimalist cards with real food photo slots, legal compliance (152-ФЗ),
+ * 100% interactive buttons, zero errors.
  */
 
 (function () {
@@ -21,15 +18,17 @@
   let activeOrderSimulation = null;
   let activePromoCode = null; // e.g. 'ФРИТО15'
   let promoDiscountPct = 0; // 0.15
+  let currentPromoSlide = 0;
+  let promoInterval = null;
 
-  // Cart: Array of { id, dishId, name, price, basePrice, weight, modifiers, quantity }
+  // Cart: Array of { id, dishId, name, price, basePrice, weight, image, modifiers, quantity }
   let cart = [];
 
   // Current modal state
   let currentModalDish = null;
   let currentSelectedModifiers = [];
 
-  // Category Icon Mapping (Kuper style 3D emojis)
+  // Category Icon Mapping
   const categoryIcons = {
     'all': '▦',
     'burrito': '🌯',
@@ -42,27 +41,34 @@
 
   // DOM Elements
   const el = {
-    // Header & Top
+    // Top Bar & Header
+    topAboutBtn: document.getElementById('topAboutBtn'),
     searchInput: document.getElementById('searchInput'),
     searchClearBtn: document.getElementById('searchClearBtn'),
     btnSelectAddress: document.getElementById('btnSelectAddress'),
     currentAddressHeader: document.getElementById('currentAddressHeader'),
     btnHeaderPromo: document.getElementById('btnHeaderPromo'),
     btnHeaderProfile: document.getElementById('btnHeaderProfile'),
+    userProfileLabel: document.getElementById('userProfileLabel'),
     btnHeaderBonuses: document.getElementById('btnHeaderBonuses'),
     bonusValDisplay: document.getElementById('bonusValDisplay'),
     btnMobileHeaderCart: document.getElementById('btnMobileHeaderCart'),
     mobileHeaderCartBadge: document.getElementById('mobileHeaderCartBadge'),
-    noticeBar: document.getElementById('noticeBar'),
-    btnCloseNotice: document.getElementById('btnCloseNotice'),
-    topAboutLink: document.getElementById('topAboutLink'),
 
-    // Hero Promo
-    btnApplyHeroPromo: document.getElementById('btnApplyHeroPromo'),
-    heroTicketCode: document.getElementById('heroTicketCode'),
+    // Promo Carousel
+    promoCarouselTrack: document.getElementById('promoCarouselTrack'),
+    btnPromoPrev: document.getElementById('btnPromoPrev'),
+    btnPromoNext: document.getElementById('btnPromoNext'),
+    promoCarouselDots: document.getElementById('promoCarouselDots'),
+    btnApplyPromo15: document.getElementById('btnApplyPromo15'),
+    ticketCode15: document.getElementById('ticketCode15'),
+    btnActivatePickupPromo: document.getElementById('btnActivatePickupPromo'),
+    ticketCodePickup: document.getElementById('ticketCodePickup'),
+    btnGoToCombos: document.getElementById('btnGoToCombos'),
+    ticketCodeFree: document.getElementById('ticketCodeFree'),
 
     // Categories & Catalog
-    categoriesGrid: document.getElementById('categoriesGrid'),
+    compactCategoriesTrack: document.getElementById('compactCategoriesTrack'),
     catalogSectionsWrap: document.getElementById('catalogSectionsWrap'),
 
     // Desktop Cart Sidebar
@@ -104,6 +110,7 @@
     // Dish Modal
     dishModalBackdrop: document.getElementById('dishModalBackdrop'),
     btnCloseDishModal: document.getElementById('btnCloseDishModal'),
+    dishModalImg: document.getElementById('dishModalImg'),
     dishModalTitle: document.getElementById('dishModalTitle'),
     dishModalPrice: document.getElementById('dishModalPrice'),
     dishModalSpecs: document.getElementById('dishModalSpecs'),
@@ -111,6 +118,7 @@
     dishModalModifiersSection: document.getElementById('dishModalModifiersSection'),
     dishModalModifiersList: document.getElementById('dishModalModifiersList'),
     btnDishModalAddToCart: document.getElementById('btnDishModalAddToCart'),
+    dishModalBtnSum: document.getElementById('dishModalBtnSum'),
 
     // Checkout Modal
     checkoutModalBackdrop: document.getElementById('checkoutModalBackdrop'),
@@ -124,6 +132,8 @@
     checkoutPickupBlock: document.getElementById('checkoutPickupBlock'),
     payMethodCash: document.getElementById('payMethodCash'),
     payMethodOnline: document.getElementById('payMethodOnline'),
+    linkConsentOffer: document.getElementById('linkConsentOffer'),
+    linkConsentPrivacy: document.getElementById('linkConsentPrivacy'),
 
     // Payment Simulator
     simPayBackdrop: document.getElementById('simPayBackdrop'),
@@ -154,14 +164,52 @@
     aboutBackdrop: document.getElementById('aboutBackdrop'),
     btnCloseAboutModal: document.getElementById('btnCloseAboutModal'),
 
+    // Promo Codes Modal
+    promoCodesBackdrop: document.getElementById('promoCodesBackdrop'),
+    btnClosePromoCodesModal: document.getElementById('btnClosePromoCodesModal'),
+
+    // Profile Modal
+    profileBackdrop: document.getElementById('profileBackdrop'),
+    btnCloseProfileModal: document.getElementById('btnCloseProfileModal'),
+    profileLoggedOutView: document.getElementById('profileLoggedOutView'),
+    profileLoggedInView: document.getElementById('profileLoggedInView'),
+    authPhoneInput: document.getElementById('authPhoneInput'),
+    btnSendAuthCode: document.getElementById('btnSendAuthCode'),
+    profileUserName: document.getElementById('profileUserName'),
+    profileUserPhone: document.getElementById('profileUserPhone'),
+    btnLogoutProfile: document.getElementById('btnLogoutProfile'),
+
+    // Bonuses Modal
+    bonusesBackdrop: document.getElementById('bonusesBackdrop'),
+    btnCloseBonusesModal: document.getElementById('btnCloseBonusesModal'),
+    btnCloseBonusesAction: document.getElementById('btnCloseBonusesAction'),
+
+    // Legal Modals
+    legalPrivacyBackdrop: document.getElementById('legalPrivacyBackdrop'),
+    btnClosePrivacyModal: document.getElementById('btnClosePrivacyModal'),
+    btnAcceptPrivacyModal: document.getElementById('btnAcceptPrivacyModal'),
+    legalOfferBackdrop: document.getElementById('legalOfferBackdrop'),
+    btnCloseOfferModal: document.getElementById('btnCloseOfferModal'),
+    btnAcceptOfferModal: document.getElementById('btnAcceptOfferModal'),
+
+    // Footer Legal Buttons
+    btnOpenPrivacyPolicy: document.getElementById('btnOpenPrivacyPolicy'),
+    btnOpenPublicOffer: document.getElementById('btnOpenPublicOffer'),
+    btnOpenCookieInfo: document.getElementById('btnOpenCookieInfo'),
+
+    // Cookie Banner
+    cookieBanner: document.getElementById('cookieBanner'),
+    btnAcceptCookies: document.getElementById('btnAcceptCookies'),
+    cookiePrivacyLink: document.getElementById('cookiePrivacyLink'),
+
     // Toast
     toastStack: document.getElementById('toastStack')
   };
 
-  // 1. Init
+  // 1. Initialize
   async function init() {
     try {
-      const resp = await fetch('dishes.json?v=5');
+      const resp = await fetch('dishes.json?v=6');
       if (resp.ok) {
         catalogData = await resp.json();
       } else {
@@ -171,50 +219,59 @@
       catalogData = getFallbackData();
     }
 
-    renderCategoryTiles();
+    renderCompactCategories();
     renderCatalog();
     updateCartUI();
+    initPromoCarousel();
+    initCookieBanner();
     setupEventListeners();
   }
 
-  // 2. Render Category Tiles (Kuper 3D Emoji Tiles)
-  function renderCategoryTiles() {
-    if (!catalogData || !catalogData.categories || !el.categoriesGrid) return;
-    el.categoriesGrid.innerHTML = '';
+  // 2. Render Compact Category Chips ("позжатее и под стиль промо-панели")
+  function renderCompactCategories() {
+    if (!catalogData || !catalogData.categories || !el.compactCategoriesTrack) return;
+    el.compactCategoriesTrack.innerHTML = '';
 
-    // "Все меню" tile
-    const allTile = document.createElement('div');
-    allTile.className = 'cat-tile active';
-    allTile.setAttribute('data-category-id', 'all');
-    allTile.innerHTML = `
-      <div class="cat-tile-icon">▦</div>
-      <div class="cat-tile-name">Все меню</div>
-      <div class="cat-tile-count">${catalogData.dishes.length} блюд</div>
+    // "Все меню" chip
+    const allChip = document.createElement('button');
+    allChip.className = 'compact-cat-chip active';
+    allChip.setAttribute('data-category-id', 'all');
+    allChip.innerHTML = `
+      <span class="chip-icon">▦</span>
+      <span class="chip-name">Все меню</span>
+      <span class="chip-count">${catalogData.dishes.length}</span>
     `;
-    allTile.addEventListener('click', () => filterCategory('all', allTile));
-    el.categoriesGrid.appendChild(allTile);
+    allChip.addEventListener('click', () => filterCategory('all', allChip));
+    el.compactCategoriesTrack.appendChild(allChip);
 
     catalogData.categories.forEach(cat => {
       const count = catalogData.dishes.filter(d => d.categoryId === cat.id).length;
       const icon = categoryIcons[cat.id] || '🌯';
+      const cleanName = cat.name.replace(/^[^\wа-яА-ЯёЁ]+/, '').trim();
 
-      const tile = document.createElement('div');
-      tile.className = 'cat-tile';
-      tile.setAttribute('data-category-id', cat.id);
-      tile.innerHTML = `
-        <div class="cat-tile-icon">${icon}</div>
-        <div class="cat-tile-name">${escapeHtml(cat.name.replace(/^[^\wа-яА-ЯёЁ]+/, '').trim())}</div>
-        <div class="cat-tile-count">${count} ${getNoun(count, 'блюдо', 'блюда', 'блюд')}</div>
+      const chip = document.createElement('button');
+      chip.className = 'compact-cat-chip';
+      chip.setAttribute('data-category-id', cat.id);
+      chip.innerHTML = `
+        <span class="chip-icon">${icon}</span>
+        <span class="chip-name">${escapeHtml(cleanName)}</span>
+        <span class="chip-count">${count}</span>
       `;
-      tile.addEventListener('click', () => filterCategory(cat.id, tile));
-      el.categoriesGrid.appendChild(tile);
+      chip.addEventListener('click', () => filterCategory(cat.id, chip));
+      el.compactCategoriesTrack.appendChild(chip);
     });
   }
 
-  function filterCategory(catId, tileElement) {
+  function filterCategory(catId, chipElement) {
     activeCategoryId = catId;
-    el.categoriesGrid.querySelectorAll('.cat-tile').forEach(t => t.classList.remove('active'));
-    tileElement.classList.add('active');
+    el.compactCategoriesTrack.querySelectorAll('.compact-cat-chip').forEach(c => c.classList.remove('active'));
+    chipElement.classList.add('active');
+
+    // Smooth horizontal scroll of chips
+    const trackLeft = el.compactCategoriesTrack.getBoundingClientRect().left;
+    const chipLeft = chipElement.getBoundingClientRect().left;
+    el.compactCategoriesTrack.scrollBy({ left: chipLeft - trackLeft - 16, behavior: 'smooth' });
+
     renderCatalog();
 
     if (catId !== 'all') {
@@ -225,7 +282,7 @@
     }
   }
 
-  // 3. Render Catalog Sections
+  // 3. Render Catalog (Minimalist cards with real food photo slots)
   function renderCatalog() {
     if (!catalogData || !el.catalogSectionsWrap) return;
     el.catalogSectionsWrap.innerHTML = '';
@@ -260,14 +317,14 @@
       sec.innerHTML = `
         <div class="section-head-bar">
           <h2 class="section-title">${icon} ${cleanName}</h2>
-          <span class="section-count">${dishes.length} ${getNoun(dishes.length, 'блюдо', 'блюда', 'блюд')}</span>
+          <span class="section-count">${dishes.length} ${getNoun(dishes.length, 'позиция', 'позиции', 'позиций')}</span>
         </div>
         <div class="dishes-cards-grid" id="grid-${cat.id}"></div>
       `;
 
       const grid = sec.querySelector(`#grid-${cat.id}`);
       dishes.forEach(dish => {
-        grid.appendChild(createDishCard(dish));
+        grid.appendChild(createMinimalDishCard(dish));
       });
 
       el.catalogSectionsWrap.appendChild(sec);
@@ -284,10 +341,10 @@
     }
   }
 
-  // 4. Create Dish Card (Kuper Dark Clean Card — NO dish photos)
-  function createDishCard(dish) {
+  // 4. Create Minimalist Dish Card with Photo Slot
+  function createMinimalDishCard(dish) {
     const card = document.createElement('div');
-    card.className = 'kuper-dish-card product-card';
+    card.className = 'minimal-dish-card product-card';
     card.setAttribute('data-dish-id', dish.id);
 
     // Badges
@@ -296,24 +353,31 @@
     if (dish.spicy === 1) badges += '<span class="badge-tag spicy">🌶️ Острое</span>';
     if (dish.spicy >= 2) badges += '<span class="badge-tag spicy">🌶️🌶️ Огонь</span>';
 
+    const imgSrc = dish.image ? `${dish.image}?v=6` : 'img/burrito-classic.jpg?v=6';
+
     card.innerHTML = `
-      <div class="dish-card-top">
-        ${badges ? `<div class="dish-badges-row">${badges}</div>` : ''}
-        <h3 class="dish-card-name">${escapeHtml(dish.name)}</h3>
-        <p class="dish-card-desc">${escapeHtml(dish.description)}</p>
+      <div class="dish-photo-slot">
+        <img src="${imgSrc}" alt="${escapeHtml(dish.name)}" loading="lazy" class="dish-card-img" onerror="this.src='img/burrito-classic.jpg?v=6'" />
+        ${badges ? `<div class="dish-badges-overlay">${badges}</div>` : ''}
       </div>
-      <div class="dish-card-bottom">
-        <div class="dish-price-box">
-          <span class="dish-price">${dish.price} ₽</span>
-          <span class="dish-weight">${dish.weight}</span>
+      <div class="dish-card-content">
+        <div>
+          <h3 class="dish-title">${escapeHtml(dish.name)}</h3>
+          <p class="dish-desc-brief">${escapeHtml(dish.description)}</p>
         </div>
-        <div class="dish-card-action" id="card-action-${dish.id}"></div>
+        <div class="dish-footer-row">
+          <div>
+            <div class="dish-price-text">${dish.price} ₽</div>
+            <div class="dish-weight-sub">${dish.weight}</div>
+          </div>
+          <div class="dish-action-slot" id="card-action-${dish.id}"></div>
+        </div>
       </div>
     `;
 
     // Click on card body opens modal
     card.addEventListener('click', (e) => {
-      if (e.target.closest('.dish-card-stepper') || e.target.closest('.btn-kuper-add')) {
+      if (e.target.closest('.card-stepper-minimal') || e.target.closest('.btn-add-minimal')) {
         return;
       }
       openDishModal(dish);
@@ -331,7 +395,7 @@
 
     if (count > 0) {
       container.innerHTML = `
-        <div class="dish-card-stepper">
+        <div class="card-stepper-minimal">
           <button class="c-dec" data-id="${dish.id}" title="Меньше">−</button>
           <span>${count}</span>
           <button class="c-inc" data-id="${dish.id}" title="Больше">+</button>
@@ -347,11 +411,11 @@
       });
     } else {
       container.innerHTML = `
-        <button class="btn-kuper-add" data-id="${dish.id}">
+        <button class="btn-add-minimal" data-id="${dish.id}">
           + Добавить
         </button>
       `;
-      container.querySelector('.btn-kuper-add').addEventListener('click', (e) => {
+      container.querySelector('.btn-add-minimal').addEventListener('click', (e) => {
         e.stopPropagation();
         addToCart(dish, []);
         showToast(`«${dish.name}» добавлен в корзину`);
@@ -367,11 +431,13 @@
     });
   }
 
-  // 5. Dish Details Modal
+  // 5. Dish Details Modal (Real photo, ingredients, calories, modifiers)
   function openDishModal(dish) {
     currentModalDish = dish;
     currentSelectedModifiers = [];
 
+    el.dishModalImg.src = dish.image ? `${dish.image}?v=6` : 'img/burrito-classic.jpg?v=6';
+    el.dishModalImg.alt = dish.name;
     el.dishModalTitle.textContent = dish.name;
     el.dishModalPrice.textContent = `${dish.price} ₽`;
     el.dishModalSpecs.innerHTML = `
@@ -425,10 +491,7 @@
     if (!currentModalDish) return;
     const modsSum = currentSelectedModifiers.reduce((acc, m) => acc + (m.price || 0), 0);
     const total = currentModalDish.price + modsSum;
-    el.btnDishModalAddToCart.innerHTML = `
-      <span>Добавить в корзину</span>
-      <span>${total} ₽</span>
-    `;
+    el.dishModalBtnSum.textContent = `${total} ₽`;
   }
 
   function closeDishModal() {
@@ -438,7 +501,7 @@
     currentSelectedModifiers = [];
   }
 
-  // 6. Cart Logic
+  // 6. Cart Management
   function addToCart(dish, modifiers = []) {
     const modNames = modifiers.map(m => m.name).sort().join('|');
     const modsCost = modifiers.reduce((acc, m) => acc + (m.price || 0), 0);
@@ -456,6 +519,7 @@
         price: itemPrice,
         basePrice: dish.price,
         weight: dish.weight,
+        image: dish.image,
         modifiers: [...modifiers],
         quantity: 1
       });
@@ -527,7 +591,7 @@
     return catalogData?.restaurant?.deliveryCost || 149;
   }
 
-  // 7. Update Cart UI (Sidebar & Mobile)
+  // 7. Update Cart UI (Desktop & Mobile)
   function updateCartUI() {
     const count = getCartItemsCount();
     const rawTotal = getCartItemsTotal();
@@ -537,7 +601,7 @@
     const finalTotal = itemsTotalAfterDiscount + deliveryCost;
     const threshold = catalogData?.restaurant?.freeDeliveryThreshold || 800;
 
-    // Header mobile badge
+    // Mobile badge
     if (count > 0) {
       el.mobileHeaderCartBadge.textContent = count;
       el.mobileHeaderCartBadge.style.display = 'inline-block';
@@ -554,10 +618,9 @@
       el.mobileBottomBar.classList.remove('visible');
     }
 
-    // Mobile sheet count
     el.mobileSheetCount.textContent = `${count} ${getNoun(count, 'позиция', 'позиции', 'позиций')}`;
 
-    // Desktop Sidebar Cart State
+    // Desktop Cart Sidebar
     if (count === 0) {
       el.cartEmptyState.style.display = 'flex';
       el.cartItemsList.style.display = 'none';
@@ -588,7 +651,7 @@
         el.cartFreeDeliveryBox.style.display = 'none';
       }
 
-      // Render cart items HTML
+      // Render cart items
       renderCartItemsMarkup();
 
       // Calculation summary
@@ -618,7 +681,6 @@
       el.btnSidebarCheckoutSum.textContent = `${finalTotal} ₽`;
     }
 
-    // Sync mobile drawer content
     syncMobileDrawer();
   }
 
@@ -627,7 +689,7 @@
 
     cart.forEach(item => {
       const row = document.createElement('div');
-      row.className = 'sidebar-cart-item';
+      row.className = 'cart-item-row';
 
       let modsStr = '';
       if (item.modifiers && item.modifiers.length > 0) {
@@ -689,7 +751,7 @@
     cart.forEach(item => {
       let modsStr = item.modifiers?.length ? item.modifiers.map(m => `+ ${m.name}`).join(', ') : '';
       itemsHtml += `
-        <div class="sidebar-cart-item">
+        <div class="cart-item-row">
           <div class="item-meta-wrap">
             <div class="item-meta-title">${escapeHtml(item.name)}</div>
             ${modsStr ? `<div class="item-meta-mods">${escapeHtml(modsStr)}</div>` : ''}
@@ -715,29 +777,28 @@
       </div>
       ${discount > 0 ? `
       <div class="calc-row">
-        <span style="color:var(--k-green);">Скидка:</span>
+        <span style="color:var(--k-green);">Скидка по акции:</span>
         <span style="color:var(--k-green);">-${discount} ₽</span>
       </div>` : ''}
       <div class="calc-row">
         <span>Доставка:</span>
         <span>${getDeliveryCost(rawTotal) === 0 ? 'Бесплатно' : getDeliveryCost(rawTotal) + ' ₽'}</span>
       </div>
-      <div class="calc-row total" style="margin: 12px 0 16px;">
+      <div class="calc-row total" style="margin: 10px 0 14px;">
         <span>Итого:</span>
         <span style="color:var(--k-green);">${finalTotal} ₽</span>
       </div>
 
-      <button class="btn-kuper-checkout-main" id="btnMobileDrawerProceedCheckout">
+      <button class="btn-checkout-primary" id="btnMobileDrawerProceedCheckout">
         <span>Оформить заказ</span>
         <span>${finalTotal} ₽</span>
       </button>
 
-      <button class="btn-kuper-whatsapp" id="btnMobileDrawerWhatsApp" style="margin-top: 10px;">
+      <button class="btn-whatsapp-action" id="btnMobileDrawerWhatsApp" style="margin-top: 8px;">
         <span>💬 Заказать через WhatsApp</span>
       </button>
     `;
 
-    // Wire mobile drawer events
     el.mobileCartScrollArea.querySelectorAll('.m-dec').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-id');
@@ -780,7 +841,7 @@
     }
   }
 
-  // 8. Mobile Drawer Sheet Toggle
+  // 8. Mobile Drawer
   function openMobileCartSheet() {
     el.mobileCartBackdrop.classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -791,7 +852,60 @@
     document.body.style.overflow = '';
   }
 
-  // 9. Checkout Flow
+  // 9. Promo Carousel Controls
+  function initPromoCarousel() {
+    const slides = document.querySelectorAll('.promo-banner-slide');
+    const dots = document.querySelectorAll('.carousel-dots .dot');
+    if (slides.length === 0) return;
+
+    function goToSlide(idx) {
+      currentPromoSlide = (idx + slides.length) % slides.length;
+      el.promoCarouselTrack.style.transform = `translateX(-${currentPromoSlide * 100}%)`;
+      dots.forEach((d, i) => {
+        d.classList.toggle('active', i === currentPromoSlide);
+      });
+    }
+
+    el.btnPromoPrev.addEventListener('click', () => goToSlide(currentPromoSlide - 1));
+    el.btnPromoNext.addEventListener('click', () => goToSlide(currentPromoSlide + 1));
+
+    dots.forEach((dot, idx) => {
+      dot.addEventListener('click', () => goToSlide(idx));
+    });
+
+    // Auto rotate every 6s
+    promoInterval = setInterval(() => {
+      goToSlide(currentPromoSlide + 1);
+    }, 6000);
+  }
+
+  // 10. Promo Code Application
+  function applyPromoCode(code) {
+    const cleanCode = code.trim().toUpperCase();
+
+    if (cleanCode === 'ФРИТО15') {
+      activePromoCode = 'ФРИТО15';
+      promoDiscountPct = 0.15;
+      updateCartUI();
+      showToast('🎉 Промокод ФРИТО15 активирован! Скидка 15% на заказы от 1 000 ₽');
+    } else if (cleanCode === 'САМОВЫВОЗ') {
+      deliveryType = 'pickup';
+      el.cartModePickup.classList.add('active');
+      el.cartModeDelivery.classList.remove('active');
+      updateCartUI();
+      showToast('🏪 Выбран самовывоз: скидка 10% на весь заказ!');
+    } else if (cleanCode === 'ДОСТАВКА') {
+      deliveryType = 'delivery';
+      el.cartModeDelivery.classList.add('active');
+      el.cartModePickup.classList.remove('active');
+      updateCartUI();
+      showToast('🛵 Выбрана доставка курьером (бесплатно от 800 ₽)');
+    } else {
+      showToast('Неверный промокод');
+    }
+  }
+
+  // 11. Checkout Flow
   function openCheckoutModal() {
     const count = getCartItemsCount();
     if (count === 0) {
@@ -837,7 +951,7 @@
     e.preventDefault();
     const phone = el.orderInputPhone.value.trim();
     if (!phone || phone.length < 10) {
-      showToast('Пожалуйста, введите корректный номер телефона');
+      showToast('Пожалуйста, введите контактный телефон');
       el.orderInputPhone.focus();
       return;
     }
@@ -855,7 +969,7 @@
     }
   }
 
-  // 10. Online Payment Simulator
+  // 12. Payment Simulator
   function openOnlinePaymentSimulator(sum) {
     el.simAmountDisplay.textContent = `${sum} ₽`;
     el.simPayBackdrop.classList.add('active');
@@ -867,7 +981,7 @@
     document.body.style.overflow = '';
   }
 
-  // 11. Order Finalize & Live Tracker
+  // 13. Order Finalize & Live Tracker
   function finalizeOrder(finalTotal, paymentDesc) {
     closeOnlinePaymentSimulator();
     closeCheckoutModal();
@@ -923,7 +1037,7 @@
     if (activeOrderSimulation) clearInterval(activeOrderSimulation);
   }
 
-  // 12. WhatsApp Order
+  // 14. WhatsApp Order Formatter
   function sendWhatsAppOrder() {
     const count = getCartItemsCount();
     if (count === 0) {
@@ -936,13 +1050,13 @@
     const deliveryCost = getDeliveryCost(rawTotal);
     const finalTotal = Math.max(0, rawTotal - discount) + deliveryCost;
 
-    let text = `🌯 *Заказ Frito Burrito (Купер Доставка)*:\n\n`;
+    let text = `🌯 *Заказ в кафе «Фрито Буррито» (Краснодар)*:\n\n`;
     cart.forEach(item => {
       let mods = item.modifiers?.length ? ` (${item.modifiers.map(m => m.name).join(', ')})` : '';
       text += `• ${item.name}${mods} x${item.quantity} = ${item.price * item.quantity} ₽\n`;
     });
 
-    text += `\n🍴 Приборы: ${cutleryCount} шт.\n`;
+    text += `\n🍴 Приборы и салфетки: ${cutleryCount} шт.\n`;
     text += `📦 Способ: ${deliveryType === 'delivery' ? 'Доставка курьером' : 'Самовывоз (-10%)'}\n`;
     if (deliveryType === 'delivery') {
       text += `📍 Адрес: ${userAddress}\n`;
@@ -951,7 +1065,7 @@
       text += `📍 Точка самовывоза: ул. Петра Метальникова, 3/1А\n`;
     }
     if (discount > 0) text += `🎁 Скидка: -${discount} ₽\n`;
-    text += `💳 Оплата: ${selectedPaymentMethod === 'cash' ? 'При получении' : 'Онлайн'}\n`;
+    text += `💳 Оплата: ${selectedPaymentMethod === 'cash' ? 'При получении' : 'Онлайн картой / СБП'}\n`;
     text += `💰 *ИТОГО: ${finalTotal} ₽*`;
 
     const phone = '79996505576';
@@ -960,19 +1074,7 @@
     showToast('Переходим в WhatsApp для заказа...');
   }
 
-  // 13. Promo Code Handling
-  function applyPromoCode(code) {
-    if (code.toUpperCase() === 'ФРИТО15') {
-      activePromoCode = 'ФРИТО15';
-      promoDiscountPct = 0.15;
-      updateCartUI();
-      showToast('🎉 Промокод ФРИТО15 активирован! Скидка 15% на заказы от 1 000 ₽');
-    } else {
-      showToast('Неверный промокод');
-    }
-  }
-
-  // 14. Toast Helper
+  // 15. Toast Helper
   function showToast(msg) {
     const t = document.createElement('div');
     t.className = 'toast-item';
@@ -984,10 +1086,20 @@
       t.style.transform = 'translateY(10px)';
       t.style.transition = 'all 0.25s ease';
       setTimeout(() => t.remove(), 260);
-    }, 2500);
+    }, 2400);
   }
 
-  // 15. Wire Event Listeners
+  // 16. Cookie Banner
+  function initCookieBanner() {
+    const accepted = localStorage.getItem('fb_cookie_accepted');
+    if (!accepted && el.cookieBanner) {
+      el.cookieBanner.style.display = 'block';
+    } else if (el.cookieBanner) {
+      el.cookieBanner.style.display = 'none';
+    }
+  }
+
+  // 17. Setup Event Listeners (Every button is fully functional!)
   function setupEventListeners() {
     // Search
     el.searchInput.addEventListener('input', (e) => {
@@ -1007,27 +1119,20 @@
       renderCatalog();
     });
 
-    // Promo button in header
-    el.btnHeaderPromo.addEventListener('click', () => {
-      applyPromoCode('ФРИТО15');
-    });
-
-    // Hero Promo Apply & Voucher Click
-    el.btnApplyHeroPromo.addEventListener('click', () => {
-      applyPromoCode('ФРИТО15');
-    });
-
-    el.heroTicketCode.addEventListener('click', () => {
+    // Promo panel buttons
+    el.btnApplyPromo15.addEventListener('click', () => applyPromoCode('ФРИТО15'));
+    el.ticketCode15.addEventListener('click', () => {
       navigator.clipboard?.writeText('ФРИТО15');
       applyPromoCode('ФРИТО15');
     });
 
-    // Notice close
-    el.btnCloseNotice.addEventListener('click', () => {
-      el.noticeBar.style.display = 'none';
-    });
+    el.btnActivatePickupPromo.addEventListener('click', () => applyPromoCode('САМОВЫВОЗ'));
+    el.ticketCodePickup.addEventListener('click', () => applyPromoCode('САМОВЫВОЗ'));
 
-    // Delivery Mode Tabs (Sidebar)
+    el.btnGoToCombos.addEventListener('click', () => applyPromoCode('ДОСТАВКА'));
+    el.ticketCodeFree.addEventListener('click', () => applyPromoCode('ДОСТАВКА'));
+
+    // Cart Mode Tabs
     el.cartModeDelivery.addEventListener('click', () => {
       deliveryType = 'delivery';
       el.cartModeDelivery.classList.add('active');
@@ -1087,7 +1192,7 @@
 
     // Payment Simulator
     el.btnSimPaySuccess.addEventListener('click', () => {
-      finalizeOrder(getCartItemsTotal() + getDeliveryCost(getCartItemsTotal()), 'Оплачено картой / СБП');
+      finalizeOrder(getCartItemsTotal() + getDeliveryCost(getCartItemsTotal()), 'Оплачено онлайн / СБП');
     });
     el.btnSimFallbackCash.addEventListener('click', () => {
       finalizeOrder(getCartItemsTotal() + getDeliveryCost(getCartItemsTotal()), 'При получении');
@@ -1137,8 +1242,7 @@
     });
 
     // About Modal
-    el.topAboutLink.addEventListener('click', (e) => {
-      e.preventDefault();
+    el.topAboutBtn.addEventListener('click', () => {
       el.aboutBackdrop.classList.add('active');
       document.body.style.overflow = 'hidden';
     });
@@ -1147,16 +1251,131 @@
       document.body.style.overflow = '';
     });
 
-    // Phone auto mask
-    el.orderInputPhone.addEventListener('input', (e) => {
-      let v = e.target.value.replace(/\D/g, '');
-      if (v.startsWith('7') || v.startsWith('8')) v = v.substring(1);
-      let f = '+7 (';
-      if (v.length > 0) f += v.substring(0, 3);
-      if (v.length >= 3) f += ') ' + v.substring(3, 6);
-      if (v.length >= 6) f += '-' + v.substring(6, 8);
-      if (v.length >= 8) f += '-' + v.substring(8, 10);
-      e.target.value = f;
+    // Promo Codes Modal (%)
+    el.btnHeaderPromo.addEventListener('click', () => {
+      el.promoCodesBackdrop.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+    el.btnClosePromoCodesModal.addEventListener('click', () => {
+      el.promoCodesBackdrop.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+    el.promoCodesBackdrop.querySelectorAll('.btn-apply-code').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.getAttribute('data-code');
+        applyPromoCode(code);
+        el.promoCodesBackdrop.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // Profile Modal ("Войти")
+    el.btnHeaderProfile.addEventListener('click', () => {
+      el.profileBackdrop.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+    el.btnCloseProfileModal.addEventListener('click', () => {
+      el.profileBackdrop.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+    el.btnSendAuthCode.addEventListener('click', () => {
+      const p = el.authPhoneInput.value.trim();
+      if (p.length >= 10) {
+        el.profileLoggedOutView.style.display = 'none';
+        el.profileLoggedInView.style.display = 'block';
+        el.profileUserPhone.textContent = p;
+        el.userProfileLabel.textContent = 'Иван (500 б)';
+        showToast('Вход выполнен! Баланс: 500 бонусов');
+      } else {
+        showToast('Введите номер телефона');
+      }
+    });
+    el.btnLogoutProfile.addEventListener('click', () => {
+      el.profileLoggedOutView.style.display = 'block';
+      el.profileLoggedInView.style.display = 'none';
+      el.userProfileLabel.textContent = 'Войти';
+      showToast('Вы вышли из профиля');
+    });
+
+    // Bonuses Modal
+    el.btnHeaderBonuses.addEventListener('click', () => {
+      el.bonusesBackdrop.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+    el.btnCloseBonusesModal.addEventListener('click', () => {
+      el.bonusesBackdrop.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+    el.btnCloseBonusesAction.addEventListener('click', () => {
+      el.bonusesBackdrop.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+
+    // Legal Modals
+    function openPrivacyModal() {
+      el.legalPrivacyBackdrop.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closePrivacyModal() {
+      el.legalPrivacyBackdrop.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    function openOfferModal() {
+      el.legalOfferBackdrop.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeOfferModal() {
+      el.legalOfferBackdrop.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    el.btnOpenPrivacyPolicy.addEventListener('click', openPrivacyModal);
+    el.btnClosePrivacyModal.addEventListener('click', closePrivacyModal);
+    el.btnAcceptPrivacyModal.addEventListener('click', closePrivacyModal);
+    el.linkConsentPrivacy.addEventListener('click', (e) => {
+      e.preventDefault();
+      openPrivacyModal();
+    });
+    el.cookiePrivacyLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      openPrivacyModal();
+    });
+
+    el.btnOpenPublicOffer.addEventListener('click', openOfferModal);
+    el.btnCloseOfferModal.addEventListener('click', closeOfferModal);
+    el.btnAcceptOfferModal.addEventListener('click', closeOfferModal);
+    el.linkConsentOffer.addEventListener('click', (e) => {
+      e.preventDefault();
+      openOfferModal();
+    });
+
+    el.btnOpenCookieInfo.addEventListener('click', () => {
+      showToast('Файлы cookie используются для работы корзины и авторизации (152-ФЗ)');
+    });
+
+    // Cookie Banner Accept
+    el.btnAcceptCookies.addEventListener('click', () => {
+      localStorage.setItem('fb_cookie_accepted', 'true');
+      el.cookieBanner.style.opacity = '0';
+      setTimeout(() => {
+        el.cookieBanner.style.display = 'none';
+      }, 250);
+      showToast('Настройки cookie сохранены');
+    });
+
+    // Phone masking
+    [el.orderInputPhone, el.authPhoneInput].forEach(inp => {
+      if (!inp) return;
+      inp.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.startsWith('7') || v.startsWith('8')) v = v.substring(1);
+        let f = '+7 (';
+        if (v.length > 0) f += v.substring(0, 3);
+        if (v.length >= 3) f += ') ' + v.substring(3, 6);
+        if (v.length >= 6) f += '-' + v.substring(6, 8);
+        if (v.length >= 8) f += '-' + v.substring(8, 10);
+        e.target.value = f;
+      });
     });
 
     // Escape Key
@@ -1169,6 +1388,11 @@
         closeTracker();
         el.addressBackdrop.classList.remove('active');
         el.aboutBackdrop.classList.remove('active');
+        el.promoCodesBackdrop.classList.remove('active');
+        el.profileBackdrop.classList.remove('active');
+        el.bonusesBackdrop.classList.remove('active');
+        el.legalPrivacyBackdrop.classList.remove('active');
+        el.legalOfferBackdrop.classList.remove('active');
         document.body.style.overflow = '';
       }
     });
@@ -1195,10 +1419,12 @@
     return {
       restaurant: {
         id: "frito-burrito-krd",
-        name: "Frito Burrito",
-        cuisine: "Мексиканский стритфуд",
+        name: "Фрито Буррито",
+        cuisine: "Мексиканская кухня",
         rating: "5.0",
-        reviewsCount: 240,
+        reviewsCount: 62,
+        deliveryTime: "25–35 мин",
+        minOrder: 400,
         freeDeliveryThreshold: 800,
         deliveryCost: 149
       },
@@ -1219,6 +1445,7 @@
           weight: "360 г",
           popular: true,
           spicy: 0,
+          image: "img/burrito-classic.jpg",
           description: "Сочное куриное филе на гриле, свежие томаты, кукуруза, сыр моцарелла, свежая зелень и фирменный сливочный соус в подрумяненной тортилье."
         },
         {
@@ -1229,6 +1456,7 @@
           weight: "380 г",
           popular: true,
           spicy: 1,
+          image: "img/burrito-juanita.jpg",
           description: "Пикантная рубленая мраморная говядина, острый перчик халапеньо, красная фасоль пинто, тянущийся чеддер и аутентичная сальса роха."
         },
         {
@@ -1239,6 +1467,7 @@
           weight: "390 г",
           popular: true,
           spicy: 2,
+          image: "img/burrito-diablo.jpg",
           description: "Экстра-острый мексиканский хит! Мраморная говядина и цыпленок, острый соус чили-хабанеро, халапеньо, сладкая кукуруза и расплавленный чеддер."
         },
         {
@@ -1249,6 +1478,7 @@
           weight: "380 г",
           popular: true,
           spicy: 1,
+          image: "img/tacos-box.jpg",
           description: "Три хрустящих кукурузно-пшеничных тако: с томленым цыпленком, острой говядиной и свежими овощами с долькой сочного лайма."
         },
         {
@@ -1259,6 +1489,7 @@
           weight: "150 г",
           popular: true,
           spicy: 0,
+          image: "img/fries-crispy.jpg",
           description: "Золотистые хрустящие брусочки картофеля фри с легкой морской солью и паприкой."
         }
       ]
