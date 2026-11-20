@@ -157,20 +157,34 @@
 
   function scrollToCategory(catId) {
     activeCategory = catId;
-    updateActiveTabHighlight(catId);
+    updateActiveTabHighlight(catId, true);
     
     const targetSection = document.getElementById(`section-${catId}`);
     if (targetSection) {
-      targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const headerOffset = window.innerWidth <= 860 ? 116 : 80;
+      const elementPosition = targetSection.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      window.scrollTo({
+        top: Math.max(0, offsetPosition),
+        behavior: 'smooth'
+      });
     }
   }
 
-  function updateActiveTabHighlight(catId) {
+  function updateActiveTabHighlight(catId, shouldScrollTab = false) {
     const tabs = el.tabsWrapper.querySelectorAll('.category-tab-btn');
     tabs.forEach(tab => {
       if (tab.getAttribute('data-category') === catId) {
         tab.classList.add('active');
-        tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        if (shouldScrollTab) {
+          const tabLeft = tab.offsetLeft;
+          const tabWidth = tab.offsetWidth;
+          const containerWidth = el.tabsWrapper.offsetWidth;
+          el.tabsWrapper.scrollTo({
+            left: Math.max(0, tabLeft - (containerWidth / 2) + (tabWidth / 2)),
+            behavior: 'smooth'
+          });
+        }
       } else {
         tab.classList.remove('active');
       }

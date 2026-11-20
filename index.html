@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Фрито Буррито — Доставка мексиканской кухни в Краснодаре</title>
   <meta name="description" content="Сочные мексиканские буррито, тако, кесадильи и горячие закуски в Краснодаре на ул. Петра Метальникова, 3/1А. Быстрая доставка и самовывоз.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌯</text></svg>">
@@ -10,12 +10,13 @@
 </head>
 <body>
 
-  <!-- Site Header (Yandex Eda style) -->
+  <!-- Site Header (Yandex Eda Mobile-First Architecture) -->
   <header class="site-header">
     <div class="header-container">
       
-      <!-- Brand & Address -->
-      <div class="header-left">
+      <!-- Top Row: Brand, Location Pill & Cart Button -->
+      <div class="header-top-row">
+        
         <div class="brand-logo" onclick="window.scrollTo({top:0, behavior:'smooth'})">
           <div class="brand-icon">FB</div>
           <div class="brand-text">
@@ -24,44 +25,46 @@
           </div>
         </div>
 
-        <button class="address-picker-btn" id="addressPickerBtn" title="Сменить адрес доставки">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
-          <span id="currentAddressDisplay" class="addr-full">Краснодар, ул. Петра Метальникова, 3/1А</span>
-          <span class="caret">▼</span>
-        </button>
+        <div class="header-top-actions">
+          <button class="address-picker-btn" id="addressPickerBtn" title="Сменить адрес доставки">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span id="currentAddressDisplay" class="addr-text">Метальникова, 3/1А</span>
+            <span class="caret">▼</span>
+          </button>
+
+          <button class="header-cart-btn" id="headerCartBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span class="header-cart-label" id="headerCartSum">Корзина</span>
+            <span class="header-cart-badge" id="headerCartBadge" style="display: none;">0</span>
+          </button>
+        </div>
+
       </div>
 
-      <!-- Live Search -->
-      <div class="header-center">
+      <!-- Search & Delivery Toggle Row -->
+      <div class="header-search-row">
+        
         <div class="search-bar">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
           <input type="text" id="searchInput" class="search-input" placeholder="Найти буррито, тако, соус..." autocomplete="off">
           <button class="search-clear-btn" id="searchClearBtn" title="Очистить поиск">✕</button>
         </div>
-      </div>
 
-      <!-- Header Actions: Delivery Toggle & Cart -->
-      <div class="header-right">
         <div class="delivery-type-toggle">
           <button class="delivery-toggle-opt active" data-type="delivery">Доставка</button>
           <button class="delivery-toggle-opt" data-type="pickup">Самовывоз</button>
         </div>
 
-        <button class="header-cart-btn" id="headerCartBtn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <path d="M16 10a4 4 0 0 1-8 0"></path>
-          </svg>
-          <span id="headerCartSum">Корзина</span>
-          <span class="header-cart-badge" id="headerCartBadge" style="display: none;">0</span>
-        </button>
       </div>
 
     </div>
@@ -110,7 +113,7 @@
 
         <div class="hero-actions-col">
           <button class="btn-info-modal" id="btnOpenInfo">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <line x1="12" y1="16" x2="12" y2="12"></line>
               <line x1="12" y1="8" x2="12.01" y2="8"></line>
@@ -126,10 +129,10 @@
     </div>
   </section>
 
-  <!-- Sticky Categories Navigation (Yandex Eda style) -->
+  <!-- Sticky Categories Navigation (Zero-Lag 60 FPS) -->
   <div class="sticky-tabs-container">
     <div class="tabs-wrapper" id="tabsWrapper">
-      <!-- Generated dynamically by app.js -->
+      <!-- Populated dynamically by app.js -->
     </div>
   </div>
 
@@ -221,7 +224,7 @@
 
   </main>
 
-  <!-- Mobile Floating Cart Bar -->
+  <!-- Mobile Floating Cart Bar (Fixed & responsive) -->
   <div class="mobile-cart-float-bar" id="mobileCartBar" style="display: none;">
     <div class="m-cart-left">
       <span class="m-cart-badge" id="mCartBadge">0</span>
@@ -262,7 +265,7 @@
   <div class="modal-backdrop" id="infoModalBackdrop">
     <div class="modal-window" style="max-width: 480px;">
       <button class="modal-close-btn" id="infoModalClose">✕</button>
-      <div style="padding: 28px 24px;">
+      <div style="padding: 24px;">
         <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 14px;">Кафе «Фрито Буррито»</h2>
         
         <div style="display: flex; flex-direction: column; gap: 14px; font-size: 14px;">
@@ -401,14 +404,14 @@
   <!-- Online Payment Simulator Modal (Fail-safe architecture) -->
   <div class="modal-backdrop" id="paymentSimBackdrop">
     <div class="modal-window" style="max-width: 440px;">
-      <div style="padding: 28px 24px; text-align: center;">
+      <div style="padding: 24px; text-align: center;">
         <div style="font-size: 38px; margin-bottom: 10px;">🔒</div>
         <h3 style="font-size: 20px; font-weight: 800;">Безопасная оплата заказа</h3>
         <p style="font-size: 13px; color: var(--color-text-secondary); margin-top: 4px;">Сумма к оплате: <strong id="paymentSimSum" style="color: #000; font-size: 17px;"></strong></p>
 
-        <div style="background-color: var(--color-bg-subtle); padding: 16px; border-radius: var(--radius-md); margin: 20px 0; text-align: left; font-size: 13px;">
-          <div style="margin-bottom: 8px;"><strong>Получатель:</strong> Кафе «Фрито Буррито»</div>
-          <div style="margin-bottom: 8px;"><strong>Назначение:</strong> Оплата заказа еды с доставкой</div>
+        <div style="background-color: var(--color-bg-subtle); padding: 14px; border-radius: var(--radius-md); margin: 18px 0; text-align: left; font-size: 13px;">
+          <div style="margin-bottom: 6px;"><strong>Получатель:</strong> Кафе «Фрито Буррито»</div>
+          <div style="margin-bottom: 6px;"><strong>Назначение:</strong> Оплата заказа еды с доставкой</div>
           <div style="color: var(--color-accent-green); font-weight: 700;">✓ Защищенный шлюз СБП / Банковские карты</div>
         </div>
 
@@ -433,7 +436,7 @@
   <div class="modal-backdrop" id="trackerModalBackdrop">
     <div class="modal-window" style="max-width: 480px;">
       <button class="modal-close-btn" id="trackerModalClose">✕</button>
-      <div style="padding: 28px 24px;">
+      <div style="padding: 24px;">
         
         <div class="tracker-status-box">
           <span class="tracker-badge" id="trackerOrderNum">Заказ №FB-1048</span>
@@ -463,7 +466,7 @@
         </div>
 
         <!-- Order Summary Details -->
-        <div style="background-color: var(--color-bg-subtle); padding: 14px; border-radius: var(--radius-md); font-size: 13px; margin-bottom: 20px;">
+        <div style="background-color: var(--color-bg-subtle); padding: 14px; border-radius: var(--radius-md); font-size: 13px; margin-bottom: 18px;">
           <div style="font-weight: 700; margin-bottom: 8px;">Состав заказа:</div>
           <div id="trackerItemsSummary"></div>
           <div style="border-top: 1px dashed #D0D0D0; margin-top: 8px; padding-top: 8px; display: flex; justify-content: space-between; font-weight: 700;">
@@ -487,7 +490,7 @@
     <div class="modal-window" style="max-width: 440px;">
       <button class="modal-close-btn" id="addressModalClose">✕</button>
       <div style="padding: 24px;">
-        <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 12px;">Укажите адрес доставки</h3>
+        <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 10px;">Укажите адрес доставки</h3>
         <p style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 14px;">Краснодар и прилегающие районы</p>
         <input type="text" class="checkout-input" id="addressInput" value="Краснодар, ул. Петра Метальникова, 3/1А" style="margin-bottom: 16px;">
         <button class="btn-checkout-primary" id="btnSaveAddress">
