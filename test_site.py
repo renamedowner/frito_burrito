@@ -5,7 +5,7 @@ import threading
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from playwright.sync_api import sync_playwright
 
-PORT = 8097
+PORT = 8098
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -41,11 +41,11 @@ def run_tests():
         page.on("console", lambda msg: console_errors.append(f"Console {msg.type}: {msg.text}") if msg.type == "error" else None)
         page.on("pageerror", lambda err: console_errors.append(f"PageError: {err}"))
 
-        page.goto(f"http://127.0.0.1:{PORT}/index.html?v=3", wait_until="domcontentloaded")
+        page.goto(f"http://127.0.0.1:{PORT}/index.html?v=4", wait_until="domcontentloaded")
         page.wait_for_selector(".product-card")
 
         # Check title & hero
-        assert "FRITO BURRITO" in page.title()
+        assert "Фрито Буррито" in page.title() or "FRITO" in page.title().upper()
         hero_title = page.locator(".hero-title").inner_text()
         print(f"✓ Hero Title: {hero_title}")
 
@@ -68,7 +68,7 @@ def run_tests():
         modal_title = page.locator("#dishModalTitle").inner_text()
         print(f"✓ Modal opened for: {modal_title}")
         
-        # Select first modifier
+        # Select first modifier if available
         first_mod = page.locator("#dishModalModifiersList .mod-row").first
         if first_mod.is_visible():
             first_mod.click()
@@ -81,7 +81,7 @@ def run_tests():
         # Add another item directly using card button
         print("Adding another item via card button...")
         fries_card = page.locator(".product-card").filter(has_text="Картофель Фри").first
-        fries_card.locator(".btn-card-add").click()
+        fries_card.locator(".btn-kuper-add").click()
         time.sleep(0.3)
 
         # Open Cart Drawer
@@ -106,6 +106,9 @@ def run_tests():
         page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "03_order_tracker.png"))
 
         page.click("#btnTrackerDone")
+        page.wait_for_selector("#trackerModalBackdrop:not(.active)")
+        time.sleep(0.4)
+        page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "00_desktop_catalog.png"))
         context.close()
 
         # ---------------------------------------------------------
@@ -118,17 +121,19 @@ def run_tests():
         m_page.on("console", lambda msg: console_errors.append(f"Console {msg.type}: {msg.text}") if msg.type == "error" else None)
         m_page.on("pageerror", lambda err: console_errors.append(f"PageError: {err}"))
 
-        m_page.goto(f"http://127.0.0.1:{PORT}/index.html?v=3", wait_until="domcontentloaded")
+        m_page.goto(f"http://127.0.0.1:{PORT}/index.html?v=4", wait_until="domcontentloaded")
         m_page.wait_for_selector(".product-card")
 
         # Check mobile overflow
         scroll_width, client_width = m_page.evaluate("() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]")
         assert scroll_width == client_width, f"Mobile overflow detected: scrollWidth={scroll_width}, clientWidth={client_width}"
-        print("✓ Mobile zero overflow verified: 100% rock-solid layout")
+        print(f"✓ Mobile zero overflow verified: scrollWidth={scroll_width} == clientWidth={client_width}")
+
+        m_page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "04_mobile_home.png"))
 
         # Add item on mobile
         first_dish = m_page.locator(".product-card").first
-        first_dish.locator(".btn-card-add").click()
+        first_dish.locator(".btn-kuper-add").click()
         time.sleep(0.3)
 
         # Check float cart
@@ -139,8 +144,9 @@ def run_tests():
 
         float_cart.click()
         m_page.wait_for_selector("#cartDrawerBackdrop.active")
+        time.sleep(0.4)
         print("✓ Mobile cart drawer opened smoothly")
-        m_page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "04_mobile_drawer.png"))
+        m_page.screenshot(path=os.path.join(ROOT_DIR, "screenshots", "05_mobile_drawer.png"))
 
         m_context.close()
         browser.close()

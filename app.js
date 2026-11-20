@@ -1,6 +1,6 @@
 /**
- * FRITO BURRITO — Bespoke Restaurant Web Application
- * Zero-lag, 100% responsive, real photography, dynamic cart drawer, checkout & tracker
+ * FRITO BURRITO — Kuper Delivery Style Application
+ * Clean, lightweight, 0 photos on dishes, zero-overflow, instant response
  */
 
 (function () {
@@ -15,7 +15,7 @@
   let selectedPaymentMethod = 'cash';
   let activeOrderSimulation = null;
 
-  // Cart: Array of { id, dishId, name, price, basePrice, weight, image, modifiers, quantity }
+  // Cart: Array of { id, dishId, name, price, basePrice, weight, modifiers, quantity }
   let cart = [];
 
   // Current modal state
@@ -30,22 +30,24 @@
     searchClearBtn: document.getElementById('searchClearBtn'),
     
     // Header
-    headerAddressBtn: document.getElementById('headerAddressBtn'),
+    headerAddressBtn: document.getElementById('addressPickerBtn'),
     currentAddressDisplay: document.getElementById('currentAddressDisplay'),
     headerCartBtn: document.getElementById('headerCartBtn'),
     headerCartBadge: document.getElementById('headerCartBadge'),
     headerCartSum: document.getElementById('headerCartSum'),
     
+    // Delivery mode pills in hero
+    modeBtnDelivery: document.getElementById('pillDelivery'),
+    modeBtnPickup: document.getElementById('pillPickup'),
+
     // Drawer Cart
     cartDrawerBackdrop: document.getElementById('cartDrawerBackdrop'),
     cartDrawer: document.getElementById('cartDrawer'),
     drawerCloseBtn: document.getElementById('drawerCloseBtn'),
     drawerItemsCount: document.getElementById('drawerItemsCount'),
-    deliveryBarBox: document.getElementById('deliveryBarBox'),
-    deliveryBarText: document.getElementById('deliveryBarText'),
-    deliveryFill: document.getElementById('deliveryFill'),
-    modeBtnDelivery: document.getElementById('modeBtnDelivery'),
-    modeBtnPickup: document.getElementById('modeBtnPickup'),
+    deliveryBarBox: document.getElementById('freeDeliveryBox'),
+    deliveryBarText: document.getElementById('freeDeliveryText'),
+    deliveryFill: document.getElementById('freeDeliveryFill'),
     drawerItemsList: document.getElementById('drawerItemsList'),
     drawerEmptyNotice: document.getElementById('drawerEmptyNotice'),
     cutlerySection: document.getElementById('cutlerySection'),
@@ -69,7 +71,6 @@
     // Dish Modal
     dishModalBackdrop: document.getElementById('dishModalBackdrop'),
     dishModalClose: document.getElementById('dishModalClose'),
-    dishModalImg: document.getElementById('dishModalImg'),
     dishModalTitle: document.getElementById('dishModalTitle'),
     dishModalPrice: document.getElementById('dishModalPrice'),
     dishModalMeta: document.getElementById('dishModalMeta'),
@@ -123,7 +124,7 @@
   // 1. Initialize
   async function init() {
     try {
-      const resp = await fetch('dishes.json?v=3');
+      const resp = await fetch('dishes.json?v=4');
       if (resp.ok) {
         catalogData = await resp.json();
       } else {
@@ -139,16 +140,17 @@
     setupEventListeners();
   }
 
-  // 2. Render Tabs
+  // 2. Render Tabs (Kuper chips)
   function renderCategoryTabs() {
-    if (!catalogData || !catalogData.categories) return;
+    if (!catalogData || !catalogData.categories || !el.tabsTrack) return;
 
     el.tabsTrack.innerHTML = '';
     
-    // "All" tab
+    // "All" chip
     const allBtn = document.createElement('button');
-    allBtn.className = 'cat-pill active';
+    allBtn.className = 'kuper-chip active';
     allBtn.textContent = '🔥 Все меню';
+    allBtn.setAttribute('data-category-id', 'all');
     allBtn.addEventListener('click', () => {
       filterCategory('all', allBtn);
     });
@@ -157,8 +159,9 @@
     catalogData.categories.forEach(cat => {
       const count = catalogData.dishes.filter(d => d.categoryId === cat.id).length;
       const btn = document.createElement('button');
-      btn.className = 'cat-pill';
+      btn.className = 'kuper-chip';
       btn.textContent = `${cat.name} (${count})`;
+      btn.setAttribute('data-category-id', cat.id);
       btn.addEventListener('click', () => {
         filterCategory(cat.id, btn);
       });
@@ -168,20 +171,20 @@
 
   function filterCategory(catId, btnElement) {
     activeCategoryId = catId;
-    el.tabsTrack.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+    el.tabsTrack.querySelectorAll('.kuper-chip').forEach(b => b.classList.remove('active'));
     btnElement.classList.add('active');
 
     // Smooth horizontal scroll of tabs
     const trackLeft = el.tabsTrack.getBoundingClientRect().left;
     const btnLeft = btnElement.getBoundingClientRect().left;
-    el.tabsTrack.scrollBy({ left: btnLeft - trackLeft - 16, behavior: 'smooth' });
+    el.tabsTrack.scrollBy({ left: btnLeft - trackLeft - 14, behavior: 'smooth' });
 
     renderCatalog();
   }
 
   // 3. Render Catalog
   function renderCatalog() {
-    if (!catalogData) return;
+    if (!catalogData || !el.catalogContainer) return;
     el.catalogContainer.innerHTML = '';
     const q = searchQuery.trim().toLowerCase();
 
@@ -206,71 +209,71 @@
       totalDishesRendered += dishes.length;
 
       const sec = document.createElement('section');
-      sec.className = 'catalog-section-block';
+      sec.className = 'catalog-section';
       sec.id = `cat-${cat.id}`;
 
-      const titleWrap = document.createElement('div');
-      titleWrap.className = 'section-title-wrap';
-      titleWrap.innerHTML = `
-        <h2 class="sec-title">${cat.name}</h2>
-        <span class="sec-count">${dishes.length} ${getNoun(dishes.length, 'блюдо', 'блюда', 'блюд')}</span>
+      const head = document.createElement('div');
+      head.className = 'section-head';
+      head.innerHTML = `
+        <h2 class="section-heading">${cat.name}</h2>
+        <span class="section-count-badge">${dishes.length} ${getNoun(dishes.length, 'блюдо', 'блюда', 'блюд')}</span>
       `;
-      sec.appendChild(titleWrap);
+      sec.appendChild(head);
 
-      const grid = document.createElement('div');
-      grid.className = 'cards-grid';
+      const layout = document.createElement('div');
+      layout.className = 'cards-layout';
 
       dishes.forEach(dish => {
         const card = createProductCard(dish);
-        grid.appendChild(card);
+        layout.appendChild(card);
       });
 
-      sec.appendChild(grid);
+      sec.appendChild(layout);
       el.catalogContainer.appendChild(sec);
     });
 
     if (totalDishesRendered === 0 && q) {
       el.catalogContainer.innerHTML = `
-        <div style="padding: 60px 20px; text-align: center; color: var(--c-muted);">
-          <div style="font-size: 48px; margin-bottom: 12px;">🔍</div>
-          <h3 style="font-size: 20px; font-weight: 800; color: var(--c-dark);">Ничего не нашлось</h3>
-          <p style="font-size: 14px; margin-top: 6px;">Попробуйте поискать «буррито», «тако», «сыр» или «фри»</p>
+        <div style="padding: 60px 20px; text-align: center; color: var(--kuper-text-muted);">
+          <div style="font-size: 44px; margin-bottom: 10px;">🔍</div>
+          <h3 style="font-size: 19px; font-weight: 800; color: var(--kuper-dark);">Ничего не нашлось</h3>
+          <p style="font-size: 13px; margin-top: 4px;">Попробуйте поискать «буррито», «тако», «сыр» или «фри»</p>
         </div>
       `;
     }
   }
 
-  // 4. Product Card
+  // 4. Product Card (Clean Kuper style — NO dish photos)
   function createProductCard(dish) {
     const card = document.createElement('div');
-    card.className = 'product-card';
+    card.className = 'kuper-card product-card';
     card.setAttribute('data-dish-id', dish.id);
 
-    // Badges
-    let badges = '';
-    if (dish.spicy === 1) badges += '<span class="c-badge spicy">🌶️ Острое</span>';
-    if (dish.spicy >= 2) badges += '<span class="c-badge spicy">🌶️🌶️ Огонь</span>';
-    if (dish.popular) badges += '<span class="c-badge hit">🔥 Хит</span>';
+    // Spicy badge
+    let spicyBadge = '';
+    if (dish.spicy === 1) spicyBadge = '<span class="spicy-badge">🌶️ Острое</span>';
+    if (dish.spicy >= 2) spicyBadge = '<span class="spicy-badge">🌶️🌶️ Огонь</span>';
 
     card.innerHTML = `
-      <div class="card-img-holder">
-        <img src="${dish.image}?v=3" alt="${escapeHtml(dish.name)}" loading="lazy" onerror="this.src='img/burrito-classic.jpg?v=3'" />
-        <div class="card-badges-stack">${badges}</div>
+      <div class="card-top">
+        <div class="card-title-row">
+          <h3 class="card-title">${escapeHtml(dish.name)}</h3>
+          ${spicyBadge}
+        </div>
+        <p class="card-ingredients">${escapeHtml(dish.description)}</p>
       </div>
-      <div class="card-info">
-        <div class="card-price-row">
+      <div class="card-bottom">
+        <div class="card-price-block">
           <span class="card-price">${dish.price} ₽</span>
           <span class="card-weight">${dish.weight}</span>
         </div>
-        <h3 class="card-name">${escapeHtml(dish.name)}</h3>
-        <p class="card-desc">${escapeHtml(dish.description)}</p>
-        <div class="card-action-bar" id="card-action-${dish.id}"></div>
+        <div class="card-action-slot" id="card-action-${dish.id}"></div>
       </div>
     `;
 
-    // Click on card body opens modal (unless clicking stepper buttons)
+    // Click on card body opens modal (unless clicking stepper buttons or add)
     card.addEventListener('click', (e) => {
-      if (e.target.closest('.card-stepper-box') || e.target.closest('.btn-card-add')) {
+      if (e.target.closest('.card-stepper') || e.target.closest('.btn-kuper-add') || e.target.closest('.btn-card-add')) {
         return;
       }
       openDishModal(dish);
@@ -283,13 +286,14 @@
   }
 
   function renderCardAction(container, dish) {
+    if (!container) return;
     const count = getDishTotalCountInCart(dish.id);
     if (count > 0) {
       container.innerHTML = `
-        <div class="card-stepper-box">
-          <button class="c-dec" data-id="${dish.id}">−</button>
+        <div class="card-stepper">
+          <button class="c-dec" data-id="${dish.id}" title="Убрать один">−</button>
           <span>${count}</span>
-          <button class="c-inc" data-id="${dish.id}">+</button>
+          <button class="c-inc" data-id="${dish.id}" title="Добавить еще">+</button>
         </div>
       `;
       container.querySelector('.c-dec').addEventListener('click', (e) => {
@@ -302,11 +306,11 @@
       });
     } else {
       container.innerHTML = `
-        <button class="btn-card-add" data-id="${dish.id}">
-          <span>+ В корзину • ${dish.price} ₽</span>
+        <button class="btn-kuper-add btn-card-add" data-id="${dish.id}">
+          + Добавить
         </button>
       `;
-      container.querySelector('.btn-card-add').addEventListener('click', (e) => {
+      container.querySelector('.btn-kuper-add').addEventListener('click', (e) => {
         e.stopPropagation();
         addToCart(dish, []);
         showToast(`«${dish.name}» добавлен в корзину`);
@@ -322,19 +326,18 @@
     });
   }
 
-  // 5. Dish Details Modal
+  // 5. Dish Details Modal (Ingredients, calories, modifiers)
   function openDishModal(dish) {
     currentModalDish = dish;
     currentSelectedModifiers = [];
 
-    el.dishModalImg.src = `${dish.image}?v=3`;
     el.dishModalTitle.textContent = dish.name;
     el.dishModalPrice.textContent = `${dish.price} ₽`;
     el.dishModalMeta.innerHTML = `
       <span>⚖️ ${dish.weight}</span>
       <span>•</span>
       <span>🔥 ${dish.calories || '520 ккал'}</span>
-      ${dish.spicy > 0 ? `<span>•</span> <span style="color:#E53935; font-weight:800;">🌶️ ${dish.spicy === 1 ? 'Острое' : 'Очень острое'}</span>` : ''}
+      ${dish.spicy > 0 ? `<span>•</span> <span style="color:var(--kuper-spicy-red); font-weight:800;">🌶️ ${dish.spicy === 1 ? 'Острое' : 'Очень острое'}</span>` : ''}
     `;
     el.dishModalDesc.textContent = dish.description;
 
@@ -409,7 +412,6 @@
         price: itemPrice,
         basePrice: dish.price,
         weight: dish.weight,
-        image: dish.image,
         modifiers: [...modifiers],
         quantity: 1
       });
@@ -503,7 +505,7 @@
       el.cutlerySection.style.display = 'none';
       el.drawerFooter.style.display = 'none';
       el.deliveryBarBox.style.display = 'none';
-      el.drawerItemsList.querySelectorAll('.drawer-item').forEach(e => e.remove());
+      el.drawerItemsList.querySelectorAll('.cart-item-row').forEach(e => e.remove());
     } else {
       el.drawerEmptyNotice.style.display = 'none';
       el.cutlerySection.style.display = 'flex';
@@ -525,11 +527,11 @@
         el.deliveryBarBox.style.display = 'none';
       }
 
-      // Render Items
-      el.drawerItemsList.querySelectorAll('.drawer-item').forEach(e => e.remove());
+      // Render Items (clean Kuper row without dish photo)
+      el.drawerItemsList.querySelectorAll('.cart-item-row').forEach(e => e.remove());
       cart.forEach(item => {
         const row = document.createElement('div');
-        row.className = 'drawer-item';
+        row.className = 'cart-item-row';
         
         let modsStr = '';
         if (item.modifiers && item.modifiers.length > 0) {
@@ -537,20 +539,19 @@
         }
 
         row.innerHTML = `
-          <img src="${item.image}?v=3" alt="" class="drawer-item-img" onerror="this.src='img/burrito-classic.jpg?v=3'" />
-          <div class="drawer-item-info">
-            <div class="d-item-title">${escapeHtml(item.name)}</div>
-            ${modsStr ? `<div class="d-item-mods">${escapeHtml(modsStr)}</div>` : ''}
-            <div class="d-item-price">${item.price * item.quantity} ₽</div>
+          <div class="cart-item-info">
+            <div class="ci-title">${escapeHtml(item.name)}</div>
+            ${modsStr ? `<div class="ci-mods">${escapeHtml(modsStr)}</div>` : ''}
+            <div class="ci-price">${item.price * item.quantity} ₽</div>
           </div>
-          <div class="drawer-stepper">
-            <button class="d-dec">−</button>
+          <div class="ci-stepper">
+            <button class="ci-dec" title="Убрать">−</button>
             <span>${item.quantity}</span>
-            <button class="d-inc">+</button>
+            <button class="ci-inc" title="Добавить">+</button>
           </div>
         `;
 
-        row.querySelector('.d-dec').addEventListener('click', () => {
+        row.querySelector('.ci-dec').addEventListener('click', () => {
           if (item.quantity > 1) {
             item.quantity -= 1;
           } else {
@@ -560,7 +561,7 @@
           updateAllCardsUI();
         });
 
-        row.querySelector('.d-inc').addEventListener('click', () => {
+        row.querySelector('.ci-inc').addEventListener('click', () => {
           item.quantity += 1;
           updateCartUI();
           updateAllCardsUI();
@@ -573,14 +574,14 @@
       el.summaryItemsTotal.textContent = `${itemsTotal} ₽`;
       if (deliveryType === 'pickup') {
         el.summaryDeliveryCost.textContent = 'Самовывоз 0 ₽';
-        el.summaryDeliveryCost.style.color = 'var(--c-green)';
+        el.summaryDeliveryCost.style.color = 'var(--kuper-green)';
       } else {
         if (deliveryCost === 0) {
           el.summaryDeliveryCost.textContent = 'Бесплатно';
-          el.summaryDeliveryCost.style.color = 'var(--c-green)';
+          el.summaryDeliveryCost.style.color = 'var(--kuper-green)';
         } else {
           el.summaryDeliveryCost.textContent = `${deliveryCost} ₽`;
-          el.summaryDeliveryCost.style.color = 'var(--c-dark)';
+          el.summaryDeliveryCost.style.color = 'var(--kuper-dark)';
         }
       }
 
@@ -726,7 +727,7 @@
     el.trackerItemsList.innerHTML = cart.map(i => 
       `<div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:13px;">
         <span>${escapeHtml(i.name)} × ${i.quantity}</span>
-        <strong style="color:var(--c-flame);">${i.price * i.quantity} ₽</strong>
+        <strong style="color:var(--kuper-green);">${i.price * i.quantity} ₽</strong>
       </div>`
     ).join('');
 
@@ -813,21 +814,23 @@
     });
 
     // Delivery mode toggle
-    el.modeBtnDelivery.addEventListener('click', () => {
-      deliveryType = 'delivery';
-      el.modeBtnDelivery.classList.add('active');
-      el.modeBtnPickup.classList.remove('active');
-      updateCartUI();
-      showToast('Выбрана доставка курьером');
-    });
+    if (el.modeBtnDelivery && el.modeBtnPickup) {
+      el.modeBtnDelivery.addEventListener('click', () => {
+        deliveryType = 'delivery';
+        el.modeBtnDelivery.classList.add('active');
+        el.modeBtnPickup.classList.remove('active');
+        updateCartUI();
+        showToast('Выбрана доставка курьером');
+      });
 
-    el.modeBtnPickup.addEventListener('click', () => {
-      deliveryType = 'pickup';
-      el.modeBtnPickup.classList.add('active');
-      el.modeBtnDelivery.classList.remove('active');
-      updateCartUI();
-      showToast('Выбран самовывоз: скидка -10%!');
-    });
+      el.modeBtnPickup.addEventListener('click', () => {
+        deliveryType = 'pickup';
+        el.modeBtnPickup.classList.add('active');
+        el.modeBtnDelivery.classList.remove('active');
+        updateCartUI();
+        showToast('Выбран самовывоз: скидка -10%!');
+      });
+    }
 
     // Cutlery
     el.btnCutleryDec.addEventListener('click', () => {
@@ -886,11 +889,13 @@
     });
 
     // Address Change
-    el.headerAddressBtn.addEventListener('click', () => {
-      el.addressEditInput.value = userAddress;
-      el.addressModalBackdrop.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    });
+    if (el.headerAddressBtn) {
+      el.headerAddressBtn.addEventListener('click', () => {
+        el.addressEditInput.value = userAddress;
+        el.addressModalBackdrop.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    }
     el.addressModalClose.addEventListener('click', () => {
       el.addressModalBackdrop.classList.remove('active');
       document.body.style.overflow = '';
@@ -978,7 +983,6 @@
           weight: "360 г",
           popular: true,
           spicy: 0,
-          image: "img/burrito-classic.jpg",
           description: "Сочное куриное филе на гриле, свежие томаты, кукуруза, сыр моцарелла, свежая зелень и фирменный сливочный соус в подрумяненной тортилье."
         },
         {
@@ -989,7 +993,6 @@
           weight: "380 г",
           popular: true,
           spicy: 1,
-          image: "img/burrito-juanita.jpg",
           description: "Пикантная рубленая мраморная говядина, острый перчик халапеньо, красная фасоль пинто, тянущийся чеддер и аутентичная сальса роха."
         },
         {
@@ -1000,7 +1003,6 @@
           weight: "390 г",
           popular: true,
           spicy: 2,
-          image: "img/burrito-diablo.jpg",
           description: "Экстра-острый мексиканский хит! Мраморная говядина и цыпленок, острый соус чили-хабанеро, халапеньо, сладкая кукуруза и расплавленный чеддер."
         },
         {
@@ -1011,7 +1013,6 @@
           weight: "380 г",
           popular: true,
           spicy: 1,
-          image: "img/tacos-box.jpg",
           description: "Три хрустящих кукурузно-пшеничных тако: с томленым цыпленком, острой говядиной и свежими овощами с долькой сочного лайма."
         },
         {
@@ -1022,7 +1023,6 @@
           weight: "150 г",
           popular: true,
           spicy: 0,
-          image: "img/fries-crispy.jpg",
           description: "Золотистые хрустящие брусочки картофеля фри с легкой морской солью и паприкой."
         }
       ]
